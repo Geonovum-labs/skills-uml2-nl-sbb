@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: nen3610-template-xmi
+expected_outcome: |
+  A NL-SBB concept scheme for the NEN3610 package only (not the IMGolf example model, not 3610-MIM-Datatypen): 38 concepts (24 object types, 9 attributes, 5 values), SHACL 0 violations, a complete review of all 38 concepts and a report with a filled-in conclusion. All decisions taken without the user are listed as assumptions.
+context:
+  scaffold_script: place-files.sh

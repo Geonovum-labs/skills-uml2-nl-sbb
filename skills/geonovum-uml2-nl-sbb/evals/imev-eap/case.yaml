@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: imev-eap
+expected_outcome: |
+  A NL-SBB concept scheme for IMEV-conceptueel without the deprecated subpackage (about 465 concepts: 89 object types, 18 data types, 168 attributes and about 190 values). The value 'gegeven in transitie', which occurs in about 19 code lists with near-identical definitions, is one concept. SHACL reports 8 violations (concepts without a definition) and few warnings. The unreadable memo field of OpslagOntplofbaarMilitair_TeBerekenenAfstand is reported. The review covers every concept in parts of 25.
+context:
+  scaffold_script: place-files.sh
