@@ -1,0 +1,57 @@
+publiccodeYmlVersion: "0.7"
+
+name: UML-naar-NL-SBB-skill
+url: https://github.com/fterpstra/skill-uml2-nl-sbb.git
+softwareVersion: "0.0.1"
+releaseDate: "2026-11-08"
+landingURL: https://github.com/fterpstra/skill-uml2-nl-sbb
+softwareType: addon
+
+platforms:
+  - linux
+  - mac
+  - windows
+
+developmentStatus: development
+
+description:
+  nl:
+    shortDescription: Agent-skill van Geonovum die een UML-informatiemodel omzet naar een NL-SBB-begrippenkader.
+    longDescription: >
+      Deze repository bevat een agent-skill van Geonovum die een UML-informatiemodel omzet naar een begrippenkader volgens NL-SBB, de Nederlandse standaard voor het beschrijven van begrippen. Een agent-skill is een instructiedocument dat een AI-assistent erbij pakt zodra het onderwerp langskomt. De skill leest XMI (1.1 en 2.x) en Enterprise Architect-bestanden (.eap, .eapx, .qea, .qeax). Objecttypen, datatypen, attributen en waarden uit waardelijsten worden begrippen, waardelijsten worden collecties. Alle vaste stappen lopen via één script dat na elke stap de volgende noemt: inventaris, analyse met voorstellen per beslispunt, genereren, SHACL-validatie tegen het NL-SBB-profiel en een inhoudelijke review in delen met een compleetheidscontrole. De keuzes staan in een projectbestand en zijn herbruikbaar. De definities blijven die van het bronmodel; de skill herschrijft ze niet.
+    features:
+      - Leest XMI 1.1, XMI 2.x en Enterprise Architect-bestanden, ook in een zip
+      - Vaste standaardkeuzes met per project af te wijken keuzes in project.yaml
+      - Ondersteunt MIM-modellen (alias als term, notities met koppen als --Definitie--)
+      - SHACL-validatie tegen het NL-SBB 1.0.0-profiel met telling per ernstniveau
+      - Inhoudelijke review in delen van 25 begrippen met signalen van het script en een compleetheidscontrole
+      - Rapport met cijfers die het script schrijft; de assistent vult alleen de conclusie in
+
+legal:
+  license: EUPL-1.2
+  mainCopyrightOwner: Geonovum
+
+intendedAudience:
+  countries:
+    - NL
+  scope:
+    - government
+
+localisation:
+  availableLanguages:
+    - nl
+  localisationReady: false
+
+maintenance:
+  type: internal
+  contacts:
+    - name: Frank Terpstra
+      affiliation: Geonovum
+
+organisation:
+  name: Geonovum
+  uri: https://organisaties.overheid.nl/27912339/Stichting_Geonovum
+
+supports:
+  - id: https://docs.geostandaarden.nl/nl-sbb/nl-sbb/
+  - id: https://docs.geostandaarden.nl/mim/mim/

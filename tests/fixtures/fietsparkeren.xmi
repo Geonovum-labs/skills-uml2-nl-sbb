@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fictief testmodel voor de offline tests van de skill. Geen bestaand informatiemodel. -->
+<xmi:XMI xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20131001"
+         xmlns:mim="http://www.geostandaarden.nl/mim/test">
+  <uml:Model xmi:type="uml:Model" xmi:id="model" name="Testmodellen">
+    <packagedElement xmi:type="uml:Package" xmi:id="pkg_basis" name="Basis">
+      <packagedElement xmi:type="uml:Class" xmi:id="GeoObject" name="GeoObject" isAbstract="true">
+        <ownedComment body="Abstractie van een object in de werkelijkheid dat een locatie heeft."/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="pkg_fiets" name="Fietsparkeren">
+      <packagedElement xmi:type="uml:Class" xmi:id="Stalling" name="Stalling">
+        <ownedComment body="Voorziening waar fietsen geordend kunnen worden geparkeerd."/>
+        <generalization general="GeoObject"/>
+        <ownedAttribute xmi:id="Stalling_naam" name="naam">
+          <ownedComment body="De officiële naam van de stalling, zoals die op de bebording staat."/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="Stalling_capaciteit" name="capaciteitFietsen">
+          <ownedComment body="Het aantal fietsen dat tegelijk in de stalling kan staan."/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="Stalling_type" name="typeStalling">
+          <ownedComment body="Indeling van de stalling naar de mate van toezicht."/>
+          <type xmi:idref="TypeStalling"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="Stalling_open" name="openingstijd">
+          <ownedComment body="De tijden waarop de stalling toegankelijk is."/>
+          <type xmi:idref="Openingstijd"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="Fietsenrek" name="Fietsenrek">
+        <ownedComment body="Stalling die bestaat uit een constructie waaraan fietsen worden vastgezet."/>
+        <generalization general="Stalling"/>
+        <ownedAttribute xmi:id="Rek_naam" name="naam">
+          <ownedComment body="De aanduiding van het rek binnen de stalling, bijvoorbeeld een rijnummer."/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="Rek_type" name="typeRek">
+          <ownedComment body="Indeling van het rek naar constructie."/>
+          <type xmi:idref="TypeRek"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="Kluis" name="Fietskluis">
+        <ownedComment body="Afsluitbare stalling voor één fiets."/>
+        <generalization general="Stalling"/>
+        <ownedAttribute xmi:id="Kluis_code" name="kluisCode"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:DataType" xmi:id="Openingstijd" name="Openingstijd">
+        <ownedComment body="Periode binnen een dag waarin iets geopend is."/>
+        <ownedAttribute xmi:id="Open_van" name="van">
+          <ownedComment body="Het tijdstip waarop de periode begint."/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="Open_tot" name="tot">
+          <ownedComment body="Het tijdstip waarop de periode eindigt."/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Enumeration" xmi:id="TypeStalling" name="TypeStalling">
+        <ownedComment body="Lijst van soorten stallingen naar de mate van toezicht."/>
+        <ownedLiteral xmi:id="TS_bewaakt" name="bewaakt"><ownedComment body="Stalling waar een beheerder of camera toezicht houdt."/></ownedLiteral>
+        <ownedLiteral xmi:id="TS_onbewaakt" name="onbewaakt"><ownedComment body="Stalling zonder toezicht."/></ownedLiteral>
+        <ownedLiteral xmi:id="TS_overig" name="overig"><ownedComment body="Een andere vorm van toezicht dan bewaakt of onbewaakt."/></ownedLiteral>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Enumeration" xmi:id="TypeRek" name="TypeRek">
+        <ownedComment body="Lijst van soorten fietsenrekken naar constructie."/>
+        <ownedLiteral xmi:id="TR_nietje" name="nietje"><ownedComment body="Rek in de vorm van een omgekeerde U waaraan een fiets met het frame wordt vastgezet."/></ownedLiteral>
+        <ownedLiteral xmi:id="TR_etage" name="etagerek"><ownedComment body="Rek met twee lagen boven elkaar."/></ownedLiteral>
+        <ownedLiteral xmi:id="TR_overig" name="overig"><ownedComment body="Een rekconstructie die niet in deze lijst staat."/></ownedLiteral>
+        <ownedLiteral xmi:id="TR_onbekend" name="onbekend"><ownedComment body="De waarde is nu niet bekend."/></ownedLiteral>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Enumeration" xmi:id="StatusStalling" name="StatusStalling">
+        <ownedComment body="Lijst van toestanden van een stalling."/>
+        <ownedLiteral xmi:id="SS_open" name="inGebruik"><ownedComment body="De stalling is open voor gebruikers."/></ownedLiteral>
+        <ownedLiteral xmi:id="SS_onbekend" name="onbekend"><ownedComment body="De waarde is nu niet bekend!"/></ownedLiteral>
+      </packagedElement>
+    </packagedElement>
+  </uml:Model>
+  <mim:Objecttype base_Class="Stalling"/>
+  <mim:Objecttype base_Class="Fietsenrek"/>
+  <mim:Objecttype base_Class="Kluis"/>
+  <mim:Objecttype base_Class="GeoObject"/>
+</xmi:XMI>

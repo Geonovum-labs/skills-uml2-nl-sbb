@@ -1,0 +1,57 @@
+# Release via Changesets.
+#
+# Bij elke push naar main kijkt changesets/action of er changesets open staan.
+# Zo ja, dan opent of actualiseert hij een pull request "Nieuwe release" met de
+# versieverhoging en de CHANGELOG. Wordt die PR gemerged, dan zijn er geen
+# changesets meer; de actie draait dan `changeset git-tag`, pusht de tag
+# v<versie> en maakt zelf de GitHub-release aan met de CHANGELOG-tekst van die
+# versie. Die release is wat de marketplace als nieuwe versie ziet.
+#
+# De actie werkt met GITHUB_TOKEN, zoals de release-workflows van de andere
+# skill-repositories in developer-overheid-nl. Een pull request die met
+# GITHUB_TOKEN is aangemaakt, start geen andere workflows; dat geeft niets,
+# want deze repository heeft geen controles op pull requests. Komen die er wel,
+# dan is een token van een GitHub App nodig, anders draaien ze niet op de
+# versie-PR. In de repo-instellingen moet onder Actions > General "Allow GitHub
+# Actions to create and approve pull requests" aan staan.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Geen dependency-cache: deze taak heeft schrijfrechten, en een cache die
+      # elders is gevuld, kan hier code binnenbrengen.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Afhankelijkheden installeren
+        run: npm ci
+
+      - name: Versie-PR openen of release aanmaken
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          github-token: ${{ github.token }}
+          version-script: npm run version
+          publish-script: npx changeset git-tag
+          pr-title: "Nieuwe release"
+          commit-message: "Versie en CHANGELOG bijgewerkt"
