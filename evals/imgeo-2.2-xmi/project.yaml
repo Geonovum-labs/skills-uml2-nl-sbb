@@ -1,0 +1,231 @@
+# project.yaml — alleen afwijkingen van SKILL/standaardkeuzes.yaml. Wijzig met `bk.py zet` of met de hand;
+# controleer daarna met `bk.py controleer`. Uitleg per sleutel: SKILL/references/keuzes.md
+relaties:
+  wortel: _CityObject
+  gebruik:
+    Status: null
+    StatusPlus: null
+    FunctieWeg: null
+    FunctieWegPlus: null
+    FysiekVoorkomenWeg: null
+    FysiekVoorkomenWegPlus: null
+    FunctieOndersteunendWegdeel:
+    - AuxiliaryTrafficArea
+    - plus-functieOndersteunendWegdeel
+    FysiekVoorkomenOndersteunendWegdeel:
+    - AuxiliaryTrafficArea
+    - null
+    FysiekVoorkomenOndersteunendWegdeelPlus:
+    - AuxiliaryTrafficArea
+    - plus-fysiekVoorkomenOndersteunendWegdeel
+    FunctieSpoor:
+    - Railway
+    - null
+    FunctieSpoorPlus:
+    - Railway
+    - plus-functieSpoor
+    FysiekVoorkomenOnbegroeidTerrein: null
+    FysiekVoorkomenOnbegroeidTerreinPlus: null
+    FysiekVoorkomenBegroeidTerrein: null
+    FysiekVoorkomenBegroeidTerreinPlus: null
+    TypeWater: null
+    TypeWaterPlus: null
+    TypeOndersteunendWaterdeel:
+    - OndersteunendWaterdeel
+    - plus-type
+    TypeOverigBouwwerk:
+    - OverigBouwwerk
+    - bgt-type
+    TypeOverigBouwwerkPlus:
+    - OverigBouwwerk
+    - plus-type
+    TypeOverbrugging: null
+    TypeOverbruggingsdeel:
+    - BridgeConstructionElement
+    - null
+    TypeKunstwerk: null
+    TypeKunstwerkPlus: null
+    TypeScheiding:
+    - Scheiding
+    - bgt-type
+    TypeScheidingPlus:
+    - Scheiding
+    - plus-type
+    TypeOpenbareRuimte:
+    - OpenbareRuimte
+    - null
+    TypeFunctioneelGebied:
+    - FunctioneelGebied
+    - bgt-type
+    TypeFunctioneelGebiedPlus:
+    - FunctioneelGebied
+    - plus-type
+    Inwinningsmethode: null
+    VoidReasonValue: null
+    TypeBak:
+    - Bak
+    - null
+    TypeBakPlus:
+    - Bak
+    - plus-type
+    TypeBord:
+    - Bord
+    - null
+    TypeBordPlus:
+    - Bord
+    - plus-type
+    TypeGebouwInstallatie:
+    - BuildingInstallation
+    - null
+    TypeGebouwInstallatiePlus:
+    - BuildingInstallation
+    - plus-typeGebouwInstallatie
+    TypeInstallatie:
+    - Installatie
+    - null
+    TypeInstallatiePlus:
+    - Installatie
+    - plus-type
+    TypeKast:
+    - Kast
+    - null
+    TypeKastPlus:
+    - Kast
+    - plus-type
+    TypeMast:
+    - Mast
+    - null
+    TypeMastPlus:
+    - Mast
+    - plus-type
+    TypePaal:
+    - Paal
+    - null
+    TypePaalPlus:
+    - Paal
+    - plus-type
+    TypePut:
+    - Put
+    - null
+    TypePutPlus:
+    - Put
+    - plus-type
+    TypeSensor:
+    - Sensor
+    - null
+    TypeSensorPlus:
+    - Sensor
+    - plus-type
+    TypeStraatmeubilair:
+    - Straatmeubilair
+    - null
+    TypeStraatmeubilairPlus:
+    - Straatmeubilair
+    - plus-type
+    TypeWaterinrichting: null
+    TypeWaterinrichtingPlus: null
+    TypeWeginrichting: null
+    TypeWeginrichtingPlus: null
+    TypeVegetatieObject:
+    - SolitaryVegetationObject
+    - null
+    TypeVegetatieObjectPlus:
+    - SolitaryVegetationObject
+    - plus-type
+besloten:
+- wortel
+- prefixen
+- waarden-splitsen
+- gebruik
+- bronnen-onbekend
+- alias
+- kader
+notities:
+- 'wortel: scriptvoorstel overgenomen'
+- 'prefixen: scriptvoorstel overgenomen'
+- 'waarden-splitsen: scriptvoorstel overgenomen'
+- 'gebruik: scriptvoorstel overgenomen'
+- 'bronnen-onbekend: scriptvoorstel overgenomen'
+- 'alias: scriptvoorstel overgenomen'
+- 'kader: scriptvoorstel overgenomen'
+termen:
+  naam_prefixen_verwijderen:
+  - bgt-
+  - plus-
+  alias_als_voorkeursterm:
+  - '*'
+  alias_naam_als_altlabel: null
+waarden:
+  automatisch_splitsen: '{lijst} {waarde}'
+bronnen:
+  mapping:
+  - patroon: BGT$
+    sleutel: BGT
+    titel: BGT
+  - patroon: IMGEO1\.0$
+    sleutel: IMGEO-1-0
+    titel: IMGEO 1.0
+  - patroon: IMGEO2\.0$
+    sleutel: IMGEO-2-0
+    titel: IMGEO 2.0
+  - patroon: CROW$
+    sleutel: CROW
+    titel: CROW
+  - patroon: IMGEO2\.1$
+    sleutel: IMGEO-2-1
+    titel: IMGEO 2.1
+  - patroon: AQUO$
+    sleutel: aquo
+    titel: aquo
+  - patroon: NEN3610:2011$
+    sleutel: NEN-3610-2011
+    titel: NEN 3610:2011
+  - patroon: IMGEO$
+    sleutel: IMGEO
+    titel: IMGEO
+  - patroon: WIKIPEDIA$
+    sleutel: Wikipedia
+    titel: Wikipedia
+  - patroon: BGT1\.1$
+    sleutel: BGT-1-1
+    titel: BGT 1.1
+  - patroon: BAG$
+    sleutel: BAG
+    titel: BAG
+  - patroon: STELSELCATALOGUS$
+    sleutel: Stelselcatalogus
+    titel: Stelselcatalogus
+  - patroon: BAGSTELSELCATALOGUS$
+    sleutel: BAG-stelselcatalogus
+    titel: BAG stelselcatalogus
+  - patroon: BRTSTELSELCATALOGUS$
+    sleutel: BRT-stelselcatalogus
+    titel: BRT stelselcatalogus
+  - patroon: CITYGML1\.0$
+    sleutel: CityGML-1-0
+    titel: CityGML 1.0
+  - patroon: RSGB$
+    sleutel: RSGB
+    titel: RSGB
+  - patroon: CITYGML$
+    sleutel: CityGML
+    titel: CityGML
+  - patroon: NEN3610$
+    sleutel: NEN-3610
+    titel: NEN 3610
+  - patroon: WEGENWIKI\.NL$
+    sleutel: wegenwiki-nl
+    titel: wegenwiki.nl
+  - patroon: NEN2660$
+    sleutel: NEN-2660
+    titel: NEN 2660
+  - patroon: INSPIRE$
+    sleutel: Inspire
+    titel: Inspire
+  - patroon: GWBRGEGEVENSWOORDENBOEKRIOLERING$
+    sleutel: GWBR-gegevenswoordenboek-riolering
+    titel: GWBR gegevenswoordenboek riolering
+kader:
+  uri: http://definities.geostandaarden.nl/imgeo
+  titel: IMGeo-begrippenkader
+  omschrijving: Begrippen uit het informatiemodel IMGeo.xmi, omgezet volgens NL-SBB.

@@ -1,0 +1,11 @@
+profiel 1.0.0, pySHACL 0.40.2, advanced=True, inference=rdfs
+
+=== A-kaal ===
+conforms-veld: False (niet leidend) | telling: Violation 0, Warning 72, Info 0
+[Warning] Concept x72: Het begrip is geen topbegrip maar heeft ook geen bovenliggende of gerelateerde begrippen.
+     bv. ['OV-baan', 'aquaduct', 'baan voor vliegverkeer', 'balustrade', 'bestaand', 'betonning', 'bodemval', 'boomspiegel']
+
+=== B-context ===
+conforms-veld: False (niet leidend) | telling: Violation 0, Warning 72, Info 0
+[Warning] Concept x72: Het begrip is geen topbegrip maar heeft ook geen bovenliggende of gerelateerde begrippen.
+     bv. ['OV-baan', 'aquaduct', 'baan voor vliegverkeer', 'balustrade', 'bestaand', 'betonning', 'bodemval', 'boomspiegel']

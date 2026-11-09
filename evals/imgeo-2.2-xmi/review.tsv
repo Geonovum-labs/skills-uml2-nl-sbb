@@ -1,0 +1,397 @@
+nr	term	soort	oordeel	opmerking	signalen
+1	begroeid terreindeel op talud	attribuut	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 3 ander(e) begrip(pen)
+2	bronhouder	attribuut	ok		-
+3	buurtcode	attribuut	ok		-
+4	datum inwinning	attribuut	ok		-
+5	eind registratie	attribuut	ok		-
+6	functie ondersteunend wegdeel	attribuut	ok		-
+7	functie spoor	attribuut	ok		-
+8	functie wegdeel	attribuut	ok		-
+9	fysiek vookomen	attribuut	ok		-
+10	fysiek voorkomen onbegroeid terreindeel	attribuut	ok		-
+11	fysiek voorkomen onbegroeid terreindeel onbegroeid terreindeel	attribuut	ok		-
+12	fysiek voorkomen ondersteunend wegdeel	attribuut	ok		-
+13	fysiek voorkomen wegdeel	attribuut	ok		-
+14	hectometeraanduiding	attribuut	ok		-
+15	hoek labelpositie	attribuut	ok		-
+16	hoort bij type overbrugging	attribuut	ok		-
+17	identificatie	attribuut	ok		-
+18	identificatie BAGOPR	attribuut	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 1 ander(e) begrip(pen); afkorting in term
+19	identificatie BAGPND	attribuut	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 1 ander(e) begrip(pen); afkorting in term
+20	identificatie BAGVBO hoogste huisnummer	attribuut	ok	afkorting is vaste term in het model	afkorting in term
+21	identificatie BAGVBO laagste huisnummer	attribuut	ok	afkorting is vaste term in het model	afkorting in term
+22	in onderzoek	attribuut	ok		-
+23	inwinnende instantie	attribuut	ok		-
+24	inwinningsmethode	attribuut	ok		-
+25	lokaal ID	attribuut	ok	afkorting is vaste term in het model	afkorting in term
+26	LV-publicatiedatum	attribuut	ok	afkorting is vaste term in het model	afkorting in term
+27	naam functioneel gebied	attribuut	ok		-
+28	naam registratief gebied	attribuut	ok		-
+29	namespace	attribuut	ok		-
+30	nauwkeurigheid	attribuut	ok		-
+31	nummeraanduidingreeks pand	attribuut	ok		-
+32	onbegroeid terreindeel op talud	attribuut	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 3 ander(e) begrip(pen)
+33	ondersteunend wegdeel op talud	attribuut	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 3 ander(e) begrip(pen)
+34	openbare ruimte naam	attribuut	ok		-
+35	openbare ruimte type	attribuut	ok		-
+36	overbrugging is beweegbaar	attribuut	ok		-
+37	plaatsingspunt	attribuut	ok		-
+38	positie label	attribuut	ok		-
+39	relatieve hoogteligging	attribuut	ok		-
+40	status IM geo-object	attribuut	ok	afkorting is vaste term in het model	afkorting in term
+41	status IM geo-object IM geo-object	attribuut	ok	afkorting is vaste term in het model	afkorting in term
+42	tekst label	attribuut	ok		-
+43	tijdstip registratie	attribuut	ok		-
+44	type bak	attribuut	ok		-
+45	type bord	attribuut	ok		-
+46	type functioneel gebied	attribuut	ok		-
+47	type functioneel gebied functioneel gebied	attribuut	ok		-
+48	type gebouw installatie	attribuut	ok		-
+49	type installatie	attribuut	ok		-
+50	type kast	attribuut	ok		-
+51	type kunstwerkdeel	attribuut	ok		-
+52	type kunstwerkdeel kunstwerkdeel	attribuut	ok		-
+53	type mast	attribuut	ok		-
+54	type overig bouwwerk	attribuut	ok		-
+55	type overig bouwwerk overig bouwwerk	attribuut	ok		-
+56	type paal	attribuut	ok		-
+57	type put	attribuut	ok		-
+58	type scheiding	attribuut	ok		-
+59	type scheiding scheiding	attribuut	ok		-
+60	type sensor	attribuut	ok		-
+61	type straatmeubilair	attribuut	ok		-
+62	type vegetatie object	attribuut	ok		-
+63	type waterdeel	attribuut	ok		-
+64	type waterinrichtingselement	attribuut	ok		-
+65	type weginrichtingselement	attribuut	ok		-
+66	wegdeel op talud	attribuut	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 3 ander(e) begrip(pen)
+67	wijkcode	attribuut	ok		-
+68	label	datatype	ok		-
+69	labelpositie	datatype	ok		-
+70	NEN3610 ID	datatype	ok	afkorting is vaste term in het model	afkorting in term; hoofdletter aan begin van term
+71	nummeraanduidingreeks	datatype	ok		-
+72	bak	objecttype	ok		-
+73	begroeid terreindeel	objecttype	ok		-
+74	bord	objecttype	ok		-
+75	buurt	objecttype	ok		-
+76	functioneel gebied	objecttype	ok		-
+77	gebouw installatie	objecttype	ok		-
+78	IM geo-object	objecttype	ok	afkorting is vaste term in het model	afkorting in term
+79	inrichtingselement	objecttype	ok		-
+80	installatie	objecttype	ok		-
+81	kast	objecttype	ok		-
+82	kunstwerkdeel	objecttype	ok		-
+83	mast	objecttype	ok	korte definitie is voldoende voor dit begrip	zeer korte definitie
+84	onbegroeid terreindeel	objecttype	ok		-
+85	ondersteunend waterdeel	objecttype	ok		-
+86	ondersteunend wegdeel	objecttype	ok		-
+87	openbare ruimte	objecttype	ok		-
+88	openbare ruimte label	objecttype	ok		-
+89	overbruggingsdeel	objecttype	ok		-
+90	overig bouwwerk	objecttype	ok		-
+91	overige constructie	objecttype	ok		-
+92	paal	objecttype	ok		-
+93	pand	objecttype	ok		-
+94	plaatsbepalingspunt	objecttype	ok		-
+95	put	objecttype	ok		-
+96	registratief gebied	objecttype	ok		-
+97	scheiding	objecttype	ok		-
+98	sensor	objecttype	ok		-
+99	spoor	objecttype	ok		-
+100	stadsdeel	objecttype	ok		-
+101	straatmeubilair	objecttype	ok		-
+102	tunneldeel	objecttype	ok		-
+103	vegetatie object	objecttype	ok		-
+104	waterdeel	objecttype	ok		-
+105	waterinrichtingselement	objecttype	ok		-
+106	waterschap	objecttype	ok		-
+107	wegdeel	objecttype	ok		-
+108	weginrichtingselement	objecttype	ok		-
+109	wijk	objecttype	ok		-
+110	(haven)kraan	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+111	abri	waarde	ok		-
+112	administratief gebied	waarde	ok		-
+113	afsluitpaal	waarde	ok		-
+114	afval apart plaats	waarde	ok		-
+115	afvalbak	waarde	ok		-
+116	akkerbouw	waarde	ok		-
+117	aquaduct	waarde	ok		-
+118	asfalt	waarde	ok		-
+119	baan voor vliegverkeer	waarde	ok		-
+120	balustrade	waarde	ok		-
+121	bank	waarde	ok		-
+122	bassin	waarde	ok		-
+123	bedrijvigheid	waarde	ok		-
+124	beek	waarde	ok		-
+125	begraafplaats	waarde	ok		-
+126	benzine- / olieput	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+127	benzinestation	waarde	ok		-
+128	berm	waarde	ok		-
+129	bestaand	waarde	ok		-
+130	betaalautomaat	waarde	ok		-
+131	beton element	waarde	ok		-
+132	betonning	waarde	ok		-
+133	betonstraatstenen	waarde	ok		-
+134	bewoning	waarde	ok		-
+135	bezinkbak	waarde	ok		-
+136	bloembak	waarde	ok		-
+137	bodembedekkers	waarde	ok		-
+138	bodemval	waarde	ok		-
+139	bolder	waarde	ok		-
+140	bollenteelt	waarde	ok		-
+141	boom	waarde	ok		-
+142	boomschors	waarde	ok		-
+143	boomspiegel	waarde	ok		-
+144	boomteelt	waarde	ok		-
+145	bordes	waarde	ok		-
+146	bosplantsoen	waarde	ok		-
+147	bouwland	waarde	ok		-
+148	bovenleidingmast	waarde	ok		-
+149	braakliggend	waarde	ok		-
+150	brandkraan / -put	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+151	brievenbus	waarde	ok		-
+152	bron	waarde	ok		-
+153	brug	waarde	ok		-
+154	bunker	waarde	ok		-
+155	bushalte	waarde	ok		-
+156	CAI-kast	waarde	ok	afkorting is vaste term in het model	afkorting in term
+157	calamiteitendoorsteek	waarde	ok		-
+158	camera	waarde	ok		-
+159	carpoolplaats	waarde	ok		-
+160	cementbeton	waarde	ok		-
+161	container	waarde	ok		-
+162	coupure	waarde	ok		-
+163	damwand	waarde	ok		-
+164	debietmeter	waarde	ok		-
+165	dek	waarde	ok		-
+166	detectielus	waarde	ok		-
+167	dijkpaal	waarde	ok		-
+168	draadraster	waarde	ok		-
+169	drainageput	waarde	ok		-
+170	drinkbak	waarde	ok		-
+171	drukknoppaal	waarde	ok		-
+172	duiker	waarde	ok		-
+173	duin	waarde	ok		-
+174	dynamische snelheidsindicator	waarde	ok		-
+175	ecoduct	waarde	ok		-
+176	elektrakast	waarde	ok		-
+177	erf	waarde	ok		-
+178	faunaraster	waarde	ok		-
+179	faunavoorziening	waarde	ok		-
+180	fietsenkluis	waarde	ok		-
+181	fietsenrek	waarde	ok		-
+182	fietspad	waarde	ok		-
+183	flitser	waarde	ok		-
+184	fly-over	waarde	ok		-
+185	fontein	waarde	ok		-
+186	fotogrammetisch	waarde	ok		-
+187	fruitteelt	waarde	ok		-
+188	functioneel beheer	waarde	ok		-
+189	functioneel beheer: hondenuitlaatplaats	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+190	fysiek voorkomen onbegroeid terrein onverhard	waarde	ok		-
+191	fysiek voorkomen onbegroeid terrein plus zand	waarde	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 2 ander(e) begrip(pen)
+192	fysiek voorkomen onbegroeid terrein zand	waarde	ok		-
+193	fysiek voorkomen ondersteunend wegdeel onverhard	waarde	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 1 ander(e) begrip(pen)
+194	fysiek voorkomen ondersteunend wegdeel plus zand	waarde	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 2 ander(e) begrip(pen)
+195	fysiek voorkomen weg onverhard	waarde	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 1 ander(e) begrip(pen)
+196	fysiek voorkomen weg plus zand	waarde	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 2 ander(e) begrip(pen)
+197	gaskast	waarde	ok		-
+198	gasput	waarde	ok		-
+199	gebakken klinkers	waarde	ok		-
+200	geen waarde	waarde	ok		-
+201	geleideconstructie	waarde	ok		-
+202	geleidewerk	waarde	ok		-
+203	geluidsscherm	waarde	ok		-
+204	gemaal	waarde	ok		-
+205	gemengd bos	waarde	ok		-
+206	gesloten duinvegetatie	waarde	ok		-
+207	gesloten verharding	waarde	ok		-
+208	GMS kast	waarde	ok	afkorting is vaste term in het model	afkorting in term
+209	GMS sensor	waarde	ok	afkorting is vaste term in het model	afkorting in term
+210	gracht	waarde	ok		-
+211	gras- en kruidachtigen	waarde	ok		-
+212	grasklinkers	waarde	ok		-
+213	grasland agrarisch	waarde	ok		-
+214	grasland overig	waarde	ok		-
+215	gravel	waarde	ok		-
+216	grensmarkering	waarde	ok		-
+217	greppel, droge sloot	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+218	griend en hakhout	waarde	ok		-
+219	grind	waarde	ok		-
+220	groenvoorziening	waarde	ok		-
+221	haag	waarde	ok		-
+222	half verhard	waarde	ok		-
+223	haltepaal	waarde	ok		-
+224	haven	waarde	ok		-
+225	hectometerpaal	waarde	ok		-
+226	heesters	waarde	ok		-
+227	heide	waarde	ok		-
+228	hek	waarde	ok		-
+229	herdenkingsmonument	waarde	ok		-
+230	hoogspanningsmast	waarde	ok		-
+231	hoogstam boomgaarden	waarde	ok		-
+232	hoogtedetectieapparaat	waarde	ok		-
+233	hoogtemerk	waarde	ok		-
+234	houtwal	waarde	ok		-
+235	informatiebord	waarde	ok		-
+236	infrastructuur verkeer en vervoer	waarde	ok		-
+237	infrastructuur waterstaatswerken	waarde	ok		-
+238	inrit	waarde	ok		-
+239	inspectie- / rioolput	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+240	kademuur	waarde	ok		-
+241	kanaal	waarde	ok		-
+242	keermuur	waarde	ok		-
+243	kering	waarde	ok		-
+244	klein fruit	waarde	ok		-
+245	kolk	waarde	ok		-
+246	kunstobject	waarde	ok		-
+247	kunststof	waarde	ok		-
+248	kunstwerk	waarde	ok		-
+249	kwelder	waarde	ok		-
+250	laagspanningsmast	waarde	ok		-
+251	laagstam boomgaarden	waarde	ok		-
+252	lage trafo	waarde	ok		-
+253	landbouw	waarde	ok		-
+254	landhoofd	waarde	ok		-
+255	landschappelijk gebied	waarde	ok		-
+256	laser	waarde	ok		-
+257	lichtcel	waarde	ok		-
+258	lichtmast	waarde	ok		-
+259	lichtpunt	waarde	ok		-
+260	lijnafwatering	waarde	ok		-
+261	loofbos	waarde	ok		-
+262	luifel	waarde	ok		-
+263	maatschappelijke en/of publieksvoorziening	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+264	meer, plas, ven, vijver	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+265	meerpaal	waarde	ok		-
+266	moeras	waarde	ok		-
+267	molgoot	waarde	ok		-
+268	muur	waarde	ok		-
+269	naaldbos	waarde	ok		-
+270	natuur en landschap	waarde	ok		-
+271	niet geautoriseerd	waarde	ok		-
+272	niet ondersteund	waarde	ok		-
+273	niet-bgt	waarde	ok		-
+274	oever, slootkant	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+275	open duinvegetatie	waarde	ok		-
+276	open loods	waarde	ok		-
+277	open verharding	waarde	ok		-
+278	openbaar toilet	waarde	ok		-
+279	openbare verlichtingkast	waarde	ok		-
+280	opslagtank	waarde	ok		-
+281	OV-baan	waarde	ok	afkorting is vaste term in het model	afkorting in term
+282	overkapping	waarde	ok		-
+283	overkluizing	waarde	ok		-
+284	overweg	waarde	ok		-
+285	panoramabeelden	waarde	ok		-
+286	parkeerbeugel	waarde	ok		-
+287	parkeervlak	waarde	ok		-
+288	perron	waarde	ok		-
+289	picknicktafel	waarde	ok		-
+290	pijler	waarde	ok		-
+291	plaatsnaambord	waarde	ok		-
+292	plan	waarde	ok		-
+293	planten	waarde	ok		-
+294	poller	waarde	ok		-
+295	pomp	waarde	ok		-
+296	ponton	waarde	ok		-
+297	portaal	waarde	ok		-
+298	praatpaal	waarde	ok		-
+299	puin	waarde	ok		-
+300	pyloon	waarde	ok		-
+301	radar detector	waarde	ok		-
+302	radarmast	waarde	ok		-
+303	reclamebord	waarde	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 1 ander(e) begrip(pen)
+304	reclamezuil	waarde	ok	gelijke definitie is acceptabel in deze context	definitie identiek aan 1 ander(e) begrip(pen)
+305	recreatie	waarde	ok		-
+306	recreatie: bungalowpark	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+307	recreatie: camping	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+308	recreatie: park	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+309	recreatie: speeltuin	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+310	recreatie: sportterrein	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+311	recreatie: volkstuin	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+312	remmingswerk	waarde	ok		-
+313	rietland	waarde	ok		-
+314	rijbaan autosnelweg	waarde	ok		-
+315	rijbaan autoweg	waarde	ok		-
+316	rijbaan lokale weg	waarde	ok		-
+317	rijbaan regionale weg	waarde	ok		-
+318	rioolkast	waarde	ok		-
+319	rivier	waarde	ok		-
+320	rooster	waarde	ok		-
+321	ruiterpad	waarde	ok		-
+322	scheepvaartbord	waarde	ok		-
+323	schelpen	waarde	ok		-
+324	schuur	waarde	ok		-
+325	sierbestrating	waarde	ok		-
+326	sirene	waarde	ok		-
+327	slagboom	waarde	ok		-
+328	slik	waarde	ok		-
+329	sloof	waarde	ok		-
+330	sloot	waarde	ok		-
+331	sluis	waarde	ok		-
+332	sneltram	waarde	ok		-
+333	speelvoorziening	waarde	ok		-
+334	spoorbaan	waarde	ok		-
+335	steiger	waarde	ok		-
+336	straalzender	waarde	ok		-
+337	straatnaambord	waarde	ok		-
+338	strand en strandwal	waarde	ok		-
+339	strekdam	waarde	ok		-
+340	struiken	waarde	ok		-
+341	struikrozen	waarde	ok		-
+342	stuw	waarde	ok		-
+343	tegels	waarde	ok		-
+344	telecom kast	waarde	ok		-
+345	telefooncel	waarde	ok		-
+346	telkast	waarde	ok		-
+347	telpaal	waarde	ok		-
+348	terrein	waarde	ok		-
+349	terrestrisch	waarde	ok		-
+350	toegangstrap	waarde	ok		-
+351	tram	waarde	ok		-
+352	trein	waarde	ok		-
+353	vastgesteld onbekend	waarde	ok		-
+354	verbindingsweg	waarde	ok		-
+355	verblindingswering	waarde	ok		-
+356	verkeersbord	waarde	ok		-
+357	verkeersbordpaal	waarde	ok		-
+358	verkeersdrempel	waarde	ok		-
+359	verkeerseiland	waarde	ok		-
+360	verkeersregelinstallatiekast	waarde	ok		-
+361	verkeersregelinstallatiepaal	waarde	ok		-
+362	verklikker transportleiding	waarde	ok		-
+363	verzorgingsplaats	waarde	ok		-
+364	viaduct	waarde	ok		-
+365	vispassage	waarde	ok		-
+366	vlaggenmast	waarde	ok		-
+367	voedersilo	waarde	ok		-
+368	voetgangersgebied	waarde	ok		-
+369	voetpad	waarde	ok		-
+370	voetpad op trap	waarde	ok		-
+371	vollegrondsteelt	waarde	ok		-
+372	voorde	waarde	ok		-
+373	vuilvang	waarde	ok		-
+374	waarde onbekend	waarde	ok		-
+375	waarschuwingshek	waarde	ok		-
+376	walbescherming	waarde	ok		-
+377	water	waarde	ok		-
+378	waterbergingsgebied	waarde	ok		-
+379	waterleidingput	waarde	ok		-
+380	waterloop	waarde	ok		-
+381	waterstandmeter	waarde	ok		-
+382	watervlakte	waarde	ok		-
+383	weerstation	waarde	ok		-
+384	weg	waarde	ok		-
+385	wegmarkering	waarde	ok		-
+386	wegwijzer	waarde	ok		-
+387	wijngaarden	waarde	ok		-
+388	wildrooster	waarde	ok		-
+389	windmeter	waarde	ok		-
+390	windturbine	waarde	ok		-
+391	woonerf	waarde	ok		-
+392	zand- / zoutbak	waarde	ok	leesteken maakt deel uit van de vaste term	leesteken in term
+393	zandverstuiving	waarde	ok		-
+394	zee	waarde	ok		-
+395	zendmast	waarde	ok		-
+396	zonnepaneel	waarde	ok		-

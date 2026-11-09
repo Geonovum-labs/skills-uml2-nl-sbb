@@ -1,0 +1,8 @@
+- wortel: _CityObject als wortelbegrip gekozen, niet bevestigd
+- prefixen: bgt- en plus- prefixen verwijderd uit termen, niet bevestigd
+- waarden-splitsen: waarden met gelijke naam en andere definitie automatisch gesplitst volgens '{lijst} {waarde}', niet bevestigd
+- gebruik: waardelijsten gekoppeld aan objecttypen/attributen volgens scriptvoorstel, niet bevestigd
+- bronnen-onbekend: bronmapping gemaakt voor herkomstwaarden, niet bevestigd
+- alias: alle aliases als voorkeursterm gebruikt, niet bevestigd
+- kader: URI, titel en omschrijving ingesteld volgens scriptvoorstel, niet bevestigd
+- review: termcorrecties niet uitgevoerd (zelfstandig werken), de gebruiker beslist over reviewbevindingen
