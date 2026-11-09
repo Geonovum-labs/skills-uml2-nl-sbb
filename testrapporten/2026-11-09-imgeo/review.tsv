@@ -1,0 +1,397 @@
+nr	term	soort	oordeel	opmerking	signalen
+1	begroeid terreindeel op talud	attribuut	ok	"signaal ""definitie identiek"" is brontrouw: dezelfde attribuutdefinitie geldt in meerdere klassen, de objecttype-context onderscheidt"	definitie identiek aan 3 ander(e) begrip(pen)
+2	beweegbaarheid overbrugging	attribuut	ok	"termcorrectie doorgevoerd: ""beweegbaarheid overbrugging"" is een zelfstandig naamwoord"	-
+3	bronhouder	attribuut	ok	term en definitie volgen de bron	-
+4	buurtcode	attribuut	ok	term en definitie in orde	-
+5	datum inwinning	attribuut	ok	correcte splitsing van datumInwinning	-
+6	eindregistratie	attribuut	ok	"termcorrectie doorgevoerd: ""eindregistratie"" (samenstelling, één woord)"	-
+7	functie ondersteunend wegdeel	attribuut	ok	correcte splitsing van plus-functieOndersteunendWegdeel	-
+8	functie spoor	attribuut	ok	correcte splitsing van plus-functieSpoor	-
+9	functie wegdeel	attribuut	ok	correcte splitsing van plus-functieWegdeel	-
+10	fysiek voorkomen begroeid terreindeel	attribuut	ok	"termcorrectie doorgevoerd: ""fysiek voorkomen begroeid terreindeel"" volgt de correctie van de spelfout in de UML-naam"	-
+11	fysiek voorkomen onbegroeid terreindeel	attribuut	ok	correcte term voor bgt-fysiekVoorkomen	-
+12	fysiek voorkomen onbegroeid terreindeel (plus)	attribuut	ok	"termcorrectie doorgevoerd: ""(plus)"" onderscheidt de plus-variant van de bgt-variant"	leesteken in term
+13	fysiek voorkomen ondersteunend wegdeel	attribuut	ok	correcte splitsing van plus-fysiekVoorkomenOndersteunendWegdeel	-
+14	fysiek voorkomen wegdeel	attribuut	ok	correcte splitsing van plus-fysiekVoorkomenWegdeel	-
+15	hectometeraanduiding	attribuut	ok	term en definitie in orde	-
+16	hoek labelpositie	attribuut	ok	"objecttype-context ""labelpositie"" is nodig bij attribuut ""hoek"""	-
+17	hoort bij type overbrugging	attribuut	ok	term en definitie in orde	-
+18	identificatie	attribuut	ok	term en definitie in orde	-
+19	identificatie BAGOPR	attribuut	ok	BAGOPR is de vaste BAG-aanduiding voor openbareruimte; identieke definitie met BAGPND is brontrouw	definitie identiek aan 1 ander(e) begrip(pen); afkorting in term
+20	identificatie BAGPND	attribuut	ok	BAGPND is de vaste BAG-aanduiding voor pand; identieke definitie met BAGOPR is brontrouw	definitie identiek aan 1 ander(e) begrip(pen); afkorting in term
+21	identificatie BAGVBO hoogste huisnummer	attribuut	ok	BAGVBO is de vaste BAG-aanduiding voor verblijfsobject	afkorting in term
+22	identificatie BAGVBO laagste huisnummer	attribuut	ok	BAGVBO is de vaste BAG-aanduiding voor verblijfsobject	afkorting in term
+23	in onderzoek	attribuut	ok	term en definitie in orde	-
+24	inwinnende instantie	attribuut	ok	term en definitie in orde	-
+25	inwinningsmethode	attribuut	ok	term en definitie in orde	-
+26	lokaal ID	attribuut	ok	"""ID"" is de vaste notatie in NEN 3610 (lokaalID)"	afkorting in term
+27	LV-publicatiedatum	attribuut	ok	"""LV"" is de vaste IMGeo-aanduiding voor de Landelijke Voorziening"	afkorting in term
+28	naam functioneel gebied	attribuut	ok	"objecttype-context ""functioneel gebied"" is nodig bij attribuut ""naam"""	-
+29	naam registratief gebied	attribuut	ok	"objecttype-context ""registratief gebied"" is nodig bij attribuut ""naam"""	-
+30	namespace	attribuut	ok	"""namespace"" is de vaste NEN 3610-attribuutnaam"	-
+31	nauwkeurigheid	attribuut	ok	term en definitie in orde	-
+32	nummeraanduidingreeks pand	attribuut	ok	"objecttype-context ""pand"" onderscheidt van de reeks bij verblijfsobjecten"	-
+33	onbegroeid terreindeel op talud	attribuut	ok	identieke definitie is brontrouw: zelfde attribuut in meerdere klassen	definitie identiek aan 3 ander(e) begrip(pen)
+34	ondersteunend wegdeel op talud	attribuut	ok	identieke definitie is brontrouw: zelfde attribuut in meerdere klassen	definitie identiek aan 3 ander(e) begrip(pen)
+35	openbare ruimte naam	attribuut	ok	term en definitie in orde	-
+36	openbare ruimte type	attribuut	ok	term en definitie in orde	-
+37	plaatsingspunt	attribuut	ok	term en definitie in orde	-
+38	positie label	attribuut	ok	"objecttype-context ""label"" is nodig bij attribuut ""positie"""	-
+39	relatieve hoogteligging	attribuut	ok	term en definitie in orde	-
+40	status geo-object	attribuut	ok	"termcorrectie doorgevoerd: ""status geo-object"" vervangt de klassenaam ""IM geo-object"""	-
+41	status geo-object (plus)	attribuut	ok	"termcorrectie doorgevoerd: ""(plus)"" onderscheidt de plus-variant van de bgt-variant"	leesteken in term
+42	tekst label	attribuut	ok	"objecttype-context ""label"" is nodig bij attribuut ""tekst"""	-
+43	tijdstip registratie	attribuut	ok	correcte splitsing van tijdstipRegistratie	-
+44	type bak	attribuut	ok	objecttype-context onderscheidt de plus-types	-
+45	type bord	attribuut	ok	objecttype-context onderscheidt de plus-types	-
+46	type functioneel gebied	attribuut	ok	correcte splitsing van bgt-type	-
+47	type functioneel gebied (plus)	attribuut	ok	"termcorrectie doorgevoerd: ""(plus)"" vervangt de dubbele klassenaam"	leesteken in term
+48	type gebouwinstallatie	attribuut	ok	"termcorrectie doorgevoerd: ""type gebouwinstallatie"" (samenstelling, één woord)"	-
+49	type installatie	attribuut	ok	objecttype-context onderscheidt de plus-types	-
+50	type kast	attribuut	ok	objecttype-context onderscheidt de plus-types	-
+51	type kunstwerkdeel	attribuut	ok	term en definitie in orde	-
+52	type kunstwerkdeel (plus)	attribuut	ok	"termcorrectie doorgevoerd: ""(plus)"" vervangt de dubbele klassenaam"	leesteken in term
+53	type mast	attribuut	ok	term en definitie in orde	-
+54	type overig bouwwerk	attribuut	ok	term en definitie in orde	-
+55	type overig bouwwerk (plus)	attribuut	ok	"termcorrectie doorgevoerd: ""(plus)"" vervangt de dubbele klassenaam"	leesteken in term
+56	type paal	attribuut	ok	term en definitie in orde	-
+57	type put	attribuut	ok	term en definitie in orde	-
+58	type scheiding	attribuut	ok	term en definitie in orde	-
+59	type scheiding (plus)	attribuut	ok	"termcorrectie doorgevoerd: ""(plus)"" vervangt de dubbele klassenaam"	leesteken in term
+60	type sensor	attribuut	ok	term en definitie in orde	-
+61	type straatmeubilair	attribuut	ok	term en definitie in orde	-
+62	type vegetatieobject	attribuut	ok	"termcorrectie doorgevoerd: ""type vegetatieobject"" (samenstelling, één woord)"	-
+63	type waterdeel	attribuut	ok	term en definitie in orde	-
+64	type waterinrichtingselement	attribuut	ok	term en definitie in orde	-
+65	type weginrichtingselement	attribuut	ok	term en definitie in orde	-
+66	wegdeel op talud	attribuut	ok	identieke definitie is brontrouw: zelfde attribuut in meerdere klassen	definitie identiek aan 3 ander(e) begrip(pen)
+67	wijkcode	attribuut	ok	term en definitie in orde	-
+68	label	datatype	ok	term en definitie in orde	-
+69	labelpositie	datatype	ok	term en definitie in orde	-
+70	NEN 3610-id	datatype	ok	"termcorrectie doorgevoerd: ""NEN 3610-id"" (standaardnaam met spatie, kleine letters)"	afkorting in term
+71	nummeraanduidingreeks	datatype	ok	term en definitie in orde	-
+72	bak	objecttype	ok	term en definitie in orde	-
+73	begroeid terreindeel	objecttype	ok	term en definitie in orde	-
+74	bord	objecttype	ok	term en definitie in orde	-
+75	buurt	objecttype	ok	term en definitie in orde	-
+76	functioneel gebied	objecttype	ok	term en definitie in orde	-
+77	gebouwinstallatie	objecttype	ok	"termcorrectie doorgevoerd: ""gebouwinstallatie"" (samenstelling, één woord)"	-
+78	IMGeo object	objecttype	ok	"termcorrectie doorgevoerd: ""IMGeo object"" (klassenaam _CityObject; IMGeo is de modelnaam)"	hoofdletter aan begin van term
+79	inrichtingselement	objecttype	ok	term en definitie in orde	-
+80	installatie	objecttype	ok	term en definitie in orde	-
+81	kast	objecttype	ok	term en definitie in orde	-
+82	kunstwerkdeel	objecttype	ok	term en definitie in orde	-
+83	mast	objecttype	ok	korte definitie is hier voldoende onderscheidend	zeer korte definitie
+84	onbegroeid terreindeel	objecttype	ok	term en definitie in orde	-
+85	ondersteunend waterdeel	objecttype	ok	term en definitie in orde	-
+86	ondersteunend wegdeel	objecttype	ok	term en definitie in orde	-
+87	openbare ruimte	objecttype	ok	hoofdletters OPENBARE RUIMTE komen zo uit de BAG-definitie	-
+88	openbare ruimte label	objecttype	ok	term en definitie in orde	-
+89	overbruggingsdeel	objecttype	ok	term en definitie in orde	-
+90	overig bouwwerk	objecttype	ok	term en definitie in orde	-
+91	overige constructie	objecttype	definitie	"definitie begint met modelterminologie (""Abstract objecttype zijnde""); advies aan beheerder: alleen het begrip zelf beschrijven"	-
+92	paal	objecttype	ok	term en definitie in orde	-
+93	pand	objecttype	ok	hoofdletters PAND komen zo uit de BAG-definitie	-
+94	plaatsbepalingspunt	objecttype	ok	term en definitie in orde	-
+95	put	objecttype	ok	term en definitie in orde	-
+96	registratief gebied	objecttype	ok	term en definitie in orde	-
+97	scheiding	objecttype	ok	term en definitie in orde	-
+98	sensor	objecttype	ok	term en definitie in orde	-
+99	spoor	objecttype	ok	term en definitie in orde	-
+100	stadsdeel	objecttype	definitie	"definitie is summier (""Deel van een stad, wijk.""); advies aan beheerder om te verhelderen"	-
+101	straatmeubilair	objecttype	ok	term en definitie in orde	-
+102	tunneldeel	objecttype	ok	term en definitie in orde	-
+103	vegetatieobject	objecttype	ok	"termcorrectie doorgevoerd: ""vegetatieobject"" (samenstelling, één woord)"	-
+104	waterdeel	objecttype	ok	term en definitie in orde	-
+105	waterinrichtingselement	objecttype	ok	term en definitie in orde	-
+106	waterschap	objecttype	ok	term en definitie in orde	-
+107	wegdeel	objecttype	ok	term en definitie in orde	-
+108	weginrichtingselement	objecttype	ok	term en definitie in orde	-
+109	wijk	objecttype	ok	term en definitie in orde	-
+110	abri	waarde	ok	term en definitie in orde	-
+111	administratief gebied	waarde	ok	term en definitie in orde	-
+112	afsluitpaal	waarde	ok	term en definitie in orde	-
+113	afval apart plaats	waarde	ok	waardenaam is brontrouw overgenomen	-
+114	afvalbak	waarde	ok	term en definitie in orde	-
+115	akkerbouw	waarde	ok	term en definitie in orde	-
+116	aquaduct	waarde	ok	term en definitie in orde	-
+117	asfalt	waarde	ok	term en definitie in orde	-
+118	baan voor vliegverkeer	waarde	ok	term en definitie in orde	-
+119	balustrade	waarde	ok	definitie beschrijft het begrip; termherhaling aan het begin is brontrouw	-
+120	bank	waarde	ok	term en definitie in orde	-
+121	bassin	waarde	ok	term en definitie in orde	-
+122	bedrijvigheid	waarde	ok	onregelmatige spatiebalken komen zo uit de bron	-
+123	beek	waarde	ok	term en definitie in orde	-
+124	begraafplaats	waarde	ok	term en definitie in orde	-
+125	benzine- of olieput	waarde	ok	"termcorrectie doorgevoerd: ""benzine- of olieput"" (schuine streep hoort niet in een term)"	-
+126	benzinestation	waarde	ok	term en definitie in orde	-
+127	berm	waarde	ok	term en definitie in orde	-
+128	bestaand	waarde	ok	term en definitie in orde	-
+129	betaalautomaat	waarde	ok	term en definitie in orde	-
+130	betonelement	waarde	ok	"termcorrectie doorgevoerd: ""betonelement"" (samenstelling, één woord)"	-
+131	betonning	waarde	ok	term en definitie in orde	-
+132	betonstraatstenen	waarde	ok	term en definitie in orde	-
+133	bewoning	waarde	ok	term en definitie in orde	-
+134	bezinkbak	waarde	ok	term en definitie in orde	-
+135	bloembak	waarde	ok	term en definitie in orde	-
+136	bodembedekkers	waarde	ok	meervoud is de vaste waardenaam in de bron	-
+137	bodemval	waarde	ok	term en definitie in orde	-
+138	bolder	waarde	ok	term en definitie in orde	-
+139	bollenteelt	waarde	ok	term en definitie in orde	-
+140	boom	waarde	ok	term en definitie in orde	-
+141	boomschors	waarde	ok	term en definitie in orde	-
+142	boomspiegel	waarde	ok	term en definitie in orde	-
+143	boomteelt	waarde	ok	term en definitie in orde	-
+144	bordes	waarde	ok	term en definitie in orde	-
+145	bosplantsoen	waarde	ok	"ontbrekende spatie na ""aangeplant"" komt zo uit de bron"	-
+146	bouwland	waarde	ok	term en definitie in orde	-
+147	bovenleidingmast	waarde	ok	term en definitie in orde	-
+148	braakliggend	waarde	ok	term en definitie in orde	-
+149	brandkraan of brandput	waarde	ok	"termcorrectie doorgevoerd: ""brandkraan of brandput"" (schuine streep en koppelteken horen niet in een term)"	-
+150	brievenbus	waarde	ok	term en definitie in orde	-
+151	bron	waarde	ok	term en definitie in orde	-
+152	brug	waarde	ok	term en definitie in orde	-
+153	bungalowpark	waarde	ok	"termcorrectie doorgevoerd: ""bungalowpark"" (dubbele punt hoort niet in een term)"	-
+154	bunker	waarde	ok	definitie beschrijft het begrip; termherhaling aan het begin is brontrouw	-
+155	bushalte	waarde	ok	term en definitie in orde	-
+156	CAI-kast	waarde	ok	"""CAI"" is de vaste afkorting voor Centrale Antenne Inrichting in de kabelinfrastructuur"	afkorting in term
+157	calamiteitendoorsteek	waarde	ok	"tussenstuk ""(Calamiteiten doorsteek) CADO"" komt zo uit de bron"	-
+158	camera	waarde	ok	term en definitie in orde	-
+159	camping	waarde	ok	"termcorrectie doorgevoerd: ""camping"" (dubbele punt hoort niet in een term)"	-
+160	carpoolplaats	waarde	ok	term en definitie in orde	-
+161	cementbeton	waarde	ok	term en definitie in orde	-
+162	container	waarde	ok	term en definitie in orde	-
+163	coupure	waarde	ok	term en definitie in orde	-
+164	damwand	waarde	ok	term en definitie in orde	-
+165	debietmeter	waarde	ok	term en definitie in orde	-
+166	dek	waarde	ok	term en definitie in orde	-
+167	detectielus	waarde	ok	term en definitie in orde	-
+168	dijkpaal	waarde	ok	term en definitie in orde	-
+169	draadraster	waarde	ok	term en definitie in orde	-
+170	drainageput	waarde	ok	term en definitie in orde	-
+171	drinkbak	waarde	ok	term en definitie in orde	-
+172	drukknoppaal	waarde	ok	term en definitie in orde	-
+173	duiker	waarde	ok	term en definitie in orde	-
+174	duin	waarde	ok	term en definitie in orde	-
+175	dynamische snelheidsindicator	waarde	ok	term en definitie in orde	-
+176	ecoduct	waarde	ok	term en definitie in orde	-
+177	elektrakast	waarde	ok	term en definitie in orde	-
+178	erf	waarde	ok	term en definitie in orde	-
+179	faunaraster	waarde	ok	term en definitie in orde	-
+180	faunavoorziening	waarde	ok	term en definitie in orde	-
+181	fietsenkluis	waarde	ok	definitie beschrijft het begrip; termherhaling aan het begin is brontrouw	-
+182	fietsenrek	waarde	ok	term en definitie in orde	-
+183	fietspad	waarde	ok	term en definitie in orde	-
+184	flitser	waarde	ok	term en definitie in orde	-
+185	fly-over	waarde	ok	"""fly-over"" is de vaste Engelse term in de bronwaardelijst"	-
+186	fontein	waarde	ok	definitie beschrijft het begrip; termherhaling aan het begin is brontrouw	-
+187	fotogrammetisch	waarde	ok	adjectivische waardenaam past bij de inwinningsmethode	-
+188	fruitteelt	waarde	ok	term en definitie in orde	-
+189	functioneel beheer	waarde	ok	term en definitie in orde	-
+190	fysiek voorkomen onbegroeid terrein onverhard	waarde	ok	term en definitie in orde	-
+191	fysiek voorkomen onbegroeid terrein plus zand	waarde	ok	identieke definitie is brontrouw voor de plus-varianten van zand	definitie identiek aan 2 ander(e) begrip(pen)
+192	fysiek voorkomen onbegroeid terrein zand	waarde	ok	term en definitie in orde	-
+193	fysiek voorkomen ondersteunend wegdeel onverhard	waarde	ok	"identieke definitie met ""fysiek voorkomen weg onverhard"" is brontrouw"	definitie identiek aan 1 ander(e) begrip(pen)
+194	fysiek voorkomen ondersteunend wegdeel plus zand	waarde	ok	identieke definitie is brontrouw voor de plus-varianten van zand	definitie identiek aan 2 ander(e) begrip(pen)
+195	fysiek voorkomen weg onverhard	waarde	ok	"identieke definitie met ""fysiek voorkomen ondersteunend wegdeel onverhard"" is brontrouw"	definitie identiek aan 1 ander(e) begrip(pen)
+196	fysiek voorkomen weg plus zand	waarde	ok	identieke definitie is brontrouw voor de plus-varianten van zand	definitie identiek aan 2 ander(e) begrip(pen)
+197	gaskast	waarde	ok	term en definitie in orde	-
+198	gasput	waarde	ok	term en definitie in orde	-
+199	gebakken klinkers	waarde	ok	term en definitie in orde	-
+200	geen waarde	waarde	ok	term en definitie in orde	-
+201	geleideconstructie	waarde	ok	term en definitie in orde	-
+202	geleidewerk	waarde	ok	term en definitie in orde	-
+203	geluidsscherm	waarde	ok	term en definitie in orde	-
+204	gemaal	waarde	ok	term en definitie in orde	-
+205	gemengd bos	waarde	ok	term en definitie in orde	-
+206	gesloten duinvegetatie	waarde	ok	term en definitie in orde	-
+207	gesloten verharding	waarde	ok	term en definitie in orde	-
+208	GMS kast	waarde	ok	"""GMS"" is de vaste afkorting voor gladheidsmeldsysteem"	afkorting in term
+209	GMS sensor	waarde	ok	"""GMS"" is de vaste afkorting voor gladheidsmeldsysteem"	afkorting in term
+210	gracht	waarde	ok	definitie beschrijft het begrip; termherhaling aan het begin is brontrouw	-
+211	gras- en kruidachtigen	waarde	ok	koppelteken is de vaste waardenaam in de bron	-
+212	grasklinkers	waarde	ok	term en definitie in orde	-
+213	grasland agrarisch	waarde	ok	term en definitie in orde	-
+214	grasland overig	waarde	ok	term en definitie in orde	-
+215	gravel	waarde	ok	term en definitie in orde	-
+216	grensmarkering	waarde	ok	term en definitie in orde	-
+217	greppel of droge sloot	waarde	ok	"termcorrectie doorgevoerd: ""greppel of droge sloot"" (komma hoort niet in een term)"	-
+218	griend en hakhout	waarde	ok	term en definitie in orde	-
+219	grind	waarde	ok	term en definitie in orde	-
+220	groenvoorziening	waarde	ok	term en definitie in orde	-
+221	haag	waarde	ok	term en definitie in orde	-
+222	half verhard	waarde	ok	term en definitie in orde	-
+223	haltepaal	waarde	ok	term en definitie in orde	-
+224	haven	waarde	ok	term en definitie in orde	-
+225	havenkraan	waarde	ok	"termcorrectie doorgevoerd: ""havenkraan"" (leestekens horen niet in een term)"	-
+226	hectometerpaal	waarde	ok	term en definitie in orde	-
+227	heesters	waarde	ok	term en definitie in orde	-
+228	heide	waarde	ok	term en definitie in orde	-
+229	hek	waarde	ok	term en definitie in orde	-
+230	herdenkingsmonument	waarde	ok	term en definitie in orde	-
+231	hondenuitlaatplaats	waarde	ok	"termcorrectie doorgevoerd: ""hondenuitlaatplaats"" (dubbele punt hoort niet in een term)"	-
+232	hoogspanningsmast	waarde	ok	term en definitie in orde	-
+233	hoogstamboomgaard	waarde	ok	"termcorrectie doorgevoerd: ""hoogstamboomgaard"" (samenstelling, één woord, enkelvoud)"	-
+234	hoogtedetectieapparaat	waarde	ok	term en definitie in orde	-
+235	hoogtemerk	waarde	ok	term en definitie in orde	-
+236	houtwal	waarde	ok	term en definitie in orde	-
+237	informatiebord	waarde	ok	term en definitie in orde	-
+238	infrastructuur verkeer en vervoer	waarde	ok	term en definitie in orde	-
+239	infrastructuur waterstaatswerken	waarde	ok	term en definitie in orde	-
+240	inrit	waarde	ok	term en definitie in orde	-
+241	inspectie- of rioolput	waarde	ok	"termcorrectie doorgevoerd: ""inspectie- of rioolput"" (schuine streep hoort niet in een term)"	-
+242	kademuur	waarde	ok	term en definitie in orde	-
+243	kanaal	waarde	ok	term en definitie in orde	-
+244	keermuur	waarde	ok	term en definitie in orde	-
+245	kering	waarde	ok	term en definitie in orde	-
+246	klein fruit	waarde	ok	term en definitie in orde	-
+247	kolk	waarde	ok	term en definitie in orde	-
+248	kunstobject	waarde	ok	term en definitie in orde	-
+249	kunststof	waarde	ok	term en definitie in orde	-
+250	kunstwerk	waarde	ok	term en definitie in orde	-
+251	kwelder	waarde	ok	term en definitie in orde	-
+252	laagspanningsmast	waarde	ok	"spelfout ""spannning"" in de definitie komt zo uit de bron"	-
+253	laagstamboomgaard	waarde	ok	"termcorrectie doorgevoerd: ""laagstamboomgaard"" (samenstelling, één woord, enkelvoud)"	-
+254	lage trafo	waarde	ok	term en definitie in orde	-
+255	landbouw	waarde	ok	term en definitie in orde	-
+256	landhoofd	waarde	ok	term en definitie in orde	-
+257	landschappelijk gebied	waarde	definitie	definitie ontbreekt in de BAG-bron; advies aan beheerder om aan te vullen	-
+258	laser	waarde	ok	term en definitie in orde	-
+259	lichtcel	waarde	ok	term en definitie in orde	-
+260	lichtmast	waarde	ok	term en definitie in orde	-
+261	lichtpunt	waarde	definitie	"definitie is in de bron onduidelijk samengesteld (""licht uitzendt niet verbonden met een mast""); advies aan beheerder"	-
+262	lijnafwatering	waarde	ok	term en definitie in orde	-
+263	loofbos	waarde	ok	term en definitie in orde	-
+264	luifel	waarde	ok	term en definitie in orde	-
+265	maatschappelijke of publieksvoorziening	waarde	ok	"termcorrectie doorgevoerd: ""maatschappelijke of publieksvoorziening"" (schuine streep met ""en/of"" hoort niet in een term)"	-
+266	meer of plas, ven of vijver	waarde	ok	"termcorrectie doorgevoerd: ""meer of plas, ven of vijver"" (komma's horen niet in een term)"	leesteken in term
+267	meerpaal	waarde	ok	term en definitie in orde	-
+268	moeras	waarde	ok	term en definitie in orde	-
+269	molgoot	waarde	ok	term en definitie in orde	-
+270	muur	waarde	ok	term en definitie in orde	-
+271	naaldbos	waarde	ok	term en definitie in orde	-
+272	natuur en landschap	waarde	ok	term en definitie in orde	-
+273	niet geautoriseerd	waarde	ok	term en definitie in orde	-
+274	niet ondersteund	waarde	ok	term en definitie in orde	-
+275	niet-bgt	waarde	ok	koppelteken is de vaste BGT-aanduiding	-
+276	oever of slootkant	waarde	ok	"termcorrectie doorgevoerd: ""oever of slootkant"" (komma hoort niet in een term)"	-
+277	open duinvegetatie	waarde	ok	term en definitie in orde	-
+278	open loods	waarde	ok	term en definitie in orde	-
+279	open verharding	waarde	ok	term en definitie in orde	-
+280	openbaar toilet	waarde	ok	term en definitie in orde	-
+281	openbare verlichtingskast	waarde	ok	"termcorrectie doorgevoerd: ""openbare verlichtingskast"" (samenstelling, één woord)"	-
+282	opslagtank	waarde	ok	term en definitie in orde	-
+283	OV-baan	waarde	ok	"""OV"" is de vaste afkorting voor openbaar vervoer in de BGT"	afkorting in term
+284	overkapping	waarde	ok	term en definitie in orde	-
+285	overkluizing	waarde	ok	term en definitie in orde	-
+286	overweg	waarde	ok	term en definitie in orde	-
+287	panoramabeelden	waarde	ok	term en definitie in orde	-
+288	park	waarde	ok	"termcorrectie doorgevoerd: ""park"" (dubbele punt hoort niet in een term)"	-
+289	parkeerbeugel	waarde	ok	term en definitie in orde	-
+290	parkeervlak	waarde	ok	term en definitie in orde	-
+291	perron	waarde	ok	term en definitie in orde	-
+292	picknicktafel	waarde	ok	backticks rond de term in de definitie komen zo uit de bron	-
+293	pijler	waarde	ok	term en definitie in orde	-
+294	plaatsnaambord	waarde	ok	term en definitie in orde	-
+295	plan	waarde	ok	term en definitie in orde	-
+296	planten	waarde	ok	term en definitie in orde	-
+297	poller	waarde	ok	term en definitie in orde	-
+298	pomp	waarde	ok	term en definitie in orde	-
+299	ponton	waarde	ok	term en definitie in orde	-
+300	portaal	waarde	ok	"spelfout ""bedoelt"" in de definitie komt zo uit de bron"	-
+301	praatpaal	waarde	ok	term en definitie in orde	-
+302	puin	waarde	ok	term en definitie in orde	-
+303	pyloon	waarde	ok	term en definitie in orde	-
+304	radardetector	waarde	ok	"termcorrectie doorgevoerd: ""radardetector"" (samenstelling, één woord)"	-
+305	radarmast	waarde	ok	term en definitie in orde	-
+306	reclamebord	waarde	definitie	"identieke definitie met ""reclamezuil"" (""bord/zuil""); advies aan beheerder om per waarde te onderscheiden"	definitie identiek aan 1 ander(e) begrip(pen)
+307	reclamezuil	waarde	definitie	"identieke definitie met ""reclamebord"" (""bord/zuil""); advies aan beheerder om per waarde te onderscheiden"	definitie identiek aan 1 ander(e) begrip(pen)
+308	recreatie	waarde	ok	term en definitie in orde	-
+309	remmingswerk	waarde	ok	term en definitie in orde	-
+310	rietland	waarde	ok	term en definitie in orde	-
+311	rijbaan autosnelweg	waarde	ok	term en definitie in orde	-
+312	rijbaan autoweg	waarde	ok	term en definitie in orde	-
+313	rijbaan lokale weg	waarde	ok	term en definitie in orde	-
+314	rijbaan regionale weg	waarde	ok	term en definitie in orde	-
+315	rioolkast	waarde	ok	term en definitie in orde	-
+316	rivier	waarde	definitie	"definitie is een omweg (""Zulk een natuurlijke afvloeiing heet een rivier""); advies aan beheerder om direct te definiëren"	-
+317	rooster	waarde	ok	term en definitie in orde	-
+318	ruiterpad	waarde	ok	term en definitie in orde	-
+319	scheepvaartbord	waarde	ok	term en definitie in orde	-
+320	schelpen	waarde	ok	term en definitie in orde	-
+321	schuur	waarde	ok	term en definitie in orde	-
+322	sierbestrating	waarde	ok	term en definitie in orde	-
+323	sirene	waarde	ok	term en definitie in orde	-
+324	slagboom	waarde	ok	term en definitie in orde	-
+325	slik	waarde	ok	term en definitie in orde	-
+326	sloof	waarde	ok	term en definitie in orde	-
+327	sloot	waarde	ok	term en definitie in orde	-
+328	sluis	waarde	ok	term en definitie in orde	-
+329	sneltram	waarde	ok	term en definitie in orde	-
+330	speeltuin	waarde	ok	"termcorrectie doorgevoerd: ""speeltuin"" (dubbele punt hoort niet in een term)"	-
+331	speelvoorziening	waarde	ok	term en definitie in orde	-
+332	spoorbaan	waarde	ok	term en definitie in orde	-
+333	sportterrein	waarde	ok	"termcorrectie doorgevoerd: ""sportterrein"" (dubbele punt hoort niet in een term)"	-
+334	steiger	waarde	ok	term en definitie in orde	-
+335	straalzender	waarde	ok	term en definitie in orde	-
+336	straatnaambord	waarde	ok	term en definitie in orde	-
+337	strand en strandwal	waarde	ok	term en definitie in orde	-
+338	strekdam	waarde	ok	term en definitie in orde	-
+339	struiken	waarde	ok	term en definitie in orde	-
+340	struikrozen	waarde	ok	term en definitie in orde	-
+341	stuw	waarde	ok	term en definitie in orde	-
+342	tegels	waarde	ok	term en definitie in orde	-
+343	telecomkast	waarde	ok	"termcorrectie doorgevoerd: ""telecomkast"" (samenstelling, één woord)"	-
+344	telefooncel	waarde	ok	term en definitie in orde	-
+345	telkast	waarde	ok	term en definitie in orde	-
+346	telpaal	waarde	ok	term en definitie in orde	-
+347	terrein	waarde	ok	term en definitie in orde	-
+348	terrestrisch	waarde	ok	term en definitie in orde	-
+349	toegangstrap	waarde	ok	term en definitie in orde	-
+350	tram	waarde	ok	term en definitie in orde	-
+351	trein	waarde	ok	term en definitie in orde	-
+352	vastgesteld onbekend	waarde	ok	term en definitie in orde	-
+353	verbindingsweg	waarde	ok	term en definitie in orde	-
+354	verblindingswering	waarde	ok	term en definitie in orde	-
+355	verkeersbord	waarde	ok	term en definitie in orde	-
+356	verkeersbordpaal	waarde	ok	term en definitie in orde	-
+357	verkeersdrempel	waarde	ok	term en definitie in orde	-
+358	verkeerseiland	waarde	ok	term en definitie in orde	-
+359	verkeersregelinstallatiekast	waarde	ok	term en definitie in orde	-
+360	verkeersregelinstallatiepaal	waarde	ok	term en definitie in orde	-
+361	verklikker transportleiding	waarde	ok	term en definitie in orde	-
+362	verzorgingsplaats	waarde	ok	term en definitie in orde	-
+363	viaduct	waarde	ok	term en definitie in orde	-
+364	vispassage	waarde	ok	term en definitie in orde	-
+365	vlaggenmast	waarde	ok	term en definitie in orde	-
+366	voedersilo	waarde	ok	term en definitie in orde	-
+367	voetgangersgebied	waarde	ok	term en definitie in orde	-
+368	voetpad	waarde	ok	term en definitie in orde	-
+369	voetpad op trap	waarde	ok	term en definitie in orde	-
+370	volkstuin	waarde	ok	"termcorrectie doorgevoerd: ""volkstuin"" (dubbele punt hoort niet in een term)"	-
+371	vollegrondsteelt	waarde	ok	term en definitie in orde	-
+372	voorde	waarde	ok	term en definitie in orde	-
+373	vuilvang	waarde	ok	term en definitie in orde	-
+374	waarde onbekend	waarde	ok	term en definitie in orde	-
+375	waarschuwingshek	waarde	ok	term en definitie in orde	-
+376	walbescherming	waarde	ok	term en definitie in orde	-
+377	water	waarde	ok	term en definitie in orde	-
+378	waterbergingsgebied	waarde	ok	term en definitie in orde	-
+379	waterleidingput	waarde	ok	term en definitie in orde	-
+380	waterloop	waarde	ok	term en definitie in orde	-
+381	waterstandmeter	waarde	ok	term en definitie in orde	-
+382	watervlakte	waarde	ok	term en definitie in orde	-
+383	weerstation	waarde	ok	term en definitie in orde	-
+384	weg	waarde	ok	term en definitie in orde	-
+385	wegmarkering	waarde	ok	term en definitie in orde	-
+386	wegwijzer	waarde	ok	term en definitie in orde	-
+387	wijngaarden	waarde	ok	term en definitie in orde	-
+388	wildrooster	waarde	ok	term en definitie in orde	-
+389	windmeter	waarde	ok	term en definitie in orde	-
+390	windturbine	waarde	ok	term en definitie in orde	-
+391	woonerf	waarde	ok	term en definitie in orde	-
+392	zand- of zoutbak	waarde	ok	"termcorrectie doorgevoerd: ""zand- of zoutbak"" (schuine streep hoort niet in een term)"	-
+393	zandverstuiving	waarde	ok	term en definitie in orde	-
+394	zee	waarde	ok	term en definitie in orde	-
+395	zendmast	waarde	ok	term en definitie in orde	-
+396	zonnepaneel	waarde	ok	term en definitie in orde	-
