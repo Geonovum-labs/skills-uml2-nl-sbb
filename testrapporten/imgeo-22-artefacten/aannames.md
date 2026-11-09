@@ -1,0 +1,6 @@
+- project.yaml is gebaseerd op het IMGeo-2.1-voorbeeld uit de skill, aangepast naar IMGeo 2.2 (versienummer en XMI-datum); keuzes niet door de gebruiker bevestigd
+- wortel: _CityObject (IMGeo-object) als wortelbegrip, volgens scriptvoorstel, niet bevestigd
+- waardelijst-koppelingen (relaties.gebruik) overgenomen uit het IMGeo-2.1-voorbeeld, niet per lijst tegen IMGeo 2.2 gecontroleerd
+- bronmappings overgenomen uit het IMGeo-2.1-voorbeeld
+- matches (NEN 3610 / BAG) overgenomen uit het IMGeo-2.1-voorbeeld, niet bevestigd
+- review-oordelen: niet met de gebruiker besproken; termcorrecties blijven als advies in reports/review.md
