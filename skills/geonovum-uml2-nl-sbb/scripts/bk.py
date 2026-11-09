@@ -83,12 +83,29 @@ def yaml_schrijf(pad, data):
     import yaml
     kop = "# project.yaml — alleen afwijkingen van SKILL/standaardkeuzes.yaml. Wijzig met `bk.py zet` of met de hand;\n" \
           "# controleer daarna met `bk.py controleer`. Uitleg per sleutel: SKILL/references/keuzes.md\n"
+    if os.path.exists(pad) and not os.access(pad, os.W_OK):
+        os.chmod(pad, 0o644)  # bv. een voorbeeld gekopieerd uit een alleen-lezen installatie
     with open(pad, "w", encoding="utf-8") as f:
         f.write(kop + yaml.safe_dump(data, allow_unicode=True, sort_keys=False, width=110))
 
 
 def standaard():
     return yaml_lees(os.path.join(SKILL, "standaardkeuzes.yaml"))
+
+
+def aanvullen(doel, nieuw, pad=""):
+    """Als samenvoegen, maar bestaande waarden blijven staan. -> lijst van sleutels die al een waarde hadden."""
+    behouden = []
+    for k, v in nieuw.items():
+        if isinstance(v, dict) and isinstance(doel.get(k), dict):
+            behouden += aanvullen(doel[k], v, f"{pad}{k}.")
+        elif isinstance(v, list) and isinstance(doel.get(k), list) and k in ("mapping", "matches", "notities", "besloten"):
+            doel[k] += [x for x in v if x not in doel[k]]
+        elif k in doel and doel[k] not in (None, [], {}, "") and doel[k] != v:
+            behouden.append(f"{pad}{k}")
+        else:
+            doel[k] = v
+    return behouden
 
 
 def samenvoegen(doel, nieuw):
@@ -170,6 +187,46 @@ def cmd_start(a):
     status_schrijf(bron=bron, packages=o.package, zonder=o.zonder)
     if "LET OP" in out:
         print("\nLET OP-meldingen hierboven: noem ze aan de gebruiker en in het rapport.")
+    vb = voorbeeld_voorstel(os.path.basename(o.bron), o.package)
+    if vb and not os.path.exists(PROJECT):
+        print(f"\nDe skill heeft een ingevuld voorbeeld voor dit model: voorbeelden/{vb}.yaml "
+              "(keuzes, termcorrecties, bronnen en matches van een eerdere omzetting).")
+        volgende(f"vraag de gebruiker of het voorbeeld gebruikt mag worden; zo ja: bk.py voorbeeld {vb}. "
+                 "Anders (of zonder gebruiker: ook gebruiken en als aanname noemen): bk.py analyseer")
+        return
+    volgende("bk.py analyseer")
+
+
+def voorbeeld_voorstel(bestandsnaam, packages):
+    """Naam van een voorbeeld in SKILL/voorbeelden/ dat bij de bestandsnaam of het gekozen package past."""
+    norm = lambda x: re.sub(r"[^0-9a-z]", "", x.lower())  # noqa: E731
+    stam = os.path.splitext(bestandsnaam)[0].lower()
+    eerste = re.split(r"[^0-9a-z]+", stam)[0]  # IMGeluid_v3_1_1 -> imgeluid, IMEV3.0.2_... -> imev3
+    namen = {norm(stam), eerste, re.sub(r"\d+$", "", eerste)} | {norm(p.split("/")[-1]) for p in packages}
+    for f in sorted(glob.glob(os.path.join(SKILL, "voorbeelden", "*.yaml"))):
+        vb = os.path.splitext(os.path.basename(f))[0]
+        if norm(vb) in namen:
+            return vb
+    return None
+
+
+def cmd_voorbeeld(a):
+    """Kopieert SKILL/voorbeelden/<naam>.yaml naar project.yaml (met schrijfrechten)."""
+    namen = sorted(os.path.splitext(os.path.basename(f))[0] for f in glob.glob(os.path.join(SKILL, "voorbeelden", "*.yaml")))
+    if not a or a[0] not in namen:
+        sys.exit(f"Gebruik: bk.py voorbeeld <naam>; beschikbaar: {', '.join(namen)}")
+    if os.path.exists(PROJECT) and "--overschrijf" not in a:
+        sys.exit("project.yaml bestaat al. Overschrijven (alle keuzes gaan verloren): bk.py voorbeeld "
+                 f"{a[0]} --overschrijf")
+    with open(os.path.join(SKILL, "voorbeelden", a[0] + ".yaml"), encoding="utf-8") as f:
+        tekst = f.read()
+    if os.path.exists(PROJECT):
+        os.chmod(PROJECT, 0o644)
+    with open(PROJECT, "w", encoding="utf-8") as f:
+        f.write(tekst)
+    print(f"project.yaml = voorbeelden/{a[0]}.yaml. Controleer kader.titel en kader.omschrijving (versie!) "
+          "en noem in het rapport dat de keuzes uit het voorbeeld komen.")
+    controleer()
     volgende("bk.py analyseer")
 
 
@@ -260,10 +317,12 @@ def cmd_overnemen(a):
             samenvoegen(proj, {"besloten": [p["code"]]})
             gedaan.append(f"{p['code']}: standaard gehouden (besloten)")
         else:
-            samenvoegen(proj, p["voorstel"])
+            # bestaande keuzes (van de gebruiker of uit een voorbeeld) worden niet overschreven
+            behouden = aanvullen(proj, p["voorstel"])
             samenvoegen(proj, {"besloten": [p["code"]],
                                "notities": [f"{p['code']}: scriptvoorstel overgenomen"]})
-            gedaan.append(f"{p['code']}: voorstel overgenomen")
+            gedaan.append(f"{p['code']}: voorstel overgenomen"
+                          + (f"; {len(behouden)} bestaande keuze(s) behouden, bv. {behouden[0]}" if behouden else ""))
     if not gedaan:
         sys.exit("Geen open VRAAG-punten met die code(s). Draai eerst bk.py analyseer.")
     yaml_schrijf(PROJECT, proj)
@@ -288,6 +347,8 @@ def cmd_zet(a):
     # sleutels met punten of dubbele punten tussen [ ]: termen.vast[Klasse.naam]
     pad = [t[1:-1] if t.startswith("[") else t for t in re.findall(r"\[[^\]]*\]|[^.\[\]]+", a[0])]
     waarde = yaml.safe_load(a[1]) if a[1] != "" else ""
+    if isinstance(waarde, dict) and not a[1].lstrip().startswith("{"):
+        waarde = a[1]  # 'IMGeo 2.2: begrippen' is tekst met een dubbele punt, geen sectie
     proj = yaml_lees(PROJECT)
     d = proj
     for k in pad[:-1]:
@@ -442,6 +503,27 @@ def termen_lezen():
     return list(csv.DictReader(open(TERMEN, encoding="utf-8"), delimiter="\t"))
 
 
+def term_voorstel(t):
+    """Voorstel voor een term met leestekens (alleen een hint; het oordeel blijft aan de reviewer).
+    'recreatie: camping' -> 'camping'; 'benzine- / olieput' -> 'benzine- of olieput';
+    'greppel, droge sloot' -> 'greppel of droge sloot'; 'meer, plas, ven, vijver' -> 'meer, plas, ven of vijver';
+    '(haven)kraan' -> 'havenkraan'; 'maatschappelijke en/of publieksvoorziening' -> '... of ...'.
+    Geen voorstel bij een verkort tweede deel ('brandkraan / -put'): dat vraagt kennis van het woord."""
+    v = t.strip()
+    if re.search(r"/\s*-", v):
+        return None
+    m = re.fullmatch(r"[^:]{2,40}:\s*(.+)", v)
+    if m:
+        v = m.group(1)
+    v = re.sub(r"\((\w+)\)(?=\w)", r"\1", v)        # (haven)kraan -> havenkraan
+    v = re.sub(r"\s+en/of\s+", " of ", v)
+    v = re.sub(r"\s*/\s*", " of ", v)
+    delen = [d.strip() for d in v.split(",")]
+    if len(delen) > 1 and all(delen):
+        v = ", ".join(delen[:-1]) + " of " + delen[-1]
+    return re.sub(r"\s+", " ", v).strip()
+
+
 def signalen(rijen):
     """Deterministische signalen per term; het oordeel blijft aan de LLM."""
     from collections import Counter
@@ -466,7 +548,8 @@ def signalen(rijen):
         if labs[t.lower()] > 1:
             s.append("voorkeursterm komt vaker voor")
         if re.search(r"[()\[\]/;:,]", t):
-            s.append("leesteken in term")
+            v = term_voorstel(t)
+            s.append("leesteken in term" + (f" (voorstel: '{v}')" if v and v != t else ""))
         if AFK.search(t):
             s.append("afkorting in term")
         if t[:1].isupper() and not AFK.match(t):
@@ -518,6 +601,7 @@ def cmd_review(a):
         for i, (r, s) in enumerate(zip(rijen[start:start + PER_DEEL], sig[start:start + PER_DEEL]), start + 1):
             regels += [f"### {i:04} | {r['voorkeursterm']}",
                        f"soort: {r['soort']} | notatie: {r['notatie'] or '-'} | altLabels: {r['altLabels'] or '-'}",
+                       f"id: {r['uri'].rsplit('/', 1)[-1]}",
                        f"definitie: {r['definitie'] or '(geen)'}",
                        f"signalen: {'; '.join(s) if s else '-'}"]
             d0 = r["definitie"] or "(geen)"
@@ -544,10 +628,10 @@ def lees_deel(pad):
         regel = regel.rstrip("\n")
         if m := re.match(r"^### (\d+) \| (.*)$", regel):
             cur = dict(nr=int(m.group(1)), term=m.group(2).strip(), oordeel="", opmerking="", signalen="",
-                       soort="", definitie="")
+                       soort="", definitie="", id="")
             uit.append(cur)
         elif cur is not None:
-            for veld in ("oordeel", "opmerking", "signalen", "definitie"):
+            for veld in ("oordeel", "opmerking", "signalen", "definitie", "id"):
                 if regel.lower().startswith(veld + ":"):
                     cur[veld] = regel.split(":", 1)[1].strip()
             if regel.startswith("soort:"):
@@ -659,9 +743,9 @@ def review_klaar():
     import csv
     with open(P("reports", "review.tsv"), "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f, delimiter="\t")
-        w.writerow(["nr", "term", "soort", "oordeel", "opmerking", "signalen"])
+        w.writerow(["nr", "id", "term", "soort", "oordeel", "opmerking", "signalen"])
         for i in alle:
-            w.writerow([i["nr"], i["term"], i["soort"], i["oordeel"], i["opmerking"], i["signalen"]])
+            w.writerow([i["nr"], i["id"], i["term"], i["soort"], i["oordeel"], i["opmerking"], i["signalen"]])
     from collections import Counter
     tel = Counter(i["oordeel"] for i in alle)
     md = [f"# Inhoudelijke review — {len(alle)} begrippen", "",
@@ -670,8 +754,9 @@ def review_klaar():
                    ("definitie", "Advies voor het UML-model (definities niet herschreven)"), ("twijfel", "Twijfel")):
         rij = [i for i in alle if i["oordeel"] == o]
         if rij:
-            md += [f"## {kop} ({len(rij)})", "", "| nr | term | soort | opmerking |", "|---|---|---|---|"]
-            md += [f"| {i['nr']} | {i['term']} | {i['soort']} | {i['opmerking'].replace('|', '/')} |" for i in rij]
+            md += [f"## {kop} ({len(rij)})", "", "Verwijs met de id (vast); het nummer verschuift na opnieuw genereren.", "",
+                   "| id | term | soort | opmerking |", "|---|---|---|---|"]
+            md += [f"| {i['id'] or i['nr']} | {i['term']} | {i['soort']} | {i['opmerking'].replace('|', '/')} |" for i in rij]
             md.append("")
     open(P("reports", "review.md"), "w", encoding="utf-8").write("\n".join(md))
     print(f"Review compleet: {dict(tel)} -> reports/review.md, reports/review.tsv")
@@ -783,7 +868,15 @@ def cmd_toon(a):
 def cmd_vergelijk(a):
     if not a:
         sys.exit("Gebruik: bk.py vergelijk <URL of bestand van het gepubliceerde kader>")
-    run("vergelijk.py", KADER, a[0], P("uit", "vergelijking.csv"))
+    r = subprocess.run([sys.executable, os.path.join(HIER, "vergelijk.py"), KADER, a[0], P("uit", "vergelijking.csv")],
+                       capture_output=True, text=True)
+    print(r.stdout + r.stderr)
+    if r.returncode:
+        sys.exit(r.returncode)
+    with open(P("uit", "vergelijking.txt"), "w", encoding="utf-8") as f:
+        f.write(f"gepubliceerd kader: {a[0]}\n{r.stdout}")
+    print("-> uit/vergelijking.txt en uit/vergelijking.csv (komt in het rapport bij bk.py rapport)")
+    volgende("bk.py rapport (neemt de vergelijking op)")
 
 
 def cmd_bronnen(a):
@@ -830,7 +923,7 @@ def cmd_rapport(_):
         r += ["## 4. SHACL-validatie", "", "Instellingen: NL-SBB-profiel + skill-extensie, advanced=True, inference=rdfs. "
               "Oordeel op de telling per ernstniveau, niet op `conforms`.", ""]
         for x in open(SHACL):
-            if x.startswith("===") or "telling:" in x or x.startswith("profiel"):
+            if x.startswith("===") or "telling:" in x or x.startswith("profiel") or x.startswith("waarvan"):
                 r.append(f"    {x.rstrip()}")
         laatste = open(SHACL).read().split("\n=== ")[-1].split("\n")
         top = [x.rstrip() for x in laatste if x.startswith("[Violation]")][:8]
@@ -844,7 +937,10 @@ def cmd_rapport(_):
         r += ["## 5. Inhoudelijke review", "", "NIET UITGEVOERD of niet compleet (bk.py review).", ""]
     if os.path.exists(P("uit", "vergelijking.txt")):
         r += ["## 6. Vergelijking met gepubliceerd kader", "", "```",
-              open(P("uit", "vergelijking.txt")).read().strip()[:3000], "```", ""]
+              open(P("uit", "vergelijking.txt")).read().strip()[:4000], "```", ""]
+    if os.path.exists(P("werk", "rapport-aanvulling.md")):
+        # eigen secties (bv. doorgevoerde termcorrecties); bk.py rapport overschrijft rapport.md, dit bestand niet
+        r += [open(P("werk", "rapport-aanvulling.md"), encoding="utf-8").read().strip(), ""]
     r += ["## Conclusie", "", "<!-- LLM: vervang deze regel door 3-6 zinnen: bruikbaarheid, belangrijkste problemen, "
           "wat de gebruiker nog moet beslissen. Verzin geen cijfers; gebruik alleen de getallen hierboven. -->", ""]
     os.makedirs(P("reports"), exist_ok=True)
@@ -886,7 +982,9 @@ def cmd_status(_):
     if not nieuwer(P("reports", "review.md"), idx):
         review_voortgang()  # noemt het eerstvolgende deel, of `bk.py review klaar`
         return
-    if not nieuwer(P("reports", "rapport.md"), P("reports", "review.md")):
+    if not nieuwer(P("reports", "rapport.md"), P("reports", "review.md")) or \
+            any(os.path.exists(f) and not nieuwer(P("reports", "rapport.md"), f)
+                for f in (P("uit", "vergelijking.txt"), P("werk", "rapport-aanvulling.md"))):
         return stap("bk.py rapport")
     if "<!-- LLM:" in open(P("reports", "rapport.md")).read():
         return stap("vul de sectie 'Conclusie' in reports/rapport.md")
@@ -898,6 +996,7 @@ COMMANDO = {
     "setup": (cmd_setup, "virtuele omgeving maken in de werkmap"),
     "status": (cmd_status, "toont de volgende stap (draai dit na elke stap)"),
     "start": (cmd_start, "<bestand> [--package P] [--zonder P]: inventaris uit XMI/EAP/ZIP"),
+    "voorbeeld": (cmd_voorbeeld, "<naam> [--overschrijf]: ingevuld voorbeeld uit SKILL/voorbeelden/ als project.yaml"),
     "analyseer": (cmd_analyseer, "beslispunten maken (INFO / VRAAG / BESLOTEN)"),
     "vraag": (cmd_vraag, "<nr> [--vanaf N]: één beslispunt met details en scriptvoorstel"),
     "overnemen": (cmd_overnemen, "<code ...> | --alle [--standaard]: scriptvoorstel(len) in project.yaml"),
