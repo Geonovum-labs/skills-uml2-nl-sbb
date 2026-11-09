@@ -26,6 +26,8 @@ def context_term(base, ctx):
     """Attribuutterm met objecttype-context. Is de context een keuze ('afstand of geometrie van de overige
     contour') en is het attribuut een van de alternatieven, dan wordt het 'afstand van de overige contour';
     zonder 'van ...': 'stof bij keuze stof of stofcategorie'. Anders: '{base} {ctx}'."""
+    if base.lower() == ctx.lower() or base.lower().endswith(" " + ctx.lower()):
+        return base  # 'type scheiding' bij Scheiding: de context staat er al in
     m = re.fullmatch(r"(?P<alt>.+? of .+?)(?P<staart> (?:van|voor|bij|in|op) .+)?", ctx)
     if m and base.lower() in [x.strip().lower() for x in re.split(r",\s*(?:of\s+)?|\s+of\s+", m.group("alt"))]:
         return base + (m.group("staart") or f" bij keuze {ctx}")
@@ -240,7 +242,17 @@ def main(inv_pad, project, uit):
                     label = v + label
                     break
             if label.lower() in used_labels and label != ctx:
-                label = f"{label} {ctx}"
+                # botsing: de context nog eens achterplakken geeft 'type scheiding scheiding'. Onderscheid dan
+                # op het verwijderde UML-prefix ('type scheiding (plus)'), anders pas op de context.
+                pref = next((p for p in T.prefixen if name.startswith(p)), None)
+                if pref:
+                    label = f"{label} ({pref.strip('-_ ')})"
+                elif not label.lower().endswith(ctx.lower()):
+                    label = f"{label} {ctx}"
+                else:
+                    label = f"{label} ({klassen[first]['name']}.{name})"
+                log.append(f"Attribuut '{klassen[first]['name']}.{name}': term botste met een ander begrip; "
+                           f"wordt '{label}' (aanpassen met attributen.term_correcties['{klassen[first]['name']}.{name}'])")
             vol = next((corr[f"{klassen[k]['name']}.{name}"] for k, _ in lst if f"{klassen[k]['name']}.{name}" in corr), None)
             if vol:  # term_correcties met sleutel Klasse.attribuut: volledige term, zonder contextregel
                 label = vol

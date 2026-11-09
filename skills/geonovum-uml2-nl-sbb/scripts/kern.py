@@ -127,11 +127,28 @@ class Termen:
         self.afk = t.get("afkortingen_behouden", True)
         self.cijfers = t.get("cijfers_scheiden", False)
         self.decimaal = t.get("decimaalteken", ",")
+        # woorden die precies zo blijven staan (geen camelCase-splitsing, geen kleine letters), bv. IMGeo
+        self.behouden = sorted(t.get("woorden_behouden") or [], key=len, reverse=True)
 
     def _woord(self, w):
         if self.afk and ACRONIEM.match(w):
             return w
+        if any(w == b or w.startswith(b + "-") for b in self.behouden):
+            return w
         return w.lower() if self.klein else w
+
+    def _bescherm(self, s):
+        """Vervangt woorden_behouden door merktekens, zodat de camelCase-regels ze niet splitsen."""
+        bewaard = []
+        for b in self.behouden:
+            if b in s:
+                tok = f"{len(bewaard)}"
+                bewaard.append((tok, b))
+                s = s.replace(b, tok)
+        if bewaard:
+            s = re.sub(r"(?<=[A-Za-z0-9])", " ", s)
+            s = re.sub(r"(?=[A-Z])", " ", s)
+        return s, bewaard
 
     def strip_prefix(self, name):
         for p in self.prefixen:
@@ -143,7 +160,7 @@ class Termen:
         """camelCase/PascalCase -> woorden; afkortingen in hoofdletters blijven."""
         if name.strip().lower() in self.vast:
             return self.vast[name.strip().lower()]
-        s = self.strip_prefix(name.strip().lstrip("_"))
+        s, bewaard = self._bescherm(self.strip_prefix(name.strip().lstrip("_")))
         if self.camel:
             s = re.sub(r"([a-z0-9])([A-Z])", r"\1 \2", s)
             s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1 \2", s)
@@ -151,6 +168,8 @@ class Termen:
             s = re.sub(r"(\d)_(\d)", r"\1" + self.decimaal + r"\2", s)
             s = re.sub(r"([A-Za-z])(\d)", r"\1 \2", s)
         s = re.sub(r"\s+", " ", " ".join(self._woord(w) for w in s.split())).strip()
+        for tok, b in bewaard:
+            s = s.replace(tok, b)
         for k, v in self.samenstellingen.items():
             s = s.replace(k, v)
         return s

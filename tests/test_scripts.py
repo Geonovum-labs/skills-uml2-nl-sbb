@@ -133,6 +133,28 @@ class ProjectControle(unittest.TestCase):
         self.assertIn("bedoel je 'camelcase_splitsen'", uit)
         self.assertNotEqual(bk(self.w, "controleer", ok=False).returncode, 0)
 
+    def test_zet_tekst_met_dubbele_punt(self):
+        bk(self.w, "zet", "kader.omschrijving", "Begrippen uit IMGeo 2.2: objecttypen en waarden")
+        import yaml
+        proj = yaml.safe_load(open(os.path.join(self.w, "project.yaml"), encoding="utf-8"))
+        self.assertEqual(proj["kader"]["omschrijving"], "Begrippen uit IMGeo 2.2: objecttypen en waarden")
+
+    def test_alleen_lezen_project_yaml(self):
+        bk(self.w, "zet", "kader.uri", "http://example.org/fiets")
+        os.chmod(os.path.join(self.w, "project.yaml"), 0o444)
+        bk(self.w, "zet", "kader.titel", "Fietsparkeren")
+        self.assertIn("Fietsparkeren", open(os.path.join(self.w, "project.yaml"), encoding="utf-8").read())
+
+    def test_overnemen_overschrijft_bestaande_keuze_niet(self):
+        bk(self.w, "zet", "kader.uri", "http://example.org/fiets")
+        bk(self.w, "zet", "relaties.gebruik.TypeRek", "[Fietsenrek, type]")
+        bk(self.w, "zet", "relaties.gebruik.StatusStalling", "[Stalling, null]")
+        bk(self.w, "analyseer")
+        bk(self.w, "overnemen", "--alle")
+        import yaml
+        proj = yaml.safe_load(open(os.path.join(self.w, "project.yaml"), encoding="utf-8"))
+        self.assertEqual(proj["relaties"]["gebruik"]["StatusStalling"], ["Stalling", None])
+
     def test_onbekende_klasse_in_gebruik(self):
         bk(self.w, "zet", "kader.uri", "http://example.org/fiets")
         bk(self.w, "zet", "relaties.gebruik.StatusStalling", "[Bestaatniet, null]", ok=False)
@@ -165,6 +187,27 @@ class Termen(unittest.TestCase):
                          "afstand van de overige contour")
         self.assertEqual(genereer.context_term("stof", "stof of stofcategorie"), "stof bij keuze stof of stofcategorie")
         self.assertEqual(genereer.context_term("naam", "stalling"), "naam stalling")
+        # de context staat al in de term: niet nog eens achterplakken
+        self.assertEqual(genereer.context_term("type scheiding", "scheiding"), "type scheiding")
+
+    def test_woorden_behouden(self):
+        self.assertEqual(self.T.humanize("IMGeo-object"), "IMGeo-object")
+        self.assertEqual(self.T.humanize("statusIMGeoObject"), "status IMGeo object")
+        self.assertEqual(self.T.waarde("IMGeo-object"), "IMGeo-object")
+
+
+class Signalen(unittest.TestCase):
+    def test_termvoorstel_bij_leestekens(self):
+        sys.argv = ["bk.py", "help"]
+        import bk as bkmod
+        v = bkmod.term_voorstel
+        self.assertEqual(v("recreatie: camping"), "camping")
+        self.assertEqual(v("benzine- / olieput"), "benzine- of olieput")
+        self.assertEqual(v("greppel, droge sloot"), "greppel of droge sloot")
+        self.assertEqual(v("meer, plas, ven, vijver"), "meer, plas, ven of vijver")
+        self.assertEqual(v("(haven)kraan"), "havenkraan")
+        self.assertEqual(v("maatschappelijke en/of publieksvoorziening"), "maatschappelijke of publieksvoorziening")
+        self.assertIsNone(v("brandkraan / -put"))
 
 
 class Package(unittest.TestCase):
@@ -173,6 +216,25 @@ class Package(unittest.TestCase):
         import bk as bkmod
         boom = ["Kies ...", "Geostandaarden", "  3610-MIM-Datatypen", "  NEN3610", "    Waardelijsten", "  IMGolf"]
         self.assertEqual(bkmod.package_voorstel(boom, "NEN3610-2022-template-20221116.xmi"), "NEN3610")
+
+    def test_voorbeeld_uit_bestandsnaam(self):
+        sys.argv = ["bk.py", "help"]
+        import bk as bkmod
+        self.assertEqual(bkmod.voorbeeld_voorstel("IMGeo.xmi", []), "imgeo")
+        self.assertEqual(bkmod.voorbeeld_voorstel("IMGeluid_v3_1_1.xmi", []), "imgeluid")
+        self.assertEqual(bkmod.voorbeeld_voorstel("IMEV3.0.2_10072025.zip", []), "imev")
+        self.assertEqual(bkmod.voorbeeld_voorstel("NEN3610-2022-template-20221116.xmi", []), "nen3610")
+        self.assertIsNone(bkmod.voorbeeld_voorstel("fietsparkeren.xmi", ["Fietsparkeren"]))
+
+    def test_voorbeeld_kopieren_met_schrijfrechten(self):
+        w = tempfile.mkdtemp(prefix="bk-test-")
+        try:
+            bk(w, "start", FIXTURE, "--package", "Fietsparkeren")
+            bk(w, "voorbeeld", "nen3610")
+            self.assertTrue(os.access(os.path.join(w, "project.yaml"), os.W_OK))
+            self.assertNotEqual(bk(w, "voorbeeld", "nen3610", ok=False).returncode, 0)  # bestaat al
+        finally:
+            shutil.rmtree(w, ignore_errors=True)
 
 
 @unittest.skipUnless(os.environ.get("BK_NETWERK") == "1", "SHACL-validatie haalt het profiel uit het register (BK_NETWERK=1)")

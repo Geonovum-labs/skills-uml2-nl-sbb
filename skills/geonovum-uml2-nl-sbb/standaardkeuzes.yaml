@@ -63,6 +63,8 @@ termen:
   naam_prefixen_verwijderen: []   # bv. ["bgt-", "plus-"]
   vast: {}                        # UML-naam/alias (hoofdletterongevoelig) -> term, zonder omzetting
   samenstellingen: {}             # "gebouw installatie": "gebouwinstallatie" (vervangen als deeltekst)
+  # Woorden die precies zo blijven staan: niet splitsen, geen kleine letters (namen van informatiemodellen)
+  woorden_behouden: [IMGeo, IMGeluid, IMBAG, IMKL, IMRO, IMEV, IMWA, IMOOV, IMNAP, IMBRT, IMBRO]
   # Stereotypen waarvoor de alias de voorkeursterm is. De UML-naam wordt dan altLabel
   # in taal alias_naam_als_altlabel (null = geen altLabel). Keuze: CityGML-namen als altLabel@en.
   # Geldt ook voor attributen en waarden met een alias (bij "*" of als hun stereotype in de lijst staat).
@@ -139,6 +141,8 @@ externe_kaders:
 validatie:
   profiel: https://register.geostandaarden.nl/shacl/nl-sbb/1.0.0/skos-ap-nl.ttl
   profiel_fallback: https://raw.githubusercontent.com/Geonovum/NL-SBB/refs/heads/main/profiles/skos-ap-nl.ttl
+  # De extensie hoort in SKILL/shacl/. Ontbreekt die map na installatie, dan wordt deze kopie gebruikt.
+  extensie_fallback: https://raw.githubusercontent.com/fterpstra/skill-uml2-nl-sbb/main/skills/geonovum-uml2-nl-sbb/shacl/skos-ap-nl-extensie.ttl
   met_externe_context: true       # keuze: valideren mét externe kaders als context
 
 # Administratie (genereer.py negeert dit):

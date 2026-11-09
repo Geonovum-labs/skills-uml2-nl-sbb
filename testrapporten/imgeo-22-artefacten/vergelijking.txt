@@ -1,0 +1,36 @@
+gepubliceerd: {'begrippen': 464, 'collecties': 57, 'topbegrippen': 464, 'broader': 0, 'related': 0, 'matches': 0, 'bronnen': 0}
+ons:          {'begrippen': 393, 'collecties': 57, 'topbegrippen': 6, 'broader': 87, 'related': 409, 'matches': 33, 'bronnen': 391}
+koppeling: {'term+definitie': 170, 'URI': 271, 'geen match': 20, 'term (andere definitie)': 3} | definitie gelijk bij 433 van 444
+
+== gepubliceerd zonder tegenhanger ==
+   bouwtekening | De geometrie is van een bouwtekening afgeleid.
+   digitaliseren | De geometrie is handmatig van analoog naar digitale informatie omgezet.
+   geconstrueerd | De geometrie is in een GIS of CAD systeem geconstrueerd.
+   historie | Situatie waarin het geregistreerde object fysiek niet meer bestaat.
+   OngeclassificeerdObject | Object waarvoor geen bronhouder aangewezen is en/of dat niet nader is geclassificeerd.
+   OverigeScheiding | Kunstmatig, meestal lineair obstakel met een werende functie, met kleinere afmetingen dan 
+   scannen | De geometrie is geautomatiseerd van analoog naar digitale informatie omgezet.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De gebruikte inwinningsmethode is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+   transitie | De waarde is tijdens transitie niet bekend.
+
+== zelfde term, andere definitie ==
+   brandkraan / -put -> brandkraan of brandkraanput
+   inspectie- / rioolput -> inspectie- of rioolput
+   plus-type -> plus type overig bouwwerk; plus type waterdeel; plus type kast; plus type paal; plus type straatmeubilair; plus type mast; plus type installatie; plus type scheiding; plus type waterinrichtingselement; plus type put; plus type bak; plus type vegetatieobject; plus type bord; plus type weginrichtingselement; plus type sensor; plus type functioneel gebied; plus type kunstwerkdeel
+
+== ons zonder tegenhanger (12) ==
+   ['NEN3610ID', 'hoek labelpositie', 'identificatie BAGVBO hoogste huisnummer', 'identificatie BAGVBO laagste huisnummer', 'label', 'labelpositie', 'lokaal ID', 'namespace', 'nummeraanduidingreeks', 'plaatsingspunt', 'positie label', 'tekst label']
+
+dubbele voorkeurstermen in gepubliceerd kader: 32
+collecties met rdfs:label i.p.v. skos:prefLabel (gepubliceerd): 57

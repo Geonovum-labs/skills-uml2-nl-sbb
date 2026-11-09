@@ -1,0 +1,8 @@
+- wortel: scriptvoorstel overgenomen, niet bevestigd
+- prefixen: scriptvoorstel overgenomen, niet bevestigd
+- waarden-splitsen: scriptvoorstel overgenomen, niet bevestigd
+- gebruik: scriptvoorstel overgenomen, niet bevestigd
+- bronnen-onbekend: scriptvoorstel overgenomen, niet bevestigd
+- alias: scriptvoorstel overgenomen, niet bevestigd
+- kader: URI/titel/omschrijving overgenomen uit skill-voorbeeld imgeo.yaml (definities.geostandaarden.nl/imgeo), niet bevestigd; titel/omschrijving aangepast naar IMGeo 2.2
+- project.yaml gestart vanuit skill-voorbeeld imgeo.yaml (bedoeld voor IMGeo 2.1), niet bevestigd voor 2.2
