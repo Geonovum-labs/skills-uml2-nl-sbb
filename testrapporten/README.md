@@ -2,6 +2,7 @@
 
 | Rapport | Inhoud |
 |---|---|
+| [2026-11-09-imgeo.md](2026-11-09-imgeo.md) | Volledige run op IMGeo 2.2 door één groot taalmodel, met de vergelijking tegen het gepubliceerde kader en het rapport |
 | [2026-11-08-scripttest.md](2026-11-08-scripttest.md) | Offline tests van de scripts, de keten op de evalmodellen zonder assistent, en de regressie tegen eerdere omzettingen |
 | [2026-11-08-modeltest.md](2026-11-08-modeltest.md) | De skill uitgevoerd door drie modelgroottes op NEN 3610 en IMEV, met de verbeteringen die daaruit volgden |
 
