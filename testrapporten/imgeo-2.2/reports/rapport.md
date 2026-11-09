@@ -476,6 +476,17 @@ Bron: `https://upload.begrippenxl.nl/storage/imgeo/imgeo.ttl` (464 gepubliceerde
 - 12 van onze begrippen zonder tegenhanger in het gepubliceerde kader (o.a. `NEN3610ID`, `label`, `labelpositie`, `lokaal ID`, `namespace`, `nummeraanduidingreeks`)
 - 3 termen met andere definitie: `brandkraan / -put`, `inspectie- / rioolput`, `plus-type` (in het gepubliceerde kader één begrip met dubbele voorkeurstermen; bij ons gesplitst per objecttype)
 
+## 7. Termcorrecties (vastgelegd in project.yaml)
+
+- Vaste termen: `IMGeo-Object` -> `IMGeo-object`; `NEN3610ID` -> `NEN3610ID` (behouden)
+- Samenstellingen: `gebouw installatie` -> `gebouwinstallatie`; `vegetatie object` -> `vegetatieobject`
+- Attribuuttermcorrectie: `plus-fysiekVookomen` -> `fysiek voorkomen` (typefout in de UML-naam)
+- Prefixen uit termen verwijderd: `bgt-`, `plus-`; `plus-` als voorvoegsel in de term behouden (`plus type bak`, ...)
+- Waarden hernoemd: `niet-bgt` -> `niet-BGT-object`
+- Waarden gesplitst per waardelijst (zelfde naam, andere definitie): `onverhard` -> `onverhard wegdeel` / `onverhard terreindeel`; `zand` -> `zand terreindeel` / `zand deklaag`
+- Alias als voorkeursterm gebruikt voor alle klassen (`alias_als_voorkeursterm: ['*']`)
+- Review: 0 term-veroordelingen; de 9 definitie-bevindingen zijn adviezen aan de UML-beheerder en niet doorgevoerd
+
 ## Conclusie
 
 Het gegenereerde IMGeo 2.2-begrippenkader bevat 393 begrippen (67 attributen, 4 datatypen, 38 objecttypen, 284 waarden) in 57 collecties en is bruikbaar als concept-kader; alle 393 begrippen hebben een definitie en de review gaf 384 ok en 9 definitie-bevindingen (o.a. identieke definities bij de vier "op talud"-attributen en bij reclamebord/reclamezuil). Belangrijkste aandachtspunten zijn de 13 SHACL-violations in run B (closeMatch naar externe concepten zonder skos:Concept in de context) en 180 warnings (vooral 72 verweesde begrippen zonder semantische relatie). De vergelijking met het gepubliceerde IMGeo-kader (464 begrippen) laat 444 van 464 matches zien (273 op URI, 168 op term+definitie), met definitie gelijk bij 433 van 444; 20 gepubliceerde waarden (o.a. `transitie`, `historie`) en 12 van onze begrippen (o.a. `NEN3610ID`, `label`) hebben geen tegenhanger. Alle 7 beslispunten zijn overgenomen zonder bevestiging (zie werk/aannames.md); de kader-URI is die van het gepubliceerde IMGeo-kader, dus de nieuwe URI's resolven (nog) niet als apart kader.
