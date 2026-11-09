@@ -1,0 +1,394 @@
+nr	term	soort	oordeel	opmerking	signalen
+1	begroeid terreindeel op talud	attribuut	definitie	"brondefinitie is voor alle vier ""op talud""-attributen identiek en niet onderscheidend; advies aan UML-beheerder"	definitie identiek aan 3 ander(e) begrip(pen)
+2	bronhouder	attribuut	ok		-
+3	buurtcode	attribuut	ok		-
+4	datum inwinning	attribuut	ok		-
+5	eind registratie	attribuut	ok		-
+6	fysiek voorkomen onbegroeid terreindeel	attribuut	ok		-
+7	hectometeraanduiding	attribuut	ok		-
+8	hoek labelpositie	attribuut	ok		-
+9	hoort bij type overbrugging	attribuut	ok		-
+10	identificatie	attribuut	ok		-
+11	identificatie BAGOPR	attribuut	definitie	definitie identiek aan identificatie BAGPND; afkorting BAGOPR is de vaste modelnaam, geen termfout	definitie identiek aan 1 ander(e) begrip(pen); afkorting in term
+12	identificatie BAGPND	attribuut	definitie	definitie identiek aan identificatie BAGOPR; afkorting BAGPND is de vaste modelnaam, geen termfout	definitie identiek aan 1 ander(e) begrip(pen); afkorting in term
+13	identificatie BAGVBO hoogste huisnummer	attribuut	ok	"signaal ""afkorting"" is terecht: BAGVBO is de vaste afkorting in het UML-model"	afkorting in term
+14	identificatie BAGVBO laagste huisnummer	attribuut	ok	"signaal ""afkorting"" is terecht: BAGVBO is de vaste afkorting in het UML-model"	afkorting in term
+15	in onderzoek	attribuut	ok		-
+16	inwinnende instantie	attribuut	ok		-
+17	inwinningsmethode	attribuut	ok		-
+18	lokaal ID	attribuut	ok	ID is de gangbare afkorting voor identificatie, geen termfout	afkorting in term
+19	LV-publicatiedatum	attribuut	ok	"LV is de vaste afkorting voor ""landelijke voorziening"" in het model"	afkorting in term
+20	naam functioneel gebied	attribuut	ok		-
+21	naam registratief gebied	attribuut	ok		-
+22	namespace	attribuut	ok		-
+23	nauwkeurigheid	attribuut	ok		-
+24	nummeraanduidingreeks pand	attribuut	ok		-
+25	onbegroeid terreindeel op talud	attribuut	definitie	"brondefinitie identiek aan de andere drie ""op talud""-attributen; advies aan UML-beheerder"	definitie identiek aan 3 ander(e) begrip(pen)
+26	ondersteunend wegdeel op talud	attribuut	definitie	"brondefinitie identiek aan de andere drie ""op talud""-attributen; advies aan UML-beheerder"	definitie identiek aan 3 ander(e) begrip(pen)
+27	openbare ruimte naam	attribuut	ok		-
+28	openbare ruimte type	attribuut	ok		-
+29	overbrugging is beweegbaar	attribuut	ok		-
+30	plaatsingspunt	attribuut	ok		-
+31	plus functie ondersteunend wegdeel	attribuut	ok		-
+32	plus functie spoor	attribuut	ok		-
+33	plus functie wegdeel	attribuut	ok		-
+34	plus fysiek voorkomen begroeid terreindeel	attribuut	ok		-
+35	plus fysiek voorkomen onbegroeid terreindeel	attribuut	ok		-
+36	plus fysiek voorkomen ondersteunend wegdeel	attribuut	ok		-
+37	plus fysiek voorkomen wegdeel	attribuut	ok		-
+38	plus status IMGeo-object	attribuut	ok		-
+39	plus type bak	attribuut	ok		-
+40	plus type bord	attribuut	ok		-
+41	plus type functioneel gebied	attribuut	ok		-
+42	plus type gebouwinstallatie	attribuut	ok		-
+43	plus type installatie	attribuut	ok		-
+44	plus type kast	attribuut	ok		-
+45	plus type kunstwerkdeel	attribuut	ok		-
+46	plus type mast	attribuut	ok		-
+47	plus type overig bouwwerk	attribuut	ok		-
+48	plus type paal	attribuut	ok		-
+49	plus type put	attribuut	ok		-
+50	plus type scheiding	attribuut	ok		-
+51	plus type sensor	attribuut	ok		-
+52	plus type straatmeubilair	attribuut	ok		-
+53	plus type vegetatieobject	attribuut	ok		-
+54	plus type waterdeel	attribuut	ok		-
+55	plus type waterinrichtingselement	attribuut	ok		-
+56	plus type weginrichtingselement	attribuut	ok		-
+57	positie label	attribuut	ok		-
+58	relatieve hoogteligging	attribuut	ok		-
+59	status IMGeo-object	attribuut	ok		-
+60	tekst label	attribuut	ok		-
+61	tijdstip registratie	attribuut	ok		-
+62	type functioneel gebied	attribuut	ok		-
+63	type kunstwerkdeel	attribuut	ok		-
+64	type overig bouwwerk	attribuut	ok		-
+65	type scheiding	attribuut	ok		-
+66	wegdeel op talud	attribuut	definitie	"brondefinitie identiek aan de andere drie ""op talud""-attributen; advies aan UML-beheerder"	definitie identiek aan 3 ander(e) begrip(pen)
+67	wijkcode	attribuut	ok		-
+68	label	datatype	ok		-
+69	labelpositie	datatype	ok		-
+70	NEN3610ID	datatype	ok	"signaal ""hoofdletter"" is terecht: NEN3610ID is de vaste naam in het bronmodel"	hoofdletter aan begin van term
+71	nummeraanduidingreeks	datatype	ok		-
+72	bak	objecttype	ok		-
+73	begroeid terreindeel	objecttype	ok		-
+74	bord	objecttype	ok		-
+75	buurt	objecttype	ok		-
+76	functioneel gebied	objecttype	ok		-
+77	gebouwinstallatie	objecttype	ok		-
+78	IMGeo-object	objecttype	ok	"signaal ""hoofdletter"" is terecht: IMGeo-object is deurt term uit het model (was _CityObject)"	hoofdletter aan begin van term
+79	inrichtingselement	objecttype	ok		-
+80	installatie	objecttype	ok		-
+81	kast	objecttype	ok		-
+82	kunstwerkdeel	objecttype	ok		-
+83	mast	objecttype	ok	"signaal ""zeer korte definitie"" is een bronkwestie; ""Hoge draagconstructie."" is de modeldefinitie"	zeer korte definitie
+84	onbegroeid terreindeel	objecttype	ok		-
+85	ondersteunend waterdeel	objecttype	ok		-
+86	ondersteunend wegdeel	objecttype	ok		-
+87	openbare ruimte	objecttype	ok		-
+88	openbare ruimte label	objecttype	ok		-
+89	overbruggingsdeel	objecttype	ok		-
+90	overig bouwwerk	objecttype	ok		-
+91	overige constructie	objecttype	ok		-
+92	paal	objecttype	ok		-
+93	pand	objecttype	ok		-
+94	plaatsbepalingspunt	objecttype	ok		-
+95	put	objecttype	ok		-
+96	registratief gebied	objecttype	ok		-
+97	scheiding	objecttype	ok		-
+98	sensor	objecttype	ok		-
+99	spoor	objecttype	ok		-
+100	stadsdeel	objecttype	ok		-
+101	straatmeubilair	objecttype	ok		-
+102	tunneldeel	objecttype	ok		-
+103	vegetatieobject	objecttype	ok		-
+104	waterdeel	objecttype	ok		-
+105	waterinrichtingselement	objecttype	ok		-
+106	waterschap	objecttype	ok		-
+107	wegdeel	objecttype	ok		-
+108	weginrichtingselement	objecttype	ok		-
+109	wijk	objecttype	ok		-
+110	(haven)kraan	waarde	ok	"signaal ""leesteken"" is terecht: de haakjes horen bij de bronterm (haven)kraan"	leesteken in term
+111	abri	waarde	ok		-
+112	administratief gebied	waarde	ok		-
+113	afsluitpaal	waarde	ok		-
+114	afval apart plaats	waarde	ok		-
+115	afvalbak	waarde	ok		-
+116	akkerbouw	waarde	ok		-
+117	aquaduct	waarde	ok		-
+118	asfalt	waarde	ok		-
+119	baan voor vliegverkeer	waarde	ok		-
+120	balustrade	waarde	ok		-
+121	bank	waarde	ok		-
+122	bassin	waarde	ok		-
+123	bedrijvigheid	waarde	ok		-
+124	beek	waarde	ok		-
+125	begraafplaats	waarde	ok		-
+126	benzine- / olieput	waarde	ok	"leesteken ""- /"" is deel van de bronterm"	leesteken in term
+127	benzinestation	waarde	ok		-
+128	berm	waarde	ok		-
+129	bestaand	waarde	ok		-
+130	betaalautomaat	waarde	ok		-
+131	beton element	waarde	ok		-
+132	betonning	waarde	ok		-
+133	betonstraatstenen	waarde	ok		-
+134	bewoning	waarde	ok		-
+135	bezinkbak	waarde	ok		-
+136	bloembak	waarde	ok		-
+137	bodembedekkers	waarde	ok		-
+138	bodemval	waarde	ok		-
+139	bolder	waarde	ok		-
+140	bollenteelt	waarde	ok		-
+141	boom	waarde	ok		-
+142	boomschors	waarde	ok		-
+143	boomspiegel	waarde	ok		-
+144	boomteelt	waarde	ok		-
+145	bordes	waarde	ok		-
+146	bosplantsoen	waarde	ok		-
+147	bouwland	waarde	ok		-
+148	bovenleidingmast	waarde	ok		-
+149	braakliggend	waarde	ok		-
+150	brandkraan / -put	waarde	ok	"leesteken ""/"" is deel van de bronterm brandkraan / -put"	leesteken in term
+151	brievenbus	waarde	ok		-
+152	bron	waarde	ok		-
+153	brug	waarde	ok		-
+154	bunker	waarde	ok		-
+155	bushalte	waarde	ok		-
+156	CAI-kast	waarde	ok	"signaal ""afkorting"" is terecht: CAI is de vaste afkorting in het bronmodel"	afkorting in term
+157	calamiteitendoorsteek	waarde	ok		-
+158	camera	waarde	ok		-
+159	carpoolplaats	waarde	ok		-
+160	cementbeton	waarde	ok		-
+161	container	waarde	ok		-
+162	coupure	waarde	ok		-
+163	damwand	waarde	ok		-
+164	debietmeter	waarde	ok		-
+165	dek	waarde	ok		-
+166	detectielus	waarde	ok		-
+167	dijkpaal	waarde	ok		-
+168	draadraster	waarde	ok		-
+169	drainageput	waarde	ok		-
+170	drinkbak	waarde	ok		-
+171	drukknoppaal	waarde	ok		-
+172	duiker	waarde	ok		-
+173	duin	waarde	ok		-
+174	dynamische snelheidsindicator	waarde	ok		-
+175	ecoduct	waarde	ok		-
+176	elektrakast	waarde	ok		-
+177	erf	waarde	ok		-
+178	faunaraster	waarde	ok		-
+179	faunavoorziening	waarde	ok		-
+180	fietsenkluis	waarde	ok		-
+181	fietsenrek	waarde	ok		-
+182	fietspad	waarde	ok		-
+183	flitser	waarde	ok		-
+184	fly-over	waarde	ok		-
+185	fontein	waarde	ok		-
+186	fotogrammetisch	waarde	ok		-
+187	fruitteelt	waarde	ok		-
+188	functioneel beheer	waarde	ok		-
+189	functioneel beheer: hondenuitlaatplaats	waarde	ok	"leesteken "":"" is deel van de bronterm"	leesteken in term
+190	gaskast	waarde	ok		-
+191	gasput	waarde	ok		-
+192	gebakken klinkers	waarde	ok		-
+193	geen waarde	waarde	ok		-
+194	geleideconstructie	waarde	ok		-
+195	geleidewerk	waarde	ok		-
+196	geluidsscherm	waarde	ok		-
+197	gemaal	waarde	ok		-
+198	gemengd bos	waarde	ok		-
+199	gesloten duinvegetatie	waarde	ok		-
+200	gesloten verharding	waarde	ok		-
+201	GMS kast	waarde	ok	afkorting GMS (gladheidsmeldsysteem) is de vaste bronterm	afkorting in term
+202	GMS sensor	waarde	ok	afkorting GMS is de vaste bronterm	afkorting in term
+203	gracht	waarde	ok		-
+204	gras- en kruidachtigen	waarde	ok		-
+205	grasklinkers	waarde	ok		-
+206	grasland agrarisch	waarde	ok		-
+207	grasland overig	waarde	ok		-
+208	gravel	waarde	ok		-
+209	grensmarkering	waarde	ok		-
+210	greppel, droge sloot	waarde	ok	"leesteken "","" is deel van de bronterm"	leesteken in term
+211	griend en hakhout	waarde	ok		-
+212	grind	waarde	ok		-
+213	groenvoorziening	waarde	ok		-
+214	haag	waarde	ok		-
+215	half verhard	waarde	ok		-
+216	haltepaal	waarde	ok		-
+217	haven	waarde	ok		-
+218	hectometerpaal	waarde	ok		-
+219	heesters	waarde	ok		-
+220	heide	waarde	ok		-
+221	hek	waarde	ok		-
+222	herdenkingsmonument	waarde	ok		-
+223	hoogspanningsmast	waarde	ok		-
+224	hoogstam boomgaarden	waarde	ok		-
+225	hoogtedetectieapparaat	waarde	ok		-
+226	hoogtemerk	waarde	ok		-
+227	houtwal	waarde	ok		-
+228	informatiebord	waarde	ok		-
+229	infrastructuur verkeer en vervoer	waarde	ok		-
+230	infrastructuur waterstaatswerken	waarde	ok		-
+231	inrit	waarde	ok		-
+232	inspectie- / rioolput	waarde	ok	"leesteken ""/"" is deel van de bronterm"	leesteken in term
+233	kademuur	waarde	ok		-
+234	kanaal	waarde	ok		-
+235	keermuur	waarde	ok		-
+236	kering	waarde	ok		-
+237	klein fruit	waarde	ok		-
+238	kolk	waarde	ok		-
+239	kunstobject	waarde	ok		-
+240	kunststof	waarde	ok		-
+241	kunstwerk	waarde	ok		-
+242	kwelder	waarde	ok		-
+243	laagspanningsmast	waarde	ok		-
+244	laagstam boomgaarden	waarde	ok		-
+245	lage trafo	waarde	ok		-
+246	landbouw	waarde	ok		-
+247	landhoofd	waarde	ok		-
+248	landschappelijk gebied	waarde	definitie	"brondefinitie (""Definitie ontbreekt in de BAG"") is nietszeggend; advies aan UML-beheerder"	-
+249	laser	waarde	ok		-
+250	lichtcel	waarde	ok		-
+251	lichtmast	waarde	ok		-
+252	lichtpunt	waarde	ok		-
+253	lijnafwatering	waarde	ok		-
+254	loofbos	waarde	ok		-
+255	luifel	waarde	ok		-
+256	maatschappelijke en/of publieksvoorziening	waarde	ok	"leesteken ""/"" is deel van de bronterm"	leesteken in term
+257	meer, plas, ven, vijver	waarde	ok	"leesteken "","" is deel van de bronterm"	leesteken in term
+258	meerpaal	waarde	ok		-
+259	moeras	waarde	ok		-
+260	molgoot	waarde	ok		-
+261	muur	waarde	ok		-
+262	naaldbos	waarde	ok		-
+263	natuur en landschap	waarde	ok		-
+264	niet geautoriseerd	waarde	ok		-
+265	niet ondersteund	waarde	ok		-
+266	niet-BGT-object	waarde	ok	afkorting BGT is de vaste afkorting in het model	afkorting in term
+267	oever, slootkant	waarde	ok	"leesteken "","" is deel van de bronterm"	leesteken in term
+268	onverhard terreindeel	waarde	ok		-
+269	onverhard wegdeel	waarde	ok		-
+270	open duinvegetatie	waarde	ok		-
+271	open loods	waarde	ok		-
+272	open verharding	waarde	ok		-
+273	openbaar toilet	waarde	ok		-
+274	openbare verlichtingkast	waarde	ok		-
+275	opslagtank	waarde	ok		-
+276	OV-baan	waarde	ok	afkorting OV (openbaar vervoer) is de vaste bronterm	afkorting in term
+277	overkapping	waarde	ok		-
+278	overkluizing	waarde	ok		-
+279	overweg	waarde	ok		-
+280	panoramabeelden	waarde	ok		-
+281	parkeerbeugel	waarde	ok		-
+282	parkeervlak	waarde	ok		-
+283	perron	waarde	ok		-
+284	picknicktafel	waarde	ok		-
+285	pijler	waarde	ok		-
+286	plaatsnaambord	waarde	ok		-
+287	plan	waarde	ok		-
+288	planten	waarde	ok		-
+289	poller	waarde	ok		-
+290	pomp	waarde	ok		-
+291	ponton	waarde	ok		-
+292	portaal	waarde	ok		-
+293	praatpaal	waarde	ok		-
+294	puin	waarde	ok		-
+295	pyloon	waarde	ok		-
+296	radar detector	waarde	ok		-
+297	radarmast	waarde	ok		-
+298	reclamebord	waarde	definitie	brondefinitie identiek aan reclamezuil; advies aan UML-beheerder	definitie identiek aan 1 ander(e) begrip(pen)
+299	reclamezuil	waarde	definitie	brondefinitie identiek aan reclamebord; advies aan UML-beheerder	definitie identiek aan 1 ander(e) begrip(pen)
+300	recreatie	waarde	ok		-
+301	recreatie: bungalowpark	waarde	ok	"leesteken "":"" is deel van de bronterm (categorie: waarde)"	leesteken in term
+302	recreatie: camping	waarde	ok	"leesteken "":"" is deel van de bronterm (categorie: waarde)"	leesteken in term
+303	recreatie: park	waarde	ok	"leesteken "":"" is deel van de bronterm (categorie: waarde)"	leesteken in term
+304	recreatie: speeltuin	waarde	ok	"leesteken "":"" is deel van de bronterm (categorie: waarde)"	leesteken in term
+305	recreatie: sportterrein	waarde	ok	"leesteken "":"" is deel van de bronterm (categorie: waarde)"	leesteken in term
+306	recreatie: volkstuin	waarde	ok	"leesteken "":"" is deel van de bronterm (categorie: waarde)"	leesteken in term
+307	remmingswerk	waarde	ok		-
+308	rietland	waarde	ok		-
+309	rijbaan autosnelweg	waarde	ok		-
+310	rijbaan autoweg	waarde	ok		-
+311	rijbaan lokale weg	waarde	ok		-
+312	rijbaan regionale weg	waarde	ok		-
+313	rioolkast	waarde	ok		-
+314	rivier	waarde	ok		-
+315	rooster	waarde	ok		-
+316	ruiterpad	waarde	ok		-
+317	scheepvaartbord	waarde	ok		-
+318	schelpen	waarde	ok		-
+319	schuur	waarde	ok		-
+320	sierbestrating	waarde	ok		-
+321	sirene	waarde	ok		-
+322	slagboom	waarde	ok		-
+323	slik	waarde	ok		-
+324	sloof	waarde	ok		-
+325	sloot	waarde	ok		-
+326	sluis	waarde	ok		-
+327	sneltram	waarde	ok		-
+328	speelvoorziening	waarde	ok		-
+329	spoorbaan	waarde	ok		-
+330	steiger	waarde	ok		-
+331	straalzender	waarde	ok		-
+332	straatnaambord	waarde	ok		-
+333	strand en strandwal	waarde	ok		-
+334	strekdam	waarde	ok		-
+335	struiken	waarde	ok		-
+336	struikrozen	waarde	ok		-
+337	stuw	waarde	ok		-
+338	tegels	waarde	ok		-
+339	telecom kast	waarde	ok		-
+340	telefooncel	waarde	ok		-
+341	telkast	waarde	ok		-
+342	telpaal	waarde	ok		-
+343	terrein	waarde	ok		-
+344	terrestrisch	waarde	ok		-
+345	toegangstrap	waarde	ok		-
+346	tram	waarde	ok		-
+347	trein	waarde	ok		-
+348	vastgesteld onbekend	waarde	ok		-
+349	verbindingsweg	waarde	ok		-
+350	verblindingswering	waarde	ok		-
+351	verkeersbord	waarde	ok		-
+352	verkeersbordpaal	waarde	ok		-
+353	verkeersdrempel	waarde	ok		-
+354	verkeerseiland	waarde	ok		-
+355	verkeersregelinstallatiekast	waarde	ok		-
+356	verkeersregelinstallatiepaal	waarde	ok		-
+357	verklikker transportleiding	waarde	ok		-
+358	verzorgingsplaats	waarde	ok		-
+359	viaduct	waarde	ok		-
+360	vispassage	waarde	ok		-
+361	vlaggenmast	waarde	ok		-
+362	voedersilo	waarde	ok		-
+363	voetgangersgebied	waarde	ok		-
+364	voetpad	waarde	ok		-
+365	voetpad op trap	waarde	ok		-
+366	vollegrondsteelt	waarde	ok		-
+367	voorde	waarde	ok		-
+368	vuilvang	waarde	ok		-
+369	waarde onbekend	waarde	ok		-
+370	waarschuwingshek	waarde	ok		-
+371	walbescherming	waarde	ok		-
+372	water	waarde	ok		-
+373	waterbergingsgebied	waarde	ok		-
+374	waterleidingput	waarde	ok		-
+375	waterloop	waarde	ok		-
+376	waterstandmeter	waarde	ok		-
+377	watervlakte	waarde	ok		-
+378	weerstation	waarde	ok		-
+379	weg	waarde	ok		-
+380	wegmarkering	waarde	ok		-
+381	wegwijzer	waarde	ok		-
+382	wijngaarden	waarde	ok		-
+383	wildrooster	waarde	ok		-
+384	windmeter	waarde	ok		-
+385	windturbine	waarde	ok		-
+386	woonerf	waarde	ok		-
+387	zand deklaag	waarde	ok		-
+388	zand terreindeel	waarde	ok		-
+389	zand- / zoutbak	waarde	ok	"leesteken ""/"" is deel van de bronterm"	leesteken in term
+390	zandverstuiving	waarde	ok		-
+391	zee	waarde	ok		-
+392	zendmast	waarde	ok		-
+393	zonnepaneel	waarde	ok		-
