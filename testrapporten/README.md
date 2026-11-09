@@ -2,6 +2,7 @@
 
 | Rapport | Inhoud |
 |---|---|
+| [2026-11-10-imgeo-vier-runs.md](2026-11-10-imgeo-vier-runs.md) | Vier modellen op IMGeo 2.2, beoordeeld tegen een referentierun, en welke verbetervoorstellen zijn overgenomen |
 | [2026-11-08-scripttest.md](2026-11-08-scripttest.md) | Offline tests van de scripts, de keten op de evalmodellen zonder assistent, en de regressie tegen eerdere omzettingen |
 | [2026-11-08-modeltest.md](2026-11-08-modeltest.md) | De skill uitgevoerd door drie modelgroottes op NEN 3610 en IMEV, met de verbeteringen die daaruit volgden |
 

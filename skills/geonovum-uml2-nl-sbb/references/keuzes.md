@@ -42,6 +42,7 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 | `termen.term_tag` | `null` | Tagnaam, bv. `Term(NL)` | Het model zet de Nederlandse term in een tagged value (IMKL) |
 | `termen.cijfers_scheiden` / `decimaalteken` | `false` / `,` | `true` | Namen met getallen: `golflengte12_5` → `golflengte 12,5` (IMGeluid) |
 | `termen.samenstellingen` | {} | "a b" → "ab" | camelCase splitst een samenstelling (`gebouw installatie`) |
+| `termen.woorden_behouden` | namen van informatiemodellen (IMGeo, IMKL, …) | Lijst | Woorden die niet gesplitst en niet in kleine letters gezet mogen worden (anders: `IMGeo-object` → *IM geo-object*) |
 | `termen.alias_als_voorkeursterm` | [] | Stereotypen, of `["*"]` | De alias bevat de Nederlandse naam (IMGeo: ADEElement; MIM-modellen: `["*"]`). Geldt ook voor attributen en waarden |
 | `termen.alias_naam_als_altlabel` | `en` | Taalcode of `null` | De UML-naam is geen Engelse term |
 | `attributen.context_altijd` | type, naam, tekst, positie, hoek, fysiek voorkomen | Lijst | Generieke attribuutnamen in het model |
@@ -68,6 +69,7 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 | `matches` | [] | {term, relatie, uri} | Na stap 5, met bevestiging van de gebruiker |
 | `externe_kaders` | NEN 3610:2011 (bulk), BAG (per begrip) | Kaders toevoegen | Andere basismodellen of registraties |
 | `validatie.met_externe_context` | `true` | `false` | – |
+| `validatie.extensie_fallback` | kopie van de extensie in de GitHub-repository | URL | Alleen gebruikt als `shacl/` bij de installatie ontbreekt |
 | `besloten` | [] | Codes van VRAAG-punten | Gezet door `bk.py overnemen`: het punt is beslist (ook als de standaard blijft) en telt niet meer als open vraag |
 | `notities` | [] | Vrije tekst | Wie besloot wat en waarom; komt in het rapport. `bk.py zet ... --notitie` vult dit aan |
 

@@ -113,14 +113,17 @@ def main(ons_pad, pub_bron, uit):
     print("ons:         ", tel(O))
     print("koppeling:", dict(stats), "| definitie gelijk bij", sum(1 for r in rows if r[4] is True), "van",
           sum(1 for r in rows if r[2] != "geen match"))
-    print("\n== gepubliceerd zonder tegenhanger ==")
-    for r in rows:
-        if r[2] == "geen match":
-            print("  ", r[1], "|", str(P.value(rdflib.URIRef(r[0]), SKOS.definition))[:90])
-    print("\n== zelfde term, andere definitie ==")
-    for r in rows:
-        if r[2] == "term (andere definitie)":
-            print("  ", r[1], "->", r[3])
+    def gegroepeerd(regels):
+        """Gelijke regels één keer, met een telling ('transitie (13x)')."""
+        for regel, n in collections.Counter(regels).items():
+            print("  ", regel + (f"   ({n}x)" if n > 1 else ""))
+
+    geen = [r for r in rows if r[2] == "geen match"]
+    print(f"\n== gepubliceerd zonder tegenhanger ({len(geen)}) ==")
+    gegroepeerd(f"{r[1]} | {str(P.value(rdflib.URIRef(r[0]), SKOS.definition))[:90]}" for r in geen)
+    anders = [r for r in rows if r[2] == "term (andere definitie)"]
+    print(f"\n== zelfde term, andere definitie ({len(anders)}) ==")
+    gegroepeerd(f"{r[1]} -> {r[3]}" for r in anders)
     rest = sorted(str(O.value(c, SKOS.prefLabel)) for c in oc - matched)
     print(f"\n== ons zonder tegenhanger ({len(rest)}) ==\n  ", rest)
     pl = collections.Counter(norm(P.value(c, SKOS.prefLabel) or "") for c in pc if P.value(c, SKOS.prefLabel))

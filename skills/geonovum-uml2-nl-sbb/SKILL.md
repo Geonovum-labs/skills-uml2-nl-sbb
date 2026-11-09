@@ -49,6 +49,7 @@ Leg deze momenten voor, als keuzevraag met opties als dat kan; één onderwerp p
 | Moment | Wat je voorlegt |
 |---|---|
 | `start` toont een packageboom | Welke package(s)? Stel het informatiemodel zelf voor. Ingesloten basismodellen (NEN 3610, GML, ISO, MIM) laat je weg, tenzij zo'n model zelf het om te zetten model is. |
+| `start` noemt een voorbeeld | Mag het ingevulde voorbeeld (`voorbeelden/<naam>.yaml`) gebruikt worden? Zo ja: `bk.py voorbeeld <naam>`. |
 | eerste `analyseer` | Eén keer: de standaardkeuzes (zie `references/keuzes.md`, "Samenvatting"). Vraag of ze goed zijn. |
 | elk VRAAG-punt (`bk.py vraag <nr>`) | Het scriptvoorstel als eerste optie, "standaard houden" als tweede. |
 | review met oordeel `term` | De betere termen, vóór je ze met `bk.py zet` vastlegt. |
@@ -64,7 +65,8 @@ Antwoord van de gebruiker vastleggen:
 Daarna: `bk.py analyseer` en `bk.py status`.
 
 **Geen gebruiker beschikbaar** (je werkt zelfstandig)?
-- Neem de standaardkeuzes en de scriptvoorstellen over: `bk.py overnemen --alle`. `--standaard` betekent: dit punt bewust op de standaardwaarde laten.
+- Noemt `start` een voorbeeld, gebruik het dan: `bk.py voorbeeld <naam>`. Het voorbeeld bevat beoordeelde keuzes; noem het als aanname.
+- Neem de overige scriptvoorstellen over: `bk.py overnemen --alle`. Keuzes die al in `project.yaml` staan (uit het voorbeeld of van de gebruiker) blijven staan. `--standaard` betekent: dit punt bewust op de standaardwaarde laten.
 - Schrijf elke aanname als één regel in `werk/aannames.md` ("- wortel: voorstel overgenomen, niet bevestigd"). Het rapport neemt dat bestand over.
 - Voer termcorrecties uit de review niet zelf door. Ze staan in `reports/review.md` en de gebruiker beslist erover.
 
@@ -79,6 +81,8 @@ bk.py zet relaties.gebruik.TypeBak '[Bak, type]'                      # waardeli
 bk.py zet relaties.gebruik.Overig 'null'                               # bewust niet koppelen
 bk.py zet termen.alias_als_voorkeursterm '["*"]'
 bk.py zet 'termen.vast[gt5]' 'GT5'                                      # sleutel met punt of dubbele punt: tussen [ ]
+bk.py zet 'termen.vast[recreatie: camping]' 'camping'                   # waardenaam met leestekens: ook tussen [ ]
+bk.py zet kader.omschrijving 'Begrippen uit IMGeo 2.2: objecttypen en waarden'   # dubbele punt in tekst mag
 ```
 
 Na elke `zet` controleert het script `project.yaml` (sleutels, klasse- en attribuutnamen, regexen). Een `FOUT:` herstel je met een nieuwe `zet`, voordat je verdergaat.
@@ -111,7 +115,9 @@ Na elke `zet` controleert het script `project.yaml` (sleutels, klasse- en attrib
    - ook bij `ok` als het script een signaal gaf. Leg dan uit waarom het signaal niet terecht is.
 4. Het script toont de voortgang en het volgende deel. Ga door tot alle delen compleet zijn, en draai dan `bk.py review klaar`.
 
-Moet het kader opnieuw gegenereerd worden (bv. na een termcorrectie)? Draai dan `bk.py review --opnieuw`. Oordelen van begrippen met dezelfde definitie neemt het script over; je beoordeelt alleen wat veranderd is.
+Bij een leesteken in de term geeft het signaal soms een voorstel, zoals `leesteken in term (voorstel: 'camping')`. Dat is een hint: neem het over in je `term`-oordeel als het klopt, of schrijf een betere term.
+
+Moet het kader opnieuw gegenereerd worden (bv. na een termcorrectie)? Draai dan `bk.py review --opnieuw`. Oordelen van begrippen met dezelfde definitie neemt het script over; je beoordeelt alleen wat veranderd is. De nummers kunnen dan verschuiven; verwijs naar een begrip met zijn `id:` (vast, uit de URI).
 
 Wat is een `term`-oordeel, en wat niet:
 - Wel: een fout in de omzetting van de naam, zoals een verkeerde splitsing of een Engelse UML-naam zonder alias.
@@ -129,7 +135,9 @@ Is de NL-SBB-reviewskill (`nl-sbb`) beschikbaar? Gebruik die dan als achtergrond
 `bk.py rapport` schrijft `reports/rapport.md` met alle cijfers. Jij vult alleen de sectie **Conclusie** in (3–6 zinnen), met uitsluitend cijfers uit het rapport. Noem altijd:
 - LET OP-meldingen van `start`, zoals onleesbare memovelden;
 - keuzes die zonder bevestiging zijn gemaakt (`werk/aannames.md`);
-- de belangrijkste SHACL-violations en reviewbevindingen.
+- de belangrijkste SHACL-violations en reviewbevindingen. Meldt de samenvatting "waarvan N violations door match-doelen die … geen skos:Concept zijn", dan was een extern kader niet bereikbaar: noem dat als oorzaak, niet als fout in het kader.
+
+Wil je meer in het rapport, zoals de doorgevoerde termcorrecties? Schrijf dat in `werk/rapport-aanvulling.md` (Markdown, met eigen `##`-koppen) en draai `bk.py rapport` opnieuw. Bewerk `reports/rapport.md` zelf alleen in de Conclusie: `bk.py rapport` schrijft het bestand steeds opnieuw.
 
 ## Alle commando's
 
@@ -138,6 +146,7 @@ Is de NL-SBB-reviewskill (`nl-sbb`) beschikbaar? Gebruik die dan als achtergrond
 | `status` | Noemt de volgende stap. Draai dit na elke stap. |
 | `setup` | Maakt `.venv` in de werkmap en installeert de pakketten. |
 | `start <bestand> [--package P] [--zonder P]` | Maakt de inventaris uit XMI 1.1/2.x, EAP, EAPX, QEA of ZIP. Bij dubbele packagenamen geef je een pad: `Ouder/Kind`. |
+| `voorbeeld <naam>` | Kopieert `voorbeelden/<naam>.yaml` naar `project.yaml`. `start` noemt het voorbeeld als het bij het bestand past. |
 | `analyseer` | Maakt de beslispunten: INFO (alleen noemen), VRAAG (beslissen), BESLOTEN. |
 | `vraag <nr>` | Toont één beslispunt met details en scriptvoorstel. |
 | `overnemen <code…> \| --alle [--standaard]` | Zet scriptvoorstel(len) in `project.yaml`. |
@@ -148,7 +157,7 @@ Is de NL-SBB-reviewskill (`nl-sbb`) beschikbaar? Gebruik die dan als achtergrond
 | `valideer` | SHACL tegen NL-SBB 1.0.0 + extensie (run A kaal, run B met externe context). |
 | `review [--opnieuw]` / `oordeel` / `review klaar` | Review in delen; oordelen invullen; compleetheid controleren en samenvoegen. |
 | `matches` / `oordeel --matches` / `matches klaar [--overnemen]` | Optioneel: externe matches in delen (relatie per kandidaat). |
-| `vergelijk <url>` / `bronnen` | Optioneel: vergelijking met een gepubliceerd kader; bronnencontrole. |
+| `vergelijk <url>` / `bronnen` | Optioneel: vergelijking met een gepubliceerd kader (naar `uit/vergelijking.txt` en `.csv`, komt in het rapport); bronnencontrole. |
 | `rapport` | Schrijft `reports/rapport.md`. |
 
 De losse scripts (`inventaris.py`, `genereer.py` enz.) zijn er nog voor gevorderd gebruik; `bk.py` roept ze aan.
