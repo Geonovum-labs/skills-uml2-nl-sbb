@@ -1,0 +1,37 @@
+profiel 1.0.0, pySHACL 0.40.2, advanced=True, inference=rdfs
+
+=== A-kaal ===
+conforms-veld: False (niet leidend) | telling: Violation 41, Warning 180, Info 2
+[Violation] SemanticRelations x28: Semantische relaties verwijzen altijd van en naar begrippen.
+     bv. ['http://bag.basisregistraties.overheid.nl/id/concept/AdministratiefGebied', 'http://bag.basisregistraties.overheid.nl/id/concept/Kunstwerk', 'http://bag.basisregistraties.overheid.nl/id/concept/LandschappelijkGebied', 'http://bag.basisregistraties.overheid.nl/id/concept/OpenbareRuimte', 'http://bag.basisregistraties.overheid.nl/id/concept/Pand', 'http://bag.basisregistraties.overheid.nl/id/concept/Spoorbaan', 'http://bag.basisregistraties.overheid.nl/id/concept/Terrein', 'http://bag.basisregistraties.overheid.nl/id/concept/TypeOpenbareRuimte']
+[Violation] Concept-closeMatch x13: Value does not have class skos:Concept
+     bv. ['eind registratie', 'functioneel gebied', 'geen waarde', 'identificatie', 'inrichtingselement', 'niet geautoriseerd', 'niet ondersteund', 'openbare ruimte type']
+[Warning] Concept x72: Het begrip is geen topbegrip maar heeft ook geen bovenliggende of gerelateerde begrippen.
+     bv. ['OV-baan', 'aquaduct', 'baan voor vliegverkeer', 'balustrade', 'bestaand', 'betonning', 'bodemval', 'boomspiegel']
+[Warning] OrphanConceptShape x72: Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).
+     bv. ['OV-baan', 'aquaduct', 'baan voor vliegverkeer', 'balustrade', 'bestaand', 'betonning', 'bodemval', 'boomspiegel']
+[Warning] DuplicateDefinitionWithinSchemeShape x16: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkad
+     bv. ['begroeid terreindeel op talud', 'identificatie BAGOPR', 'identificatie BAGPND', 'onbegroeid terreindeel op talud', 'ondersteunend wegdeel op talud', 'reclamebord', 'reclamezuil', 'wegdeel op talud']
+[Warning] Concept-broadMatch x12: Value does not have class skos:Concept
+     bv. ['IMGeo-object', 'begroeid terreindeel', 'kunstwerkdeel', 'onbegroeid terreindeel', 'ondersteunend waterdeel', 'ondersteunend wegdeel', 'overbruggingsdeel', 'pand']
+[Warning] Concept-exactMatch x8: Value does not have class skos:Concept
+     bv. ['administratief gebied', 'kunstwerk', 'landschappelijk gebied', 'openbare ruimte', 'pand', 'terrein', 'water', 'weg']
+[Info] MissingSourceShape-source x2: Begrip heeft geen bron (dct:source); overweeg een bronverwijzing toe te voegen.
+     bv. ['hectometeraanduiding', 'landschappelijk gebied']
+
+=== B-context ===
+conforms-veld: False (niet leidend) | telling: Violation 13, Warning 180, Info 2
+[Violation] Concept-closeMatch x13: Value does not have class skos:Concept
+     bv. ['eind registratie', 'functioneel gebied', 'geen waarde', 'identificatie', 'inrichtingselement', 'niet geautoriseerd', 'niet ondersteund', 'openbare ruimte type']
+[Warning] Concept x72: Het begrip is geen topbegrip maar heeft ook geen bovenliggende of gerelateerde begrippen.
+     bv. ['OV-baan', 'aquaduct', 'baan voor vliegverkeer', 'balustrade', 'bestaand', 'betonning', 'bodemval', 'boomspiegel']
+[Warning] OrphanConceptShape x72: Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).
+     bv. ['OV-baan', 'aquaduct', 'baan voor vliegverkeer', 'balustrade', 'bestaand', 'betonning', 'bodemval', 'boomspiegel']
+[Warning] DuplicateDefinitionWithinSchemeShape x16: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkad
+     bv. ['begroeid terreindeel op talud', 'identificatie BAGOPR', 'identificatie BAGPND', 'onbegroeid terreindeel op talud', 'ondersteunend wegdeel op talud', 'reclamebord', 'reclamezuil', 'wegdeel op talud']
+[Warning] Concept-broadMatch x12: Value does not have class skos:Concept
+     bv. ['IMGeo-object', 'begroeid terreindeel', 'kunstwerkdeel', 'onbegroeid terreindeel', 'ondersteunend waterdeel', 'ondersteunend wegdeel', 'overbruggingsdeel', 'pand']
+[Warning] Concept-exactMatch x8: Value does not have class skos:Concept
+     bv. ['administratief gebied', 'kunstwerk', 'landschappelijk gebied', 'openbare ruimte', 'pand', 'terrein', 'water', 'weg']
+[Info] MissingSourceShape-source x2: Begrip heeft geen bron (dct:source); overweeg een bronverwijzing toe te voegen.
+     bv. ['hectometeraanduiding', 'landschappelijk gebied']
