@@ -1,0 +1,945 @@
+Validation Report
+Conforms: False
+Results (89):
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:EindRegistratie
+	Value Node: nen3610:EindRegistratie
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:FunctioneelGebied
+	Value Node: nen3610:FunctioneelGebied
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:GeenWaarde
+	Value Node: nen3610:GeenWaarde
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:Identificatie
+	Value Node: nen3610:Identificatie
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:Inrichtingselement
+	Value Node: nen3610:Inrichtingselement
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:NietGeautoriseerd
+	Value Node: nen3610:NietGeautoriseerd
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:NietOndersteund
+	Value Node: nen3610:NietOndersteund
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:OpenbareRuimteType
+	Value Node: bag:TypeOpenbareRuimte
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:RegistratiefGebied
+	Value Node: nen3610:RegistratiefGebied
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:Spoorbaan
+	Value Node: bag:Spoorbaan
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:TijdstipRegistratie
+	Value Node: nen3610:TijdstipRegistratie
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:VastgesteldOnbekend
+	Value Node: nen3610:VastgesteldOnbekend
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:Concept-closeMatch
+	Focus Node: imgeo:WaardeOnbekend
+	Value Node: nen3610:WaardeOnbekend
+	Result Path: skos:closeMatch
+	Message: Value does not have class skos:Concept
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: bag:AdministratiefGebied
+	Value Node: bag:AdministratiefGebied
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: bag:Kunstwerk
+	Value Node: bag:Kunstwerk
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: bag:LandschappelijkGebied
+	Value Node: bag:LandschappelijkGebied
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: bag:OpenbareRuimte
+	Value Node: bag:OpenbareRuimte
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: bag:Pand
+	Value Node: bag:Pand
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: bag:Spoorbaan
+	Value Node: bag:Spoorbaan
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: bag:Terrein
+	Value Node: bag:Terrein
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: bag:TypeOpenbareRuimte
+	Value Node: bag:TypeOpenbareRuimte
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: bag:Water
+	Value Node: bag:Water
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: bag:Weg
+	Value Node: bag:Weg
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:EindRegistratie
+	Value Node: nen3610:EindRegistratie
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:FunctioneelGebied
+	Value Node: nen3610:FunctioneelGebied
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:Gebouw
+	Value Node: nen3610:Gebouw
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:GeenWaarde
+	Value Node: nen3610:GeenWaarde
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:GeoObject
+	Value Node: nen3610:GeoObject
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:Identificatie
+	Value Node: nen3610:Identificatie
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:Inrichtingselement
+	Value Node: nen3610:Inrichtingselement
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:Kunstwerk
+	Value Node: nen3610:Kunstwerk
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:NietGeautoriseerd
+	Value Node: nen3610:NietGeautoriseerd
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:NietOndersteund
+	Value Node: nen3610:NietOndersteund
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:RegistratiefGebied
+	Value Node: nen3610:RegistratiefGebied
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:Spoorbaan
+	Value Node: nen3610:Spoorbaan
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:Terrein
+	Value Node: nen3610:Terrein
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:TijdstipRegistratie
+	Value Node: nen3610:TijdstipRegistratie
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:VastgesteldOnbekend
+	Value Node: nen3610:VastgesteldOnbekend
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:WaardeOnbekend
+	Value Node: nen3610:WaardeOnbekend
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:Water
+	Value Node: nen3610:Water
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Constraint Violation in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: skosapnl:SemanticRelations
+	Focus Node: nen3610:Weg
+	Value Node: nen3610:Weg
+	Source Constraint: [ sh:message Literal("Semantische relaties verwijzen altijd van en naar begrippen.", lang=nl) ; sh:prefixes <http://nlbegrip.nl/def/skosapnl#> ; sh:select Literal("
+    SELECT $this
+    WHERE {
+      FILTER NOT EXISTS { $this a skos:Concept }
+    }") ]
+	Message: Semantische relaties verwijzen altijd van en naar begrippen.
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:BegroeidTerreindeel
+	Value Node: nen3610:Terrein
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:IMGeoObject
+	Value Node: nen3610:GeoObject
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:Kunstwerkdeel
+	Value Node: nen3610:Kunstwerk
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:OnbegroeidTerreindeel
+	Value Node: nen3610:Terrein
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:OndersteunendWaterdeel
+	Value Node: nen3610:Water
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:OndersteunendWegdeel
+	Value Node: nen3610:Weg
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:Overbruggingsdeel
+	Value Node: nen3610:Kunstwerk
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:Pand
+	Value Node: nen3610:Gebouw
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:Spoor
+	Value Node: nen3610:Spoorbaan
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:Tunneldeel
+	Value Node: nen3610:Kunstwerk
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:Waterdeel
+	Value Node: nen3610:Water
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-broadMatch
+	Focus Node: imgeo:Wegdeel
+	Value Node: nen3610:Weg
+	Result Path: skos:broadMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-exactMatch
+	Focus Node: imgeo:AdministratiefGebied
+	Value Node: bag:AdministratiefGebied
+	Result Path: skos:exactMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-exactMatch
+	Focus Node: imgeo:Kunstwerk
+	Value Node: bag:Kunstwerk
+	Result Path: skos:exactMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-exactMatch
+	Focus Node: imgeo:LandschappelijkGebied
+	Value Node: bag:LandschappelijkGebied
+	Result Path: skos:exactMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-exactMatch
+	Focus Node: imgeo:OpenbareRuimte
+	Value Node: bag:OpenbareRuimte
+	Result Path: skos:exactMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-exactMatch
+	Focus Node: imgeo:Pand
+	Value Node: bag:Pand
+	Result Path: skos:exactMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-exactMatch
+	Focus Node: imgeo:Terrein
+	Value Node: bag:Terrein
+	Result Path: skos:exactMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-exactMatch
+	Focus Node: imgeo:Water
+	Value Node: bag:Water
+	Result Path: skos:exactMatch
+	Message: Value does not have class skos:Concept
+Validation Result in ClassConstraintComponent (http://www.w3.org/ns/shacl#ClassConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept-exactMatch
+	Focus Node: imgeo:Weg
+	Value Node: bag:Weg
+	Result Path: skos:exactMatch
+	Message: Value does not have class skos:Concept
+Validation Result in MinCountConstraintComponent (http://www.w3.org/ns/shacl#MinCountConstraintComponent):
+	Severity: sh:Info
+	Source Shape: ext:MissingSourceShape-source
+	Focus Node: imgeo:Hectometeraanduiding
+	Result Path: dct:source
+	Message: Begrip heeft geen bron (dct:source); overweeg een bronverwijzing toe te voegen.
+Validation Result in MinCountConstraintComponent (http://www.w3.org/ns/shacl#MinCountConstraintComponent):
+	Severity: sh:Info
+	Source Shape: ext:MissingSourceShape-source
+	Focus Node: imgeo:LandschappelijkGebied
+	Result Path: dct:source
+	Message: Begrip heeft geen bron (dct:source); overweeg een bronverwijzing toe te voegen.
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:BegroeidTerreindeelOpTalud
+	Value Node: imgeo:OnbegroeidTerreindeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/OnbegroeidTerreindeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:BegroeidTerreindeelOpTalud
+	Value Node: imgeo:OndersteunendWegdeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/OndersteunendWegdeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:BegroeidTerreindeelOpTalud
+	Value Node: imgeo:WegdeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/WegdeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:IdentificatieBAGOPR
+	Value Node: imgeo:IdentificatieBAGPND
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/IdentificatieBAGPND).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:IdentificatieBAGPND
+	Value Node: imgeo:IdentificatieBAGOPR
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/IdentificatieBAGOPR).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:OnbegroeidTerreindeelOpTalud
+	Value Node: imgeo:BegroeidTerreindeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/BegroeidTerreindeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:OnbegroeidTerreindeelOpTalud
+	Value Node: imgeo:OndersteunendWegdeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/OndersteunendWegdeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:OnbegroeidTerreindeelOpTalud
+	Value Node: imgeo:WegdeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/WegdeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:OndersteunendWegdeelOpTalud
+	Value Node: imgeo:BegroeidTerreindeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/BegroeidTerreindeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:OndersteunendWegdeelOpTalud
+	Value Node: imgeo:OnbegroeidTerreindeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/OnbegroeidTerreindeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:OndersteunendWegdeelOpTalud
+	Value Node: imgeo:WegdeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/WegdeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:Reclamebord
+	Value Node: imgeo:Reclamezuil
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/Reclamezuil).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:Reclamezuil
+	Value Node: imgeo:Reclamebord
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/Reclamebord).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:WegdeelOpTalud
+	Value Node: imgeo:BegroeidTerreindeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/BegroeidTerreindeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:WegdeelOpTalud
+	Value Node: imgeo:OnbegroeidTerreindeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/OnbegroeidTerreindeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:DuplicateDefinitionWithinSchemeShape
+	Focus Node: imgeo:WegdeelOpTalud
+	Value Node: imgeo:OndersteunendWegdeelOpTalud
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor ({?value}).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this ?value
+      WHERE {
+        $this skos:definition ?def ;
+              skos:inScheme ?scheme .
+        ?value skos:definition ?def ;
+               skos:inScheme ?scheme .
+        FILTER (?value != $this)
+      }
+    ") ]
+	Message: Definitie is niet onderscheidend: exact dezelfde definitie komt bij een ander begrip in hetzelfde begrippenkader voor (http://definities.geostandaarden.nl/imgeo/id/begrip/OndersteunendWegdeelOpTalud).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:OrphanConceptShape
+	Focus Node: imgeo:GeenWaarde
+	Value Node: imgeo:GeenWaarde
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this
+      WHERE {
+        FILTER NOT EXISTS { $this skos:topConceptOf ?s1 . }
+        FILTER NOT EXISTS { ?s2 skos:hasTopConcept $this . }
+        FILTER NOT EXISTS {
+          { $this ?p ?x . } UNION { ?x ?p $this . }
+          FILTER (?p IN (skos:broader, skos:narrower, skos:related,
+                         isothes:broaderGeneric, isothes:narrowerGeneric,
+                         isothes:broaderPartitive, isothes:narrowerPartitive,
+                         isothes:broaderInstantial, isothes:narrowerInstantial))
+        }
+      }
+    ") ]
+	Message: Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:OrphanConceptShape
+	Focus Node: imgeo:NietGeautoriseerd
+	Value Node: imgeo:NietGeautoriseerd
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this
+      WHERE {
+        FILTER NOT EXISTS { $this skos:topConceptOf ?s1 . }
+        FILTER NOT EXISTS { ?s2 skos:hasTopConcept $this . }
+        FILTER NOT EXISTS {
+          { $this ?p ?x . } UNION { ?x ?p $this . }
+          FILTER (?p IN (skos:broader, skos:narrower, skos:related,
+                         isothes:broaderGeneric, isothes:narrowerGeneric,
+                         isothes:broaderPartitive, isothes:narrowerPartitive,
+                         isothes:broaderInstantial, isothes:narrowerInstantial))
+        }
+      }
+    ") ]
+	Message: Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:OrphanConceptShape
+	Focus Node: imgeo:NietOndersteund
+	Value Node: imgeo:NietOndersteund
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this
+      WHERE {
+        FILTER NOT EXISTS { $this skos:topConceptOf ?s1 . }
+        FILTER NOT EXISTS { ?s2 skos:hasTopConcept $this . }
+        FILTER NOT EXISTS {
+          { $this ?p ?x . } UNION { ?x ?p $this . }
+          FILTER (?p IN (skos:broader, skos:narrower, skos:related,
+                         isothes:broaderGeneric, isothes:narrowerGeneric,
+                         isothes:broaderPartitive, isothes:narrowerPartitive,
+                         isothes:broaderInstantial, isothes:narrowerInstantial))
+        }
+      }
+    ") ]
+	Message: Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:OrphanConceptShape
+	Focus Node: imgeo:VastgesteldOnbekend
+	Value Node: imgeo:VastgesteldOnbekend
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this
+      WHERE {
+        FILTER NOT EXISTS { $this skos:topConceptOf ?s1 . }
+        FILTER NOT EXISTS { ?s2 skos:hasTopConcept $this . }
+        FILTER NOT EXISTS {
+          { $this ?p ?x . } UNION { ?x ?p $this . }
+          FILTER (?p IN (skos:broader, skos:narrower, skos:related,
+                         isothes:broaderGeneric, isothes:narrowerGeneric,
+                         isothes:broaderPartitive, isothes:narrowerPartitive,
+                         isothes:broaderInstantial, isothes:narrowerInstantial))
+        }
+      }
+    ") ]
+	Message: Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: ext:OrphanConceptShape
+	Focus Node: imgeo:WaardeOnbekend
+	Value Node: imgeo:WaardeOnbekend
+	Source Constraint: [ rdf:type sh:SPARQLConstraint ; sh:message Literal("Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).", lang=nl) ; sh:prefixes <https://register.geostandaarden.nl/shacl/nl-sbb/ext/> ; sh:select Literal("
+      SELECT $this
+      WHERE {
+        FILTER NOT EXISTS { $this skos:topConceptOf ?s1 . }
+        FILTER NOT EXISTS { ?s2 skos:hasTopConcept $this . }
+        FILTER NOT EXISTS {
+          { $this ?p ?x . } UNION { ?x ?p $this . }
+          FILTER (?p IN (skos:broader, skos:narrower, skos:related,
+                         isothes:broaderGeneric, isothes:narrowerGeneric,
+                         isothes:broaderPartitive, isothes:narrowerPartitive,
+                         isothes:broaderInstantial, isothes:narrowerInstantial))
+        }
+      }
+    ") ]
+	Message: Verweesd begrip: geen topbegrip en geen enkele semantische relatie (in- of uitgaand).
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept
+	Focus Node: imgeo:GeenWaarde
+	Value Node: imgeo:GeenWaarde
+	Source Constraint: skosapnl:OrphanConcept
+	Message: Het begrip is geen topbegrip maar heeft ook geen bovenliggende of gerelateerde begrippen.
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept
+	Focus Node: imgeo:NietGeautoriseerd
+	Value Node: imgeo:NietGeautoriseerd
+	Source Constraint: skosapnl:OrphanConcept
+	Message: Het begrip is geen topbegrip maar heeft ook geen bovenliggende of gerelateerde begrippen.
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept
+	Focus Node: imgeo:NietOndersteund
+	Value Node: imgeo:NietOndersteund
+	Source Constraint: skosapnl:OrphanConcept
+	Message: Het begrip is geen topbegrip maar heeft ook geen bovenliggende of gerelateerde begrippen.
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept
+	Focus Node: imgeo:VastgesteldOnbekend
+	Value Node: imgeo:VastgesteldOnbekend
+	Source Constraint: skosapnl:OrphanConcept
+	Message: Het begrip is geen topbegrip maar heeft ook geen bovenliggende of gerelateerde begrippen.
+Validation Result in SPARQLConstraintComponent (http://www.w3.org/ns/shacl#SPARQLConstraintComponent):
+	Severity: sh:Warning
+	Source Shape: skosapnl:Concept
+	Focus Node: imgeo:WaardeOnbekend
+	Value Node: imgeo:WaardeOnbekend
+	Source Constraint: skosapnl:OrphanConcept
+	Message: Het begrip is geen topbegrip maar heeft ook geen bovenliggende of gerelateerde begrippen.
