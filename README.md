@@ -57,7 +57,7 @@ De standaardkeuzes staan in [`standaardkeuzes.yaml`](skills/geonovum-uml2-nl-sbb
   ```
 
   Dat vraagt een Python waarin de pakketten uit `requirements.txt` staan. Zet `BK_NETWERK=1` om ook de SHACL-validatie te testen. De workflow [`test.yml`](.github/workflows/test.yml) draait de tests bij elke push en pull request.
-- **[`skills/geonovum-uml2-nl-sbb/evals/`](skills/geonovum-uml2-nl-sbb/evals/)**: drie testcases voor een assistent: het NEN 3610-template (XMI, met een voorbeeldmodel ernaast), IMGeluid (XMI 1.1, codes die in meer lijsten voorkomen) en IMEV (EAP in een zip). Elke testcase heeft een prompt, een script dat het model uit het register haalt en de checksum controleert, en controles die beschrijven wat een goed resultaat is.
+- **[`skills/geonovum-uml2-nl-sbb/evals/`](skills/geonovum-uml2-nl-sbb/evals/)**: vier testcases voor een assistent: het NEN 3610-template (XMI, met een voorbeeldmodel ernaast), IMGeluid (XMI 1.1, codes die in meer lijsten voorkomen), IMEV (EAP in een zip) en IMGeo 2.2 (XMI, met het ingevulde voorbeeld, matches en een vergelijking met het gepubliceerde kader). Elke testcase heeft een prompt, een script dat het model uit het register haalt en de checksum controleert, en controles die beschrijven wat een goed resultaat is.
 - **[`testrapporten/`](testrapporten/)**: de uitkomsten:
   - de scripttest en de regressie tegen eerdere omzettingen;
   - een test met drie modelgroottes, met de verbeteringen die daaruit volgden.

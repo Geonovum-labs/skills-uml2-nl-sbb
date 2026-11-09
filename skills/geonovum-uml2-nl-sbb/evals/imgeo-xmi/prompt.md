@@ -1,0 +1,1 @@
+in deze map staat IMGeo 2.2 als XMI uit het register. maak er een NL-SBB begrippenkader van, met validatie en een inhoudelijke review van alle begrippen, en vergelijk het met het gepubliceerde kader op https://upload.begrippenxl.nl/storage/imgeo/imgeo.ttl. ik kan tussendoor geen vragen beantwoorden: kies zelf en zet je aannames in het rapport.

@@ -1,0 +1,12 @@
+schema_version: "1.1"
+name: imgeo-xmi
+expected_outcome: |
+  A NL-SBB concept scheme for IMGeo 2.2 (XMI from the register). bk.py start names the example voorbeelden/imgeo.yaml; without a user the agent uses it (bk.py voorbeeld imgeo) and lists that as an assumption. Result: 393 concepts (38 object types, 4 data types, 67 attributes, 284 values), 57 collections, 33 matches to NEN 3610 and BAG. SHACL run B (with external context) reports 0 violations; if the external schemes cannot be fetched, the remaining violations are explained as caused by unreachable match targets. The review covers all concepts and is substantive: it flags the identical definitions of reclamebord and reclamezuil, the placeholder definition of landschappelijk gebied, and terms with punctuation such as 'recreatie: camping'. The comparison with the published scheme (444 of 464 published concepts linked, 20 without counterpart) is part of the report.
+context:
+  scaffold_script: place-files.sh
+---
+tags: [geonovum-uml2-nl-sbb]
+max_turns: 200
+timeout_seconds: 3600
+allowed_tools: [Read, Glob, Grep, Skill, Write, Edit, Bash]
+---
