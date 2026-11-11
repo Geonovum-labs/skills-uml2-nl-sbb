@@ -195,6 +195,57 @@ class Termen(unittest.TestCase):
         self.assertEqual(self.T.humanize("statusIMGeoObject"), "status IMGeo object")
         self.assertEqual(self.T.waarde("IMGeo-object"), "IMGeo-object")
 
+    def test_ij_en_losse_hoofdletter(self):
+        self.assertEqual(self.T.waarde("obstakelIJzervloer"), "obstakel ijzervloer")
+        self.assertEqual(self.T.waarde("klasseA"), "klasse A")
+
+    def test_codes_standaard_ongewijzigd(self):
+        # zonder de nieuwe opties blijft het gedrag zoals het was
+        self.assertEqual(self.T.waarde("veel25tot50"), "veel25tot50")
+        self.assertEqual(self.T.waarde("ISO17892d4v2016"), "iso17892d4v2016")
+        self.assertEqual(self.T.waarde("GBKNonbekend"), "gbknonbekend")
+
+    def test_getallen_normcodes_afkortingen(self):
+        import kern
+        T = kern.Termen(kern._merge(kern.laad_keuzes(), {"termen": {
+            "getallen": True, "normcodes": True, "afkortingen": ["RTK-GPS", "GPS", "PP", "AHN", "GBKN", "PE"]}}))
+        gevallen = {
+            "veel25tot50": "veel 25 tot 50", "zeerVeel50tot75": "zeer veel 50 tot 75",
+            "fractie 16tot31.5mm": "fractie 16 tot 31,5 mm", "fractie 1400umtot2mm": "fractie 1400 µm tot 2 mm",
+            "1400kPa": "1400 kPa", "klasseA_v2006": "klasse A v2006", "zoutwaterMinstens50000": "zoutwater minstens 50000",
+            "ISO17892d4v2016": "ISO 17892-4:2016", "ASTM_D4767v2011": "ASTM D4767:2011", "EN1997d2v2007": "EN 1997-2:2007",
+            "ISO14688d1v2019NEN8990v2020": "ISO 14688-1:2019 NEN 8990:2020", "fijnNEN5104": "fijn NEN 5104",
+            "NEN5104Synthetisch": "NEN 5104 synthetisch",
+            "RTKGPS0tot2cm": "RTK-GPS 0 tot 2 cm", "GPS200tot1000cm": "GPS 200 tot 1000 cm", "PPgroot": "PP groot",
+            "PPzeerKlein": "PP zeer klein", "GBKNonbekend": "GBKN onbekend", "AHNOnbekend": "AHN onbekend",
+            "peHighDensity": "PE high density", "pe": "PE",
+            # blijven staan: afkortingen met cijfers, versies, gewone woorden die met een afkorting beginnen
+            "AHN3": "AHN3", "WGS84": "WGS84", "QM1": "QM1", "SIKB2001vanafV6.0": "sikb 2001 vanaf v6.0",
+            "peilbuis": "peilbuis", "Pleistoceen": "pleistoceen",
+        }
+        for code, term in gevallen.items():
+            self.assertEqual(T.waarde(code), term, code)
+        self.assertEqual(T.humanize("Standaardverdeling fractie groter63um"), "standaardverdeling fractie groter 63 µm")
+
+    def test_analyse_stelt_codes_voor(self):
+        w = tempfile.mkdtemp(prefix="bk-codes-")
+        try:
+            os.makedirs(os.path.join(w, "werk"))
+            lijst = {"name": "Methode", "type": "uml:Enumeration", "stereo": None, "pkg": "M", "abstract": False,
+                     "doc": "", "alias": None, "gens": [], "tags": {},
+                     "attrs": [{"id": f"w{i}", "name": n, "doc": f"Methode {n}.", "tags": {}} for i, n in
+                               enumerate(["RTKGPS0tot2cm", "GPS200tot1000cm", "GPSOnbekend", "ISO17892d4v2016"])]}
+            with open(os.path.join(w, "werk", "inventaris.json"), "w", encoding="utf-8") as f:
+                json.dump({"bron": "t.xmi", "elementen": {"L": lijst}, "externe_klassen": {}}, f)
+            bk(w, "analyseer")
+            with open(os.path.join(w, "werk", "beslispunten.json"), encoding="utf-8") as f:
+                p = {x["code"]: x for x in json.load(f)}
+            v = p["termen-codes"]["voorstel"]["termen"]
+            self.assertTrue(v["getallen"] and v["normcodes"])
+            self.assertEqual(v["afkortingen"], ["GPS", "RTKGPS"])  # GPSOnbekend -> GPS, niet GPSO
+        finally:
+            shutil.rmtree(w, ignore_errors=True)
+
 
 class Signalen(unittest.TestCase):
     def test_termvoorstel_bij_leestekens(self):

@@ -57,6 +57,10 @@ termen:
   term_tag: null                  # tagged value met de voorkeursterm (bv. "Term(NL)" in IMKL); UML-naam -> altLabel
   camelcase_splitsen: true
   cijfers_scheiden: false         # true: "golflengte12_5" -> "golflengte 12,5" (underscore tussen cijfers = decimaalteken)
+  # Codes in namen (bv. BRO-domeintabellen). Uit = gedrag zoals voorheen; analyseer stelt ze voor (termen-codes).
+  getallen: false                 # true: veel25tot50 -> veel 25 tot 50, 16tot31.5mm -> 16 tot 31,5 mm, um -> µm, kpa -> kPa
+  normcodes: false                # true: iso17892d4v2016 -> ISO 17892-4:2016, ASTM_D4767v2011 -> ASTM D4767:2011, NEN5104 -> NEN 5104
+  afkortingen: []                 # afkortingen vóór een woord of getal: [RTK-GPS, PP] -> RTKGPS0tot2cm -> RTK-GPS 0 tot 2 cm, PPgroot -> PP groot
   decimaalteken: ","
   kleine_letters: true
   afkortingen_behouden: true      # woorden met 2+ hoofdletters (BGT, OV-baan) blijven staan

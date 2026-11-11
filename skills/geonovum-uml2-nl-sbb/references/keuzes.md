@@ -45,6 +45,9 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 | `termen.woorden_behouden` | namen van informatiemodellen (IMGeo, IMKL, …) | Lijst | Woorden die niet gesplitst en niet in kleine letters gezet mogen worden (anders: `IMGeo-object` → *IM geo-object*) |
 | `termen.alias_als_voorkeursterm` | [] | Stereotypen, of `["*"]` | De alias bevat de Nederlandse naam (IMGeo: ADEElement; MIM-modellen: `["*"]`). Geldt ook voor attributen en waarden |
 | `termen.alias_naam_als_altlabel` | `en` | Taalcode of `null` | De UML-naam is geen Engelse term |
+| `termen.getallen` | `false` | `true` | Codes met getallen aan woorden: `veel25tot50` → `veel 25 tot 50`, `16tot31.5mm` → `16 tot 31,5 mm`, `um` → `µm`. Afkortingen met cijfers (WGS84, AHN3) blijven staan |
+| `termen.normcodes` | `false` | `true` | Normen als code: `iso17892d4v2016` → `ISO 17892-4:2016`, `ASTM_D4767v2011` → `ASTM D4767:2011`, `NEN5104` → `NEN 5104` (d = deel, v = versie) |
+| `termen.afkortingen` | [] | Lijst, samenstellingen met `-` | Afkortingen vóór een woord of getal: `RTK-GPS` maakt van `RTKGPS0tot2cm` → `RTK-GPS 0 tot 2 cm`, `PP` van `PPgroot` → `PP groot`; ook in kleine letters als los woord (`pe` → `PE`) |
 | `attributen.context_altijd` | type, naam, tekst, positie, hoek, fysiek voorkomen | Lijst | Generieke attribuutnamen in het model |
 | `attributen.context_bij_dubbele_naam` | `true` | `false` | – |
 | `attributen.prefix_term` | {} | `{"plus-": "plus "}` | Een prefix moet zichtbaar blijven in de term |
@@ -81,6 +84,7 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 - **Afgebroken bestanden**: de IMRO2012-XMI in het register is afgebroken (ongeldige XML). Gebruik dan het EAP-bestand.
 - **access-parser** decodeert Access' *compressed unicode* niet (tekens als '–' en 'é' buiten Latin-1 worden \x13 e.d.); `inventaris_eap.py` vervangt die functie. Soms leest access-parser de `ea_guid` of een memoveld niet; het script gebruikt dan een id op Object_ID en meldt onleesbare definities bij naam.
 - **MIM-stereotypen** (`Codelijst`, `Enumeratie`, `Gestructureerd datatype`, `Primitief datatype`, `Keuze`) staan in de standaardlijsten.
+- **Codes als waardenaam** (BRO-domeintabellen: `RTKGPS0tot2cm`, `iso17892d4v2016`, `fractie16tot31.5mm`). Bij BHR-GT 2.2 gaf dat 230 termcorrecties in de review. `analyseer` stelt nu `termen.getallen`, `termen.normcodes` en `termen.afkortingen` voor (beslispunt `termen-codes`); daarmee kwamen 1540 van de 1586 termen automatisch overeen met de termen die na de review waren goedgekeurd. De rest (eigennamen zoals Sherbrooke, trema's, typefouten in UML-namen en woordkeuzes zoals "groter dan") blijft werk voor `termen.vast`.
 - **Waardelijsten zonder waarden** (extern beheerd, bv. IMKL) worden geen lege collectie; de attributen die ze gebruiken worden wel begrip.
 - **Waardelijsten met kolommen in plaats van waarden** (BRO-catalogi, bv. BHR-GT: Waarde, IMBRO, IMBRO/A, Omschrijving). Zonder herkenning werden de kolommen als waarden omgezet (436 nepwaarden). `analyseer` herkent dit (minstens 3 lijsten met dezelfde kolommen) en stelt `waarden.extern` voor, met de bron uit de tag met de lijstlocatie. Controleer de versiemap: de tag `Locatie` wees in BHR-GT 2.2 naar `lists/` en niet naar `lists/2.2/`. Bestandsnamen zonder trema (`Coordinaattransformatie.xml`) vindt het script zelf.
 

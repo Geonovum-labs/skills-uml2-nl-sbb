@@ -51,6 +51,7 @@ Leg deze momenten voor, als keuzevraag met opties als dat kan; één onderwerp p
 | `start` toont een packageboom | Welke package(s)? Stel het informatiemodel zelf voor. Ingesloten basismodellen (NEN 3610, GML, ISO, MIM) laat je weg, tenzij zo'n model zelf het om te zetten model is. |
 | `start` noemt een voorbeeld | Mag het ingevulde voorbeeld (`voorbeelden/<naam>.yaml`) gebruikt worden? Zo ja: `bk.py voorbeeld <naam>`. |
 | VRAAG `waarden-extern` | De waardelijsten bevatten alleen kolommen; de waarden staan elders. Laat de bron-URL bevestigen (versiemap!), zet hem met `bk.py zet waarden.extern.bron '<url met {lijst}>'` en draai `bk.py waarden`. |
+| VRAAG `termen-codes` | Laat de afkortingen controleren (samenstellingen met `-`, bv. `RTK-GPS`) en neem het voorstel over; het scheelt veel `term`-oordelen in de review. |
 | eerste `analyseer` | Eén keer: de standaardkeuzes (zie `references/keuzes.md`, "Samenvatting"). Vraag of ze goed zijn. |
 | elk VRAAG-punt (`bk.py vraag <nr>`) | Het scriptvoorstel als eerste optie, "standaard houden" als tweede. |
 | review met oordeel `term` | De betere termen, vóór je ze met `bk.py zet` vastlegt. |

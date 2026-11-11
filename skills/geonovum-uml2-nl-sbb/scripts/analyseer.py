@@ -325,6 +325,38 @@ def main(inv_pad, project, uitdir):
                  "alias_naam_als_altlabel": None if any((c["stereo"] or "").lower() in MIM for c in klassen.values())
                  else cfg["termen"].get("alias_naam_als_altlabel")}})
 
+    # I2. codes in namen: vastgeplakte getallen, normcodes, afkortingen in hoofdletters (BRO: RTKGPS0tot2cm)
+    namen = [c["name"] for c in klassen.values()] + [a["name"] for c in klassen.values() for a in c["attrs"]]
+    wnamen = [a["name"] for c in cod.values() for a in c["attrs"]]
+    termen_nu = [T.humanize(n) for n in namen] + [T.waarde(n) for n in wnamen]
+    geplakt = sorted({t for t in termen_nu if re.search(r"[a-z]\d|\d[a-z]", t) and not re.search(r"\d[-:]\d", t)
+                      and not all(re.fullmatch(r"[A-Z]+\d+[A-Za-z]?|[^\d]*", w) for w in t.split())})
+    norm = sorted({n for n in namen + wnamen if Termen.NORM.search(n)})
+    alle_runs = {m.group(0) for n in namen + wnamen for m in re.finditer(r"[A-Z]{2,}", n)}
+    runs = Counter()
+    for n in namen + wnamen:
+        for m in re.finditer(r"(?<![A-Za-z])([A-Z]{2,})(?=[a-z]{2,}|\d+[a-z]{2,})", n):
+            r = m.group(1)
+            # AHNOnbekend: de laatste hoofdletter hoort bij het volgende woord als AHN ook los voorkomt (AHN3)
+            runs[r[:-1] if len(r) > 2 and n[m.end():m.end() + 1].islower() and r[:-1] in alle_runs else r] += 1
+    gedekt = {k for k, _ in T.afkortingen} | set(T.behouden) | {"ISO", "NEN", "EN", "ASTM", "NPR"}
+    afk = sorted(r for r in runs if r not in gedekt)
+    tc = cfg["termen"]
+    voorstel = {}
+    if geplakt and not tc.get("getallen"):
+        voorstel["getallen"] = True
+    if norm and not tc.get("normcodes"):
+        voorstel["normcodes"] = True
+    if afk:
+        voorstel["afkortingen"] = sorted(set(tc.get("afkortingen") or []) | set(afk))
+    if voorstel:
+        det = [f"aan elkaar: {t}" for t in geplakt[:25]] + [f"normcode: {n}" for n in norm[:10]] \
+            + [f"afkorting vóór een woord of getal: {r} ({runs[r]}x)" for r in afk]
+        punt("VRAAG", "termen-codes", "Namen met codes: getallen aan woorden (termen.getallen), normcodes zoals "
+             "iso17892d4v2016 (termen.normcodes) of afkortingen vóór een woord (termen.afkortingen, bv. RTK-GPS "
+             "voor RTKGPS). Netjes schrijven? Controleer de afkortingen: een samenstelling schrijf je met '-'.",
+             det, voorstel={"termen": voorstel})
+
     # J. parent-tag
     pt = rel.get("waarde_parent_tag")
     np_ = sum(1 for c in cod.values() for a in c["attrs"] if (a["tags"].get(pt) or "").strip())

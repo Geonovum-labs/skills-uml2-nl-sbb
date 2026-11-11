@@ -129,26 +129,78 @@ class Termen:
         self.decimaal = t.get("decimaalteken", ",")
         # woorden die precies zo blijven staan (geen camelCase-splitsing, geen kleine letters), bv. IMGeo
         self.behouden = sorted(t.get("woorden_behouden") or [], key=len, reverse=True)
+        # afkortingen die in codes aan een woord vastzitten (RTKGPS0tot2cm, PPgroot); "RTK-GPS" herkent ook RTKGPS
+        self.afkortingen = sorted(((a.replace("-", ""), a) for a in t.get("afkortingen") or []),
+                                  key=lambda x: len(x[0]), reverse=True)
+        self.afk_klein = {k.lower(): a for k, a in self.afkortingen}
+        self.getallen = t.get("getallen", False)
+        self.normcodes = t.get("normcodes", False)
 
     def _woord(self, w):
-        if self.afk and ACRONIEM.match(w):
-            return w
+        if w.lower() in self.afk_klein:
+            return self.afk_klein[w.lower()]
+        if self.afk and (ACRONIEM.match(w) or re.fullmatch(r"[A-Z]", w)):
+            return w  # ook één hoofdletter blijft staan: klasseA -> klasse A
         if any(w == b or w.startswith(b + "-") for b in self.behouden):
             return w
         return w.lower() if self.klein else w
 
-    def _bescherm(self, s):
-        """Vervangt woorden_behouden door merktekens, zodat de camelCase-regels ze niet splitsen."""
+    def _bescherm(self, s, extra=()):
+        """Vervangt woorden_behouden en afkortingen door merktekens, zodat de camelCase-regels ze niet splitsen.
+        Een afkorting telt alleen als ze niet midden in een langere reeks hoofdletters staat."""
         bewaard = []
-        for b in self.behouden:
-            if b in s:
+        paren = [(b, b) for b in self.behouden] + [
+            (k, a) for k, a in self.afkortingen if re.search(rf"(?<![A-Z]){re.escape(k)}(?![A-Z])", s)] + list(extra)
+        for zoek, uit in sorted(paren, key=lambda p: len(p[0]), reverse=True):
+            if zoek in s:
                 tok = f"{len(bewaard)}"
-                bewaard.append((tok, b))
-                s = s.replace(b, tok)
+                bewaard.append((tok, uit))
+                s = s.replace(zoek, tok)
         if bewaard:
             s = re.sub(r"(?<=[A-Za-z0-9])", " ", s)
-            s = re.sub(r"(?=[A-Z])", " ", s)
+            s = re.sub(r"(?=[A-Za-z]|\d+[A-Za-z])", " ", s)  # AHN3 blijft, GPS200tot... niet
+            s = s.replace("", " ")  # twee normcodes of afkortingen achter elkaar
         return s, bewaard
+
+    # organisatie + nummer [+ d deel] [+ v jaar]; een hoofdletter-organisatie mag aan een woord vastzitten (fijnNEN5104)
+    NORM = re.compile(r"(?:(?<![A-Za-z])(ISO|iso|NEN|nen|EN|en|ASTM|astm|NPR|npr)|(?<=[a-z])(ISO|NEN|ASTM|NPR))"
+                      r"_?([A-Za-z]?\d+)(?:d(\d+))?(?:v(\d{4}))?")
+
+    def _normcodes(self, s):
+        """iso17892d4v2016 -> ISO 17892-4:2016, ASTM_D4767v2011 -> ASTM D4767:2011 (d = deel, v = versie).
+        Geeft de tekst met plaatshouders en de paren (plaatshouder, normcode) om te beschermen."""
+        paren = []
+
+        def f(m):
+            org = (m.group(1) or m.group(2)).upper()
+            if m.group(3)[0].isalpha() and org != "ASTM":
+                return m.group(0)  # alleen ASTM heeft een letter voor het nummer (D4767); 'end9' is geen norm
+            code = f"{org} {m.group(3).upper()}" + (f"-{m.group(4)}" if m.group(4) else "") \
+                + (f":{m.group(5)}" if m.group(5) else "")
+            ph = f"\ue002{len(paren)}\ue003"
+            paren.append((ph, code))
+            return ph
+        return self.NORM.sub(f, s), paren
+
+    def _getallen(self, s):
+        """Getallen los van woorden: veel25tot50 -> veel 25 tot 50, 16tot31.5mm -> 16 tot 31,5 mm, um -> µm.
+        Afkortingen met cijfers (WGS84, AHN3, QM1), normcodes (17892-4:2016) en versies (v6.0) blijven staan."""
+        uit = []
+        for w in s.split(" "):
+            if not w or ACRONIEM.match(w) or re.fullmatch(r"[A-Z]+\d+[A-Za-z]?", w) or re.search(r"\d[-:]\d", w) \
+                    or re.fullmatch(r"[vV]\d+(\.\d+)*", w) or "" in w:
+                uit.append(w)
+                continue
+            w = re.sub(r"(?<=\d)\.(?=\d)", self.decimaal, w)
+            w = re.sub(r"(?<=\d)([a-zµ]{1,2})tot(?=\d)", r"\1 tot ", w)  # 1400umtot2mm
+            w = re.sub(r"(?<=\d)(tot|en|of)(?=\d)", r" \1 ", w)
+            w = re.sub(r"(?<=[A-Za-z])(?=\d)", " ", w)
+            w = re.sub(r"(?<=\d)(?=[A-Za-zµ°])", " ", w)
+            uit.append(w)
+        s = " ".join(uit)
+        s = re.sub(r"\bum\b", "µm", s)
+        s = re.sub(r"\bk ?pa\b", "kPa", s, flags=re.I)
+        return s
 
     def strip_prefix(self, name):
         for p in self.prefixen:
@@ -156,20 +208,32 @@ class Termen:
                 return name[len(p):]
         return name
 
-    def humanize(self, name):
+    def humanize(self, name, prefix=True):
         """camelCase/PascalCase -> woorden; afkortingen in hoofdletters blijven."""
         if name.strip().lower() in self.vast:
             return self.vast[name.strip().lower()]
-        s, bewaard = self._bescherm(self.strip_prefix(name.strip().lstrip("_")))
+        s = name.strip().lstrip("_")
+        s = self.strip_prefix(s) if prefix else s
+        extra = []
+        if self.normcodes:
+            s, extra = self._normcodes(s)
+        s, bewaard = self._bescherm(s, extra)
+        if self.getallen:
+            s = re.sub(r"_(?=[A-Za-z])", " ", s)  # klasseA_v2006 -> klasse A v2006
         if self.camel:
-            s = re.sub(r"([a-z0-9])([A-Z])", r"\1 \2", s)
+            s = re.sub(r"IJ(?=[a-z])", "\x01", s)  # IJ is één letter: obstakelIJzervloer -> obstakel ijzervloer
+            s = re.sub(r"([a-z0-9])([A-Z\x01])", r"\1 \2", s)
             s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1 \2", s)
+            s = s.replace("\x01", "IJ")
         if self.cijfers:  # golflengte12_5 -> golflengte 12,5
             s = re.sub(r"(\d)_(\d)", r"\1" + self.decimaal + r"\2", s)
             s = re.sub(r"([A-Za-z])(\d)", r"\1 \2", s)
         s = re.sub(r"\s+", " ", " ".join(self._woord(w) for w in s.split())).strip()
+        if self.getallen:
+            s = re.sub(r"\s+", " ", self._getallen(s)).strip()
         for tok, b in bewaard:
             s = s.replace(tok, b)
+        s = re.sub(r"\s+", " ", s).strip()
         for k, v in self.samenstellingen.items():
             s = s.replace(k, v)
         return s
@@ -181,6 +245,8 @@ class Termen:
             return self.vast[nm.lower()]
         if re.search(r"[a-z][A-Z]", nm):
             return self.humanize(nm)
+        if self.getallen or self.normcodes or any(k in nm for k, _ in self.afkortingen):
+            return self.humanize(nm, prefix=False)  # codes met getallen, normcodes of afkortingen
         return " ".join(self._woord(w) for w in nm.split())
 
 
