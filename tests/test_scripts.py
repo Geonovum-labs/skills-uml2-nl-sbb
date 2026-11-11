@@ -247,6 +247,42 @@ class Termen(unittest.TestCase):
             shutil.rmtree(w, ignore_errors=True)
 
 
+class Voorstellen(unittest.TestCase):
+    """Heuristische voorstellen van analyseer: alias, kader en samenvoegen van waarden."""
+
+    def test_alias_engels_of_nederlands(self):
+        import analyseer
+        bro = [("Booronderzoek", "BoreholeResearch"), ("Registratiegeschiedenis", "RegistrationHistory"),
+               ("Weggegraven laag", "ExcavatedLayer"), ("Tussentijdse gebeurtenis", "IntermediateEvent")]
+        imgeo = [("BuildingInstallation", "Gebouwinstallatie"), ("WaterBody", "Waterdeel"),
+                 ("AuxiliaryTrafficArea", "OndersteunendWegdeel"), ("CityFurniture", "Straatmeubilair")]
+        self.assertTrue(analyseer.alias_engels(bro))
+        self.assertFalse(analyseer.alias_engels(imgeo))
+        self.assertFalse(analyseer.alias_engels([("Boring", "Boring")]))  # gelijke namen tellen niet
+
+    def test_kader_uit_bovenliggende_package(self):
+        import analyseer
+        obj = {"k": {"pkg_path": ["Geotechnisch booronderzoek (BHR-GT)", "Model"]}}
+        v = analyseer.kader_voorstel({"packages": ["Model"], "bron": "BHR-GT_conceptueel-2.2.xml"}, obj)
+        self.assertEqual(v["uri"], "http://definities.geostandaarden.nl/bhr-gt")
+        self.assertEqual(v["titel"], "Begrippenkader Geotechnisch booronderzoek (BHR-GT)")
+        v = analyseer.kader_voorstel({"packages": ["Fietsparkeren"], "bron": "f.xmi"}, {"k": {"pkg_path": ["Fietsparkeren"]}})
+        self.assertEqual((v["uri"], v["titel"]), ("http://definities.geostandaarden.nl/fietsparkeren",
+                                                  "Fietsparkeren-begrippenkader"))
+
+    def test_samenvoegen_niet_bij_andere_getallen(self):
+        import analyseer
+        anders = [("grof", [("Grindmediaanklasse", "De grindmediaan is gelijk aan of groter dan 20 mm en kleiner dan 63 mm."),
+                            ("Zandmediaanklasse", "De zandmediaan is groter dan 630 μm en kleiner dan of gelijk aan 2000 μm.")]),
+                  ("geotextiel", [("A", "Een antropogeen bestanddeel: textiel en folies die meestal uit kunststof bestaan."),
+                                  ("B", "Antropogeen materiaal: textiel en folies die meestal uit kunststof bestaan.")]),
+                  ("veel", [("Fijn", "De fractie 2-5,6 mm maakt tussen 25 en 50 procent van de massa uit."),
+                            ("Grof", "De fractie 16-63 mm maakt tussen 25 en 50 procent van de massa uit.")])]
+        v = analyseer.split_voorstel(anders)["waarden"]
+        self.assertEqual(v["zelfde_begrip"], ["geotextiel"])
+        self.assertEqual(v["automatisch_splitsen"], "{lijst} {waarde}")
+
+
 class Signalen(unittest.TestCase):
     def test_termvoorstel_bij_leestekens(self):
         sys.argv = ["bk.py", "help"]

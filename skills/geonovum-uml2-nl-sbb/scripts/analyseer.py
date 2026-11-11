@@ -20,6 +20,9 @@ MIM = {"objecttype", "gegevensgroeptype", "codelijst", "enumeratie", "referentie
        "primitief datatype", "keuze", "attribuutsoort"}
 
 
+GETAL = re.compile(r"\d+(?:[.,]\d+)?")
+
+
 def split_voorstel(anders):
     """Per conflict: kleinste onderlinge gelijkenis van de definities. Hoog -> zelfde begrip, anders splitsen."""
     from difflib import SequenceMatcher
@@ -27,7 +30,9 @@ def split_voorstel(anders):
     for lab, lst in anders:
         defs = sorted({clean_def(d).lower() for _, d in lst})
         minimum = min((SequenceMatcher(None, a, b).ratio() for i, a in enumerate(defs) for b in defs[i + 1:]), default=1)
-        (zelfde if minimum >= 0.8 else rest).append(lab)
+        # andere getallen = ander begrip, hoe gelijk de zin ook is (grof: 20-63 mm vs 630-2000 µm)
+        getallen = {tuple(sorted(GETAL.findall(d))) for d in defs}
+        (zelfde if minimum >= 0.8 and len(getallen) == 1 else rest).append(lab)
     v = {"waarden": {}}
     if zelfde:
         v["waarden"]["zelfde_begrip"] = zelfde
@@ -76,6 +81,39 @@ def extern_voorstel(cod, lijsten, kolommen):
     if len(lijsten) < len(cod):
         ex["lijsten"] = lijsten
     return {"waarden": {"extern": ex}}
+
+
+def engels_score(s):
+    """Grove taalscore van een naam: positief = eerder Engels, negatief = eerder Nederlands."""
+    s = re.sub(r"([a-z])([A-Z])", r"\1 \2", s).lower()
+    nl = len(re.findall(r"ij|oe|aa|uu|ui|eu|sch|cht|heid|tie\b|isch|ige?\b|eer|oor|elijk|ng\b|en\b|eel", s))
+    en = len(re.findall(r"th|tion|ea|w|y|ph|sh|qu|ck|ity\b|ed\b|al\b|ous|ing\b", s))
+    return en - nl
+
+
+def alias_engels(paren):
+    """True als de aliassen in minstens twee derde van de paren (naam, alias) Engelser zijn dan de UML-naam."""
+    paren = [(n, a) for n, a in paren if a and a.lower().replace(" ", "") != n.lower().replace(" ", "")]
+    return bool(paren) and sum(engels_score(a) > engels_score(n) for n, a in paren) * 3 >= len(paren) * 2
+
+
+GENERIEK = {"model", "informatiemodel", "conceptueel model", "conceptueelmodel", "logisch model", "uml", "classes",
+            "package", "packages", "domein", "datamodel", "data model", "objecten", "objecttypen"}
+
+
+def kader_voorstel(inv, obj):
+    """Kader-URI en titel uit de modelnaam: een algemene packagenaam (Model) vervangen door de bovenliggende
+    package; een afkorting tussen haakjes (BHR-GT) wordt de URI-naam."""
+    paden = Counter(tuple(c.get("pkg_path") or []) for c in obj.values() if c.get("pkg_path"))
+    pad = list(paden.most_common(1)[0][0]) if paden else []
+    kand = [p for p in (inv.get("packages") or [])[:1]] + list(reversed(pad))
+    naam = next((k.split("/")[-1] for k in kand if k and k.split("/")[-1].strip().lower() not in GENERIEK), None)
+    naam = naam or os.path.splitext(os.path.basename(inv.get("bron", "model")))[0]
+    m = re.search(r"\(([A-Za-z][\w-]*)\)", naam)
+    slug = m.group(1).lower() if m else re.sub(r"[^0-9a-z]+", "", naam.lower())
+    return {"uri": "http://definities.geostandaarden.nl/" + slug,
+            "titel": f"Begrippenkader {naam}" if m or " " in naam else naam + "-begrippenkader",
+            "omschrijving": f"Begrippen uit het informatiemodel {naam}, omgezet volgens NL-SBB."}
 
 
 def bron_voorstel(onb):
@@ -312,7 +350,14 @@ def main(inv_pad, project, uitdir):
 
     # I. aliassen
     al = Counter(c["stereo"] for c in klassen.values() if c["alias"] and c["alias"] != c["name"])
-    if al:
+    engels = alias_engels([(c["name"], c["alias"]) for c in klassen.values() if c["alias"]])
+    if al and engels and not cfg["termen"].get("alias_als_voorkeursterm"):
+        punt("VRAAG", "alias", "Klassen met een alias, maar de aliassen lijken Engels en de UML-namen Nederlands: "
+             "UML-naam als voorkeursterm houden (standaard; de alias komt dan niet in het kader)?",
+             [f"«{s}»: {n}x, bv. " + ", ".join(f"{c['name']} = {c['alias']}" for c in klassen.values()
+                                                if c["stereo"] == s and c["alias"])[:200] for s, n in al.items()],
+             voorstel={"termen": {"alias_als_voorkeursterm": []}})
+    elif al:
         punt("INFO" if cfg["termen"].get("alias_als_voorkeursterm") else "VRAAG", "alias",
              "Klassen met een alias: alias als voorkeursterm gebruiken (termen.alias_als_voorkeursterm), met "
              + ("de UML-naam als altLabel@" + cfg['termen']['alias_naam_als_altlabel'] if cfg['termen'].get('alias_naam_als_altlabel')
@@ -367,9 +412,7 @@ def main(inv_pad, project, uitdir):
     if not cfg["kader"].get("uri"):
         punt("VRAAG", "kader", "Kader-URI, titel en omschrijving ontbreken (kader.uri / kader.titel / kader.omschrijving)",
              [f"modelnaam/package: {', '.join(sorted({c['pkg'] for c in obj.values() if c['pkg']}))}"],
-             voorstel={"kader": {"uri": "http://definities.geostandaarden.nl/" + re.sub(r"[^0-9a-z]+", "", (inv.get("packages") or [os.path.splitext(os.path.basename(inv.get("bron", "model")))[0]])[0].split("/")[-1].lower()),
-                                 "titel": (inv.get("packages") or [os.path.splitext(os.path.basename(inv.get("bron", "model")))[0]])[0].split("/")[-1] + "-begrippenkader",
-                                 "omschrijving": "Begrippen uit het informatiemodel " + os.path.basename(inv.get("bron", "")) + ", omgezet volgens NL-SBB."}})
+             voorstel={"kader": kader_voorstel(inv, obj)})
 
     os.makedirs(uitdir, exist_ok=True)
     json.dump(punten, open(os.path.join(uitdir, "beslispunten.json"), "w"), ensure_ascii=False, indent=1)
