@@ -54,8 +54,9 @@ def profiel(cfg, werk):
 def extern_zonder_begrip(data, kader_uri):
     """Match-doelen buiten het kader die in de graaf geen skos:Concept zijn (extern kader niet opgehaald)."""
     doelen = set()
+    eigen = set(data.subjects(SKOS.inScheme, None))
     for p in ("exactMatch", "closeMatch", "broadMatch", "narrowMatch", "relatedMatch"):
-        doelen |= {o for o in data.objects(None, SKOS[p]) if not str(o).startswith(kader_uri)}
+        doelen |= {o for o in data.objects(None, SKOS[p]) if not str(o).startswith(kader_uri) and o not in eigen}
     return {o for o in doelen if (o, rdflib.RDF.type, SKOS.Concept) not in data}
 
 
@@ -66,7 +67,7 @@ def run(naam, data, shapes, alleen, reports, label_graph, extern=frozenset()):
     door_extern = 0
     for r in rg.subjects(rdflib.RDF.type, SH.ValidationResult):
         foc = rg.value(r, SH.focusNode)
-        if alleen and not str(foc).startswith(alleen):
+        if alleen is not None and foc not in alleen:
             continue
         sev = str(rg.value(r, SH.resultSeverity)).split("#")[1]
         tel[sev] += 1
@@ -103,7 +104,9 @@ def main(kader, project, reports, *ctx):
         d2 = rdflib.Graph().parse(kader)
         for f in ctx:
             d2.parse(f)
-        delen.append(run("B-context", d2, shapes, uri, reports, d2, extern_zonder_begrip(d2, uri)))
+        # alleen bevindingen over het eigen kader tellen; de URI's kunnen uit een gepubliceerd kader komen
+        eigen = set(data.subjects())
+        delen.append(run("B-context", d2, shapes, eigen, reports, d2, extern_zonder_begrip(d2, uri)))
     open(os.path.join(reports, "shacl-samenvatting.txt"), "w").write(
         f"profiel {versie}, pySHACL {pyshacl.__version__}, advanced=True, inference=rdfs\n\n" + "\n\n".join(delen) + "\n")
 

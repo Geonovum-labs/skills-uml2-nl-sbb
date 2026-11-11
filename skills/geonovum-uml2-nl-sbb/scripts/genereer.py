@@ -71,7 +71,7 @@ def bestaande_uris(cfg, pub, vooraf, g, concepts, soort, notaties, uit, log):
         w.writerows(regels)
     gekoppeld = tel["URI"] + tel["term+definitie"] + tel["term (andere definitie)"] + tel["waarde in lijst"]
     log.append(f"URI's uit het gepubliceerde kader ({bron}): {gekoppeld} begrippen gekoppeld "
-               f"({tel['waarde in lijst']} waarden via hun waardelijst, {tel['URI']} op URI, "
+               f"({tel['waarde in lijst']} via hun klasse of waardelijst, {tel['URI']} op URI, "
                f"{tel['term+definitie']} op term en definitie, {tel['term (andere definitie)']} "
                f"op term met andere definitie), {tel['collectie URI'] + tel['collectie naam']} collecties; "
                f"{len(set(pub.subjects(RDF.type, SKOS.Concept))) - gekoppeld} gepubliceerde begrippen zonder tegenhanger. "
@@ -147,7 +147,12 @@ def main(inv_pad, project, uit):
     def concept(label, definition, kind, notation=None, source_tag=None, alt=(), alt_lang=(), toelichting="", codes=()):
         u = URIRef(uri(cfg, "begrip", local_name(label)))
         if u in concepts:
-            raise SystemExit(f"URI-botsing {u} ({label}); pas termen aan in project.yaml")
+            # andere term, zelfde URI (NITG-code en NITGcode): de soort erbij, en het in het log zetten
+            oud, n = u, 2
+            u = URIRef(uri(cfg, "begrip", f"{local_name(label)}_{kind}"))
+            while u in concepts:
+                u, n = URIRef(uri(cfg, "begrip", f"{local_name(label)}_{kind}{n}")), n + 1
+            log.append(f"URI-botsing: '{label}' ({kind}) en '{concepts[oud]}' geven beide {oud}; '{label}' krijgt {u}")
         concepts[u] = label
         used_labels[label.lower()] = u
         soort[u], notaties[u] = kind, notation or " | ".join(f"{c} [{str(c.datatype).rsplit('/', 1)[-1]}]" for c in codes)
@@ -272,6 +277,11 @@ def main(inv_pad, project, uit):
         for k, c in klassen.items():
             for a in c["attrs"]:
                 key = def_key(a["doc"]) if ac.get("samenvoegen") == "naam_en_definitie" else k
+                # identiteit eerst: heeft het gepubliceerde kader dit attribuut per klasse als eigen begrip
+                # (URI-pad .../Klasse/attribuut), dan niet samenvoegen met hetzelfde attribuut in een andere klasse
+                pid = ident.get((bestaand.norm(c["name"]), bestaand.norm(a["name"]))) if ident else None
+                if pid is not None and ac.get("samenvoegen") == "naam_en_definitie":
+                    key = f"{key}|pub:{pid}"
                 groups[(a["name"], key)].append((k, a))
         base_count = defaultdict(set)
         for (name, dk), lst in groups.items():
@@ -318,6 +328,8 @@ def main(inv_pad, project, uit):
                         source_tag=bron_tag(a, cfg), toelichting=a.get("toelichting", ""),
                         alt=[name] if name != label and not (eigen_term(a) and term_lang) else [],
                         alt_lang=[(name, term_lang)] if eigen_term(a) and term_lang and name != label else [])
+            if isinstance(dk, str) and "|pub:" in dk:
+                vooraf[u] = URIRef(dk.split("|pub:", 1)[1])
             for k, _ in lst:
                 if rel.get("attribuut_objecttype") == "related":
                     related(u, cls_uri[k])

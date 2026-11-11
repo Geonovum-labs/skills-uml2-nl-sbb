@@ -2,6 +2,7 @@
 
 | Rapport | Inhoud |
 |---|---|
+| [2026-11-11-bhr-gt.md](2026-11-11-bhr-gt.md) | BHR-GT 2.2 met de waardelijsten van GitHub en het gepubliceerde kader: 1707 van de 1824 URI's behouden, drie scriptfouten gevonden en opgelost |
 | [2026-11-11-imgeo-uris-en-relaties.md](2026-11-11-imgeo-uris-en-relaties.md) | Feedback op het IMGeo-kader verwerkt: URI's van het gepubliceerde kader behouden, `skos:broader` zonder isothes, botsingen en codes volgens NL-SBB |
 | [2026-11-10-imgeo-vier-runs.md](2026-11-10-imgeo-vier-runs.md) | Vier modellen op IMGeo 2.2, beoordeeld tegen een referentierun, en welke verbetervoorstellen zijn overgenomen |
 | [2026-11-09-imgeo-klein-model.md](2026-11-09-imgeo-klein-model.md) | IMGeo 2.2 door een klein, snel model: kader in orde, review zonder inhoud; basis voor de eval `imgeo-xmi` |

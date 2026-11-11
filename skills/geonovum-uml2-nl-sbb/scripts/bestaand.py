@@ -11,6 +11,7 @@ URI of op naam (prefLabel, rdfs:label of code), het kader zelf als beide er éé
 import collections
 import html
 import re
+import urllib.parse
 
 from rdflib import RDF, RDFS, Graph, Literal, URIRef
 from rdflib.namespace import SKOS
@@ -32,21 +33,56 @@ def termen(g, c):
     return [norm(t) for t in uit if norm(t)]
 
 
+def contexten(pub: Graph, c):
+    """Context van een gepubliceerd begrip uit zijn URI: het pad ervoor (BHR-GT: .../Boring/boorsnelheid) of
+    het deel na een '_' (IMGeo: .../Asfalt_fysiekVoorkomenWegPlus). Genormaliseerd."""
+    s = urllib.parse.unquote(str(c))
+    for kader in pub.subjects(RDF.type, SKOS.ConceptScheme):
+        if s.startswith(str(kader) + "/"):
+            s = s[len(str(kader)) + 1:]
+            break
+    delen = s.split("/")
+    uit = {norm(delen[-2])} if len(delen) >= 2 else set()
+    if "_" in delen[-1]:
+        uit.add(norm(delen[-1].split("_", 1)[1]))
+    return uit - {""}
+
+
 def waarde_identiteit(pub: Graph):
-    """{(waardelijst, waarde) genormaliseerd: gepubliceerde URI} uit de collecties van het gepubliceerde kader.
-    Zo blijft een waarde die per lijst een eigen gepubliceerd begrip heeft, ook in het nieuwe kader apart."""
+    """{(context, naam) genormaliseerd: gepubliceerde URI}. Context = de waardelijst (uit de collecties van het
+    gepubliceerde kader) of de klasse of lijst uit het URI-pad. Zo blijft een waarde of attribuut dat per lijst
+    of klasse een eigen gepubliceerd begrip heeft, ook in het nieuwe kader apart. genereer.py gebruikt een sleutel
+    alleen als de context een klasse of waardelijst in het model is."""
     uit = {}
     for col in pub.subjects(RDF.type, SKOS.Collection):
         for lijst in set(termen(pub, col)):
             for m in pub.objects(col, SKOS.member):
                 for t in termen(pub, m):
                     uit.setdefault((lijst, t), m)
+    for c in pub.subjects(RDF.type, SKOS.Concept):
+        for ctx in contexten(pub, c):
+            for t in termen(pub, c):
+                uit.setdefault((ctx, t), c)
+    return uit
+
+
+def context_ons(ons: Graph, o):
+    """Context van een begrip in het nieuwe kader: de klasse uit de notatie Klasse.attribuut, de waardelijst uit
+    het datatype van een code, of '' voor een klasse."""
+    uit = set()
+    for n in ons.objects(o, SKOS.notation):
+        if getattr(n, "datatype", None):
+            uit.add(norm(str(n.datatype).rsplit("/", 1)[-1]))
+        elif "." in str(n):
+            uit.add(norm(str(n).split(".", 1)[0]))
+        else:
+            uit.add("")
     return uit
 
 
 def koppel(ons: Graph, pub: Graph, vooraf=None):
     """-> (mapping {onze URI: gepubliceerde URI}, regels voor uri-koppeling.tsv, telling).
-    vooraf: koppelingen die al vaststaan (waarden via hun waardelijst)."""
+    vooraf: koppelingen die al vaststaan (attributen en waarden via hun klasse of waardelijst)."""
     mapping, regels, tel = {}, [], collections.Counter()
     oc = set(ons.subjects(RDF.type, SKOS.Concept))
     pc = sorted(set(pub.subjects(RDF.type, SKOS.Concept)))
@@ -64,7 +100,7 @@ def koppel(ons: Graph, pub: Graph, vooraf=None):
         bezet[o] = p
         if o != p:
             mapping[o] = p
-        regels.append((str(p), str(o), "waarde in gekoppelde waardelijst"))
+        regels.append((str(p), str(o), "via klasse of waardelijst"))
         tel["waarde in lijst"] += 1
 
     def leg(p, o, hoe):
@@ -89,6 +125,9 @@ def koppel(ons: Graph, pub: Graph, vooraf=None):
         pdef = norm(pub.value(p, SKOS.definition) or "")
         kand = {o for t in termen(pub, p) for o in idx.get(t, ()) if o not in bezet}
         zelfde = {o for o in kand if pdef and odef[o] == pdef}
+        if len(zelfde) > 1:  # bij gelijkspel beslist de context: klasse of lijst in het URI-pad, of geen pad
+            pctx = contexten(pub, p) or {""}
+            zelfde = {o for o in zelfde if context_ons(ons, o) & pctx} or zelfde
         if len(zelfde) == 1:
             leg(p, zelfde.pop(), "term+definitie")
         elif len(zelfde) > 1:

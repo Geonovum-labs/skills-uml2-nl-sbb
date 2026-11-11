@@ -36,7 +36,7 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 | Sleutel | Standaard | Alternatieven | Wanneer afwijken |
 |---|---|---|---|
 | `kader.uri` / `titel` / `omschrijving` | – (verplicht) | | Altijd invullen |
-| `uris.bestaand` | `null` | URL of bestand (Turtle) van het gepubliceerde kader | Het model is al eerder als begrippenkader gepubliceerd: begrippen, collecties en het kader houden hun URI. Koppeling op URI, dan term + definitie, dan unieke term; waarden via hun waardelijst. Zie `uit/uri-koppeling.tsv`; `bk.py bestaand <url>` zet het |
+| `uris.bestaand` | `null` | URL of bestand (Turtle) van het gepubliceerde kader | Het model is al eerder als begrippenkader gepubliceerd: begrippen, collecties en het kader houden hun URI. Koppeling op URI, dan term + definitie, dan unieke term; attributen en waarden via hun klasse of waardelijst (collecties, of het URI-pad: `Klasse/attribuut`, `Lijst/waarde`, `Waarde_lijst`). De gepubliceerde waardelijsten als begrip (BHR-GT) en associatierollen worden niet gekoppeld. Zie `uit/uri-koppeling.tsv`; `bk.py bestaand <url>` zet het |
 | `uris.*` | patroon definities.geostandaarden.nl | Elk patroon met `{kader}` en `{naam}` | Ander publicatiedomein of URI-strategie |
 | `stereotypen.waardelijst` / `datatype` | codeList, enumeration, … / dataType, union, … | Eigen stereotypen toevoegen | Het model gebruikt andere stereotypen (zie analyse "stereotypen") |
 | `stereotypen.overslaan` | [] | Lijst | Bv. «Interface», «Union», hulpklassen |

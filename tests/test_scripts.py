@@ -176,6 +176,55 @@ class Bestaand(unittest.TestCase):
         self.assertNotIn("niet gekoppeld", koppeling)
 
 
+def mini_model(w, elementen):
+    os.makedirs(os.path.join(w, "werk"), exist_ok=True)
+    with open(os.path.join(w, "werk", "inventaris.json"), "w", encoding="utf-8") as f:
+        json.dump({"bron": "t.xmi", "elementen": elementen, "externe_klassen": {}}, f)
+    bk(w, "zet", "kader.uri", "http://voorbeeld.nl/k")
+
+
+def klasse(naam, doc, attrs, soort="uml:Class"):
+    return {"name": naam, "type": soort, "stereo": None, "pkg": "M", "abstract": False, "doc": doc, "alias": None,
+            "gens": [], "tags": {}, "attrs": [{"id": f"{naam}.{n}", "name": n, "doc": d, "type": None, "tags": {}}
+                                             for n, d in attrs]}
+
+
+class Identiteit(unittest.TestCase):
+    def setUp(self):
+        self.w = tempfile.mkdtemp(prefix="bk-pad-")
+
+    def tearDown(self):
+        shutil.rmtree(self.w, ignore_errors=True)
+
+    def test_uri_botsing_wordt_opgelost(self):
+        """NITG-code (attribuut) en NITGcode (datatype) geven dezelfde URI; genereer stopt niet."""
+        mini_model(self.w, {"K": klasse("Boring", "Een boring.", [("NITG-code", "De oude code.")]),
+                            "D": klasse("NITGCode", "Een code uit DINO.", [], soort="uml:DataType")})
+        bk(self.w, "genereer")
+        uris = {r["uri"].rsplit("/", 1)[-1] for r in termen(self.w)}
+        self.assertEqual(uris & {"NITGCode", "NITGCode_attribuut"}, {"NITGCode", "NITGCode_attribuut"})
+        self.assertIn("URI-botsing", open(os.path.join(self.w, "uit", "beslissingen.md"), encoding="utf-8").read())
+
+    def test_attribuut_per_klasse_uit_uri_pad(self):
+        """Gepubliceerd kader zonder collecties met URI's .../Klasse/attribuut: per klasse een eigen begrip."""
+        mini_model(self.w, {"A": klasse("Boring", "Een boring.", [("diepte", "De diepte.")]),
+                            "B": klasse("Sondering", "Een sondering.", [("diepte", "De diepte.")])})
+        s = "http://voorbeeld.nl/kader/BHR"
+        ttl = f"""@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+<{s}> a skos:ConceptScheme .
+<{s}/Boring> a skos:Concept ; skos:inScheme <{s}> ; skos:prefLabel "Boring"@nl ; skos:definition "Een boring."@nl .
+<{s}/Sondering> a skos:Concept ; skos:inScheme <{s}> ; skos:prefLabel "Sondering"@nl ; skos:definition "Een sondering."@nl .
+<{s}/Boring/diepte> a skos:Concept ; skos:inScheme <{s}> ; skos:prefLabel "diepte"@nl ; skos:definition "De diepte."@nl .
+<{s}/Sondering/diepte> a skos:Concept ; skos:inScheme <{s}> ; skos:prefLabel "diepte"@nl ; skos:definition "De diepte."@nl .
+"""
+        schrijf(os.path.join(self.w, "pub.ttl"), ttl)
+        bk(self.w, "bestaand", "pub.ttl")
+        bk(self.w, "genereer")
+        t = {r["uri"]: r["voorkeursterm"] for r in termen(self.w)}
+        self.assertEqual(t, {f"{s}/Boring": "boring", f"{s}/Sondering": "sondering",
+                             f"{s}/Boring/diepte": "diepte boring", f"{s}/Sondering/diepte": "diepte sondering"})
+
+
 class Botsing(unittest.TestCase):
     def test_waarde_met_naam_van_objecttype(self):
         """Gelijke definitie: één begrip (ook lid van de collectie); andere definitie: lijst tussen haakjes."""
