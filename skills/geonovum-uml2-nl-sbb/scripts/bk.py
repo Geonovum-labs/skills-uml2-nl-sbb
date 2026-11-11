@@ -501,6 +501,24 @@ def cmd_waarden(_):
     volgende("bk.py analyseer (de waarden zijn nieuw; noem LET OP-meldingen hierboven aan de gebruiker)")
 
 
+def cmd_bestaand(a):
+    """Legt het gepubliceerde kader vast waarvan de URI's behouden blijven (uris.bestaand)."""
+    if not a:
+        sys.exit("Gebruik: bk.py bestaand <URL of bestand (Turtle) van het gepubliceerde begrippenkader>")
+    bron = a[0]
+    if not re.match(r"https?://", bron) and not os.path.exists(bron):
+        sys.exit(f"Bestand niet gevonden: {bron}")
+    proj = yaml_lees(PROJECT)
+    samenvoegen(proj, {"uris": {"bestaand": bron}, "besloten": ["bestaand-kader"],
+                       "notities": [f"uris.bestaand: URI's uit {bron}"]})
+    yaml_schrijf(PROJECT, proj)
+    if os.path.exists(P("werk", "bestaand.ttl")):
+        os.remove(P("werk", "bestaand.ttl"))  # opnieuw ophalen bij de volgende genereer
+    print(f"uris.bestaand = {bron}. Bij bk.py genereer houden gekoppelde begrippen en collecties hun gepubliceerde "
+          "URI; de koppeling staat in uit/uri-koppeling.tsv.")
+    volgende("bk.py analyseer")
+
+
 def cmd_genereer(_):
     if controleer(stil=True):
         sys.exit("Herstel eerst project.yaml (zie FOUT-regels).")
@@ -1035,6 +1053,7 @@ COMMANDO = {
     "controleer": (cmd_controleer, "project.yaml controleren (sleutels, namen, regexen)"),
     "toon": (cmd_toon, "<naam | Klasse.attribuut>: element uit de inventaris opzoeken"),
     "waarden": (cmd_waarden, "waarden van extern beheerde waardelijsten ophalen (waarden.extern)"),
+    "bestaand": (cmd_bestaand, "<url|bestand>: gepubliceerd kader waarvan de URI's behouden blijven (uris.bestaand)"),
     "genereer": (cmd_genereer, "kader.ttl + termen.tsv + beslissingen.md maken"),
     "valideer": (cmd_valideer, "SHACL-validatie (run A en B)"),
     "review": (cmd_review, "[klaar | --opnieuw]: reviewdelen maken / controleren en samenvoegen"),

@@ -7,7 +7,7 @@ kader:
 # Bron: register.geostandaarden.nl/informatiemodel/img/3.1.1/IMGeluid_v3_1_1.xmi, --package IMGeluid
 waarden:
   # Codes 1..12 komen in meerdere lijsten voor met verschillende betekenis
-  automatisch_splitsen: "{lijst} {waarde}"
+  automatisch_splitsen: "{waarde} ({lijst})"   # NL-SBB, zoals gepubliceerd: 1 (bovenbouwcode)
   splitsingen:
     industrieterrein|Geluidbron: geluidbron industrieterrein
     schiet- of springterrein|Geluidbron: geluidbron schiet- of springterrein

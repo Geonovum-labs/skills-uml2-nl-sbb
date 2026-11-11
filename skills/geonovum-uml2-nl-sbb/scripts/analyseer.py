@@ -37,7 +37,7 @@ def split_voorstel(anders):
     if zelfde:
         v["waarden"]["zelfde_begrip"] = zelfde
     if rest:
-        v["waarden"]["automatisch_splitsen"] = "{lijst} {waarde}"
+        v["waarden"]["automatisch_splitsen"] = "{waarde} ({lijst})"  # NL-SBB: onderscheidende term tussen haakjes
     return v
 
 
@@ -376,7 +376,7 @@ def main(inv_pad, project, uitdir):
     termen_nu = [T.humanize(n) for n in namen] + [T.waarde(n) for n in wnamen]
     geplakt = sorted({t for t in termen_nu if re.search(r"[a-z]\d|\d[a-z]", t) and not re.search(r"\d[-:]\d", t)
                       and not all(re.fullmatch(r"[A-Z]+\d+[A-Za-z]?|[^\d]*", w) for w in t.split())})
-    norm = sorted({n for n in namen + wnamen if Termen.NORM.search(n)})
+    norm = sorted({n for n in namen + wnamen if Termen.NORM.search(n) and n.lower() not in T.vast})  # vast: al geregeld
     alle_runs = {m.group(0) for n in namen + wnamen for m in re.finditer(r"[A-Z]{2,}", n)}
     runs = Counter()
     for n in namen + wnamen:
@@ -402,11 +402,20 @@ def main(inv_pad, project, uitdir):
              "voor RTKGPS). Netjes schrijven? Controleer de afkortingen: een samenstelling schrijf je met '-'.",
              det, voorstel={"termen": voorstel})
 
-    # J. parent-tag
+    # J. parent-tag (staat standaard uit: modelspecifiek, en niet elke parent is een generieke relatie)
     pt = rel.get("waarde_parent_tag")
     np_ = sum(1 for c in cod.values() for a in c["attrs"] if (a["tags"].get(pt) or "").strip())
     if pt and np_:
-        punt("INFO", "parent", f"{np_} waarden met tag '{pt}' -> broaderGeneric naar de bovenliggende waarde")
+        punt("INFO", "parent", f"{np_} waarden met tag '{pt}' -> skos:broader naar de bovenliggende waarde "
+             "(relaties.waarde_parent_tag; controleer of elke parent echt een bovenliggend begrip is)")
+
+    # J2. bestaand, al gepubliceerd kader: URI's gelijk houden
+    if not cfg["uris"].get("bestaand"):
+        punt("VRAAG", "bestaand-kader", "Is dit model al eerder als begrippenkader gepubliceerd? Geef dan de URL of het "
+             "bestand (Turtle), zodat bestaande begrippen en collecties hun URI houden: bk.py bestaand <url|bestand>. "
+             "Zo niet: bk.py overnemen bestaand-kader --standaard",
+             ["Koppeling per gepubliceerd begrip: gelijke URI, anders gelijke term (ook altLabel of code) met gelijke "
+              "definitie, anders gelijke term als die maar één keer voorkomt. Niet gekoppelde begrippen krijgen een nieuwe URI."])
 
     # K. kader
     if not cfg["kader"].get("uri"):

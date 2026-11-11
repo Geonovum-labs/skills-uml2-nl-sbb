@@ -70,9 +70,9 @@ class Keten(unittest.TestCase):
         # zelfde attribuutnaam, andere definitie -> objecttype-context
         self.assertIn("naam stalling", t)
         self.assertIn("naam fietsenrek", t)
-        # zelfde waarde, andere definitie -> automatisch gesplitst
-        self.assertIn("type rek overig", t)
-        self.assertIn("type stalling overig", t)
+        # zelfde waarde, andere definitie -> automatisch gesplitst, NL-SBB: lijst tussen haakjes
+        self.assertIn("overig (type rek)", t)
+        self.assertIn("overig (type stalling)", t)
         # zelfde waarde, alleen leestekens anders -> één begrip
         self.assertIn("onbekend", t)
         self.assertEqual(t["capaciteit fietsen"]["notatie"], "Stalling.capaciteitFietsen")
@@ -84,6 +84,21 @@ class Keten(unittest.TestCase):
         self.assertEqual(len(set(g.subjects(RDF.type, SKOS.Concept))), 21)
         self.assertEqual(len(set(g.subjects(RDF.type, SKOS.Collection))), 3)
         self.assertEqual(len(set(g.subjects(RDF.type, SKOS.ConceptScheme))), 1)
+
+    def test_generalisatie_is_broader_zonder_isothes(self):
+        kader = open(os.path.join(self.w, "uit", "kader.ttl"), encoding="utf-8").read()
+        self.assertNotIn("broaderGeneric", kader)
+
+    def test_code_van_waarde_in_notation_per_lijst(self):
+        import rdflib
+        from rdflib.namespace import SKOS
+        g = rdflib.Graph().parse(os.path.join(self.w, "uit", "kader.ttl"))
+        u = rdflib.URIRef("http://definities.geostandaarden.nl/fietsparkeren/id/begrip/InGebruik")
+        [code] = list(g.objects(u, SKOS.notation))
+        self.assertEqual((str(code), str(code.datatype).rsplit("/", 1)[-1]), ("inGebruik", "StatusStalling"))
+        # 'onbekend' staat in twee lijsten: één begrip met twee codes, elk getypeerd met zijn lijst
+        u = rdflib.URIRef("http://definities.geostandaarden.nl/fietsparkeren/id/begrip/Onbekend")
+        self.assertEqual(len(set(g.objects(u, SKOS.notation))), 2)
 
     def test_ontbrekende_definitie_in_log(self):
         log = open(os.path.join(self.w, "uit", "beslissingen.md"), encoding="utf-8").read()
@@ -117,6 +132,100 @@ class Keten(unittest.TestCase):
         r = open(os.path.join(self.w, "reports", "rapport.md"), encoding="utf-8").read()
         self.assertIn("begrippen: attribuut", r)
         self.assertIn("<!-- LLM:", r)
+
+
+class Bestaand(unittest.TestCase):
+    """URI's van een al gepubliceerd kader behouden (uris.bestaand)."""
+
+    def setUp(self):
+        self.w = tempfile.mkdtemp(prefix="bk-bestaand-")
+        for stap in (["start", FIXTURE, "--package", "Fietsparkeren"], ["analyseer"], ["overnemen", "--alle"], ["genereer"]):
+            bk(self.w, *stap)
+
+    def tearDown(self):
+        shutil.rmtree(self.w, ignore_errors=True)
+
+    def test_gepubliceerde_uris_blijven_gelijk(self):
+        import rdflib
+        from rdflib.namespace import SKOS
+        # 'gepubliceerd' kader: hetzelfde kader met andere URI's, en 'onbekend' per lijst een eigen begrip
+        tekst = open(os.path.join(self.w, "uit", "kader.ttl"), encoding="utf-8").read()
+        tekst = tekst.replace("/id/begrip/", "/id/begrip/oud-").replace("/id/collectie/", "/id/waardelijst/v1-")
+        pub = rdflib.Graph().parse(data=tekst, format="turtle")
+        oud = rdflib.URIRef("http://definities.geostandaarden.nl/fietsparkeren/id/begrip/oud-Onbekend")
+        tweede = rdflib.URIRef("http://definities.geostandaarden.nl/fietsparkeren/id/begrip/oud-Onbekend_2")
+        for p, o in list(pub.predicate_objects(oud)):
+            pub.add((tweede, p, o))
+        eerste_col, col = sorted(pub.subjects(SKOS.member, oud))  # 'onbekend' staat in twee lijsten
+        pub.remove((col, SKOS.member, oud))
+        pub.add((col, SKOS.member, tweede))
+        pub.serialize(os.path.join(self.w, "gepubliceerd.ttl"), format="turtle")
+
+        bk(self.w, "bestaand", "gepubliceerd.ttl")
+        bk(self.w, "genereer")
+        g = rdflib.Graph().parse(os.path.join(self.w, "uit", "kader.ttl"))
+        nieuw = set(g.subjects(rdflib.RDF.type, SKOS.Concept)) | set(g.subjects(rdflib.RDF.type, SKOS.Collection))
+        self.assertEqual(nieuw - set(pub.subjects()), set())  # elke URI komt uit het gepubliceerde kader
+        self.assertIn(tweede, nieuw)
+        # 'onbekend' is nu twee begrippen, onderscheiden met de lijst tussen haakjes
+        labels = {str(g.value(u, SKOS.prefLabel)) for u in (oud, tweede)}
+        self.assertEqual(labels, {f"onbekend ({pub.value(c, SKOS.prefLabel)})" for c in (eerste_col, col)})
+        # de codes zijn getypeerd met de gepubliceerde collectie-URI
+        self.assertEqual({str(c.datatype) for c in g.objects(tweede, SKOS.notation)}, {str(col)})
+        koppeling = open(os.path.join(self.w, "uit", "uri-koppeling.tsv"), encoding="utf-8").read()
+        self.assertNotIn("niet gekoppeld", koppeling)
+
+
+class Botsing(unittest.TestCase):
+    def test_waarde_met_naam_van_objecttype(self):
+        """Gelijke definitie: één begrip (ook lid van de collectie); andere definitie: lijst tussen haakjes."""
+        w = tempfile.mkdtemp(prefix="bk-botsing-")
+        try:
+            os.makedirs(os.path.join(w, "werk"))
+            el = {
+                "K": {"name": "Fiets", "type": "uml:Class", "stereo": None, "pkg": "M", "abstract": False,
+                      "doc": "Rijwiel met twee wielen.", "alias": None, "gens": [], "tags": {},
+                      "attrs": [{"id": "a", "name": "soort", "doc": "Soort vervoermiddel.", "type": "Vervoer", "tags": {}},
+                                {"id": "b", "name": "rem", "doc": "Soort rem.", "type": "Rem", "tags": {}}]},
+                "L": {"name": "Vervoer", "type": "uml:Enumeration", "stereo": None, "pkg": "M", "abstract": False,
+                      "doc": "", "alias": None, "gens": [], "tags": {},
+                      "attrs": [{"id": "w1", "name": "fiets", "doc": "Rijwiel met twee wielen.", "tags": {}}]},
+                "R": {"name": "Rem", "type": "uml:Enumeration", "stereo": None, "pkg": "M", "abstract": False,
+                      "doc": "", "alias": None, "gens": [], "tags": {},
+                      "attrs": [{"id": "w2", "name": "fiets", "doc": "Rem zoals op een gewone fiets.", "tags": {}}]},
+            }
+            with open(os.path.join(w, "werk", "inventaris.json"), "w", encoding="utf-8") as f:
+                json.dump({"bron": "t.xmi", "elementen": el, "externe_klassen": {}}, f)
+            bk(w, "zet", "kader.uri", "http://voorbeeld.nl/k")
+            bk(w, "zet", "waarden.splitsingen", "{fiets|Rem: fietsrem}")
+            bk(w, "genereer")
+            t = {r["voorkeursterm"]: r for r in termen(w)}
+            self.assertEqual(t["fiets"]["soort"], "objecttype")  # waarde 'fiets' in Vervoer = het objecttype
+            self.assertIn("fiets [Vervoer]", t["fiets"]["notatie"])
+            self.assertIn("fietsrem", t)
+        finally:
+            shutil.rmtree(w, ignore_errors=True)
+
+    def test_waarde_botst_met_andere_definitie(self):
+        w = tempfile.mkdtemp(prefix="bk-botsing-")
+        try:
+            os.makedirs(os.path.join(w, "werk"))
+            el = {
+                "K": {"name": "Weg", "type": "uml:Class", "stereo": None, "pkg": "M", "abstract": False,
+                      "doc": "Verkeersverbinding over land.", "alias": None, "gens": [], "tags": {},
+                      "attrs": [{"id": "a", "name": "functie", "doc": "Functie van de weg.", "type": "Functie", "tags": {}}]},
+                "L": {"name": "Functie", "type": "uml:Enumeration", "stereo": None, "pkg": "M", "abstract": False,
+                      "doc": "", "alias": None, "gens": [], "tags": {},
+                      "attrs": [{"id": "w1", "name": "weg", "doc": "Gebruik als rijbaan voor auto's.", "tags": {}}]},
+            }
+            with open(os.path.join(w, "werk", "inventaris.json"), "w", encoding="utf-8") as f:
+                json.dump({"bron": "t.xmi", "elementen": el, "externe_klassen": {}}, f)
+            bk(w, "zet", "kader.uri", "http://voorbeeld.nl/k")
+            bk(w, "genereer")
+            t = {r["voorkeursterm"]: r for r in termen(w)}
+            self.assertEqual((t["weg"]["soort"], t["weg (functie)"]["soort"]), ("objecttype", "waarde"))
+        finally:
+            shutil.rmtree(w, ignore_errors=True)
 
 
 class ProjectControle(unittest.TestCase):
@@ -280,7 +389,7 @@ class Voorstellen(unittest.TestCase):
                             ("Grof", "De fractie 16-63 mm maakt tussen 25 en 50 procent van de massa uit.")])]
         v = analyseer.split_voorstel(anders)["waarden"]
         self.assertEqual(v["zelfde_begrip"], ["geotextiel"])
-        self.assertEqual(v["automatisch_splitsen"], "{lijst} {waarde}")
+        self.assertEqual(v["automatisch_splitsen"], "{waarde} ({lijst})")
 
 
 class Signalen(unittest.TestCase):

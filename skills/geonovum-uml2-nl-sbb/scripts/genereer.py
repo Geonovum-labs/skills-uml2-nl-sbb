@@ -34,6 +34,52 @@ def context_term(base, ctx):
     return f"{base} {ctx}"
 
 
+def laad_bestaand(cfg, uit):
+    """Het gepubliceerde kader uit uris.bestaand (URL wordt in werk/bestaand.ttl bewaard), of None."""
+    from kern import haal
+    if not cfg["uris"].get("bestaand"):
+        return None
+    bron = str(cfg["uris"]["bestaand"])
+    werkmap = os.path.dirname(os.path.dirname(os.path.abspath(uit)))
+    if re.match(r"https?://", bron):
+        pad = os.path.join(werkmap, "werk", "bestaand.ttl")
+        if not os.path.exists(pad):
+            os.makedirs(os.path.dirname(pad), exist_ok=True)
+            if not haal(bron, pad, accept="text/turtle,*/*"):
+                sys.exit(f"uris.bestaand: {bron} is niet op te halen. Zet een lokaal bestand of los de toegang op.")
+    else:
+        pad = bron if os.path.isabs(bron) else os.path.join(werkmap, bron)
+        if not os.path.exists(pad):
+            sys.exit(f"uris.bestaand: bestand {pad} bestaat niet")
+    return Graph().parse(pad, format="turtle")
+
+
+def bestaande_uris(cfg, pub, vooraf, g, concepts, soort, notaties, uit, log):
+    """Vervangt de URI's van begrippen, collecties en het kader die in het gepubliceerde kader (uris.bestaand)
+    voorkomen door de gepubliceerde URI. Schrijft uit/uri-koppeling.tsv."""
+    import bestaand
+    bron = str(cfg["uris"]["bestaand"])
+    mapping, regels, tel = bestaand.koppel(g, pub, vooraf)
+    g = bestaand.herschrijf(g, mapping)
+    concepts = {mapping.get(u, u): lab for u, lab in concepts.items()}
+    soort = {mapping.get(u, u): s for u, s in soort.items()}
+    notaties = {mapping.get(u, u): n for u, n in notaties.items()}
+    os.makedirs(os.path.dirname(os.path.abspath(uit)), exist_ok=True)
+    with open(os.path.join(os.path.dirname(os.path.abspath(uit)), "uri-koppeling.tsv"), "w", newline="") as f:
+        w = csv.writer(f, delimiter="\t")
+        w.writerow(["gepubliceerd", "ons (gegenereerd)", "koppeling"])
+        w.writerows(regels)
+    gekoppeld = tel["URI"] + tel["term+definitie"] + tel["term (andere definitie)"] + tel["waarde in lijst"]
+    log.append(f"URI's uit het gepubliceerde kader ({bron}): {gekoppeld} begrippen gekoppeld "
+               f"({tel['waarde in lijst']} waarden via hun waardelijst, {tel['URI']} op URI, "
+               f"{tel['term+definitie']} op term en definitie, {tel['term (andere definitie)']} "
+               f"op term met andere definitie), {tel['collectie URI'] + tel['collectie naam']} collecties; "
+               f"{len(set(pub.subjects(RDF.type, SKOS.Concept))) - gekoppeld} gepubliceerde begrippen zonder tegenhanger. "
+               "Details: uit/uri-koppeling.tsv")
+    print(log[-1])
+    return g, concepts, soort, notaties
+
+
 def main(inv_pad, project, uit):
     cfg = laad_keuzes(project)
     if not cfg["kader"].get("uri"):
@@ -42,6 +88,10 @@ def main(inv_pad, project, uit):
     T = Termen(cfg)
     taal = cfg["kader"].get("taal", "nl")
     log, open_beslissingen = [], []
+    pub = laad_bestaand(cfg, uit)
+    import bestaand
+    ident = bestaand.waarde_identiteit(pub) if pub is not None else {}
+    vooraf = {}  # onze URI -> gepubliceerde URI, voor waarden waarvan de identiteit vaststaat
 
     def lit(s):
         return Literal(s, lang=taal)
@@ -94,13 +144,13 @@ def main(inv_pad, project, uit):
     concepts, used_labels = {}, {}
     soort, notaties = {}, {}
 
-    def concept(label, definition, kind, notation=None, source_tag=None, alt=(), alt_lang=(), toelichting=""):
+    def concept(label, definition, kind, notation=None, source_tag=None, alt=(), alt_lang=(), toelichting="", codes=()):
         u = URIRef(uri(cfg, "begrip", local_name(label)))
         if u in concepts:
             raise SystemExit(f"URI-botsing {u} ({label}); pas termen aan in project.yaml")
         concepts[u] = label
         used_labels[label.lower()] = u
-        soort[u], notaties[u] = kind, notation or ""
+        soort[u], notaties[u] = kind, notation or " | ".join(f"{c} [{str(c.datatype).rsplit('/', 1)[-1]}]" for c in codes)
         g.add((u, RDF.type, SKOS.Concept))
         g.add((u, SKOS.inScheme, SCHEME))
         g.add((u, SKOS.prefLabel, lit(label)))
@@ -111,6 +161,8 @@ def main(inv_pad, project, uit):
             log.append(f"Geen definitie in het model: '{label}' ({notation})")
         if notation:
             g.add((u, SKOS.notation, Literal(notation)))
+        for c in codes:  # codes van waarden: getypeerd met de waardelijst, zo uniek per lijst
+            g.add((u, SKOS.notation, c))
         t = clean_def(toelichting)
         if t:
             g.add((u, SKOS.scopeNote, lit(t)))
@@ -289,6 +341,11 @@ def main(inv_pad, project, uit):
             else:
                 lab = hernoem.get(nm.lower()) or eigen_term(a) or T.waarde(nm)
             key = lab if wc.get("samenvoegen") == "naam_en_definitie" else (lab, c["name"])
+            # identiteit eerst: heeft het gepubliceerde kader deze waarde in deze lijst als eigen begrip,
+            # dan blijft ze apart van dezelfde waarde in een andere lijst
+            pid = ident.get((bestaand.norm(c["name"]), bestaand.norm(nm))) if ident else None
+            if pid is not None and isinstance(key, str):
+                key = (lab, f"pub:{pid}")
             val_groups[key].append((k, a))
 
     # automatisch splitsen (waarden.automatisch_splitsen = patroon met {waarde} en {lijst})
@@ -307,6 +364,22 @@ def main(inv_pad, project, uit):
                 val_groups[nieuw if isinstance(key, str) else (nieuw, key[1])].append((k, a))
             log.append(f"Waarde '{lab}': verschillende definities per lijst; automatisch gesplitst volgens '{auto}'")
 
+    def coll_uri(k):
+        naam = codelists[k]["name"]
+        return URIRef(uri(cfg, "collectie", naam if re.fullmatch(r"[\w.-]+", naam, re.A) else local_name(naam)))
+
+    def codes(lst):
+        """skos:notation van een waarde: de code uit het model, getypeerd met de waardelijst (waarden.notatie)."""
+        wijze = wc.get("notatie", "code")
+        uit = []
+        for k, a in lst:
+            code = a["name"].strip() if wijze == "code" else (a["tags"].get(wc.get("notatie_tag") or "") or "").strip()
+            if wijze != "geen" and code:
+                uit.append(Literal(code, datatype=coll_uri(k)))
+        return uit
+
+    from collections import Counter as _Counter
+    homoniem = _Counter((key if isinstance(key, str) else key[0]).lower() for key in val_groups)
     val_uri = {}
     for key, lst in sorted(val_groups.items(), key=lambda kv: str(kv[0])):
         lab = key if isinstance(key, str) else key[0]
@@ -327,17 +400,42 @@ def main(inv_pad, project, uit):
             log.append(f"Waarde '{lab}': definities verschilden alleen in leestekens/entiteiten; samengevoegd")
         d = sorted(variants, key=lambda s: (not s.endswith("."), ";" in s, len(s)))[0]
         label = lab
-        if label.lower() in used_labels:
-            label = f"{label}{wc.get('botsing_achtervoegsel', ' waarde')}"
-            log.append(f"Waarde '{lab}' botst met bestaand begrip; voorkeursterm '{label}'")
-        names = sorted({a["name"].strip() for _, a in lst})
         k0, a0 = lst[0]
-        nt = a0["tags"].get(wc["notatie_tag"]) if wc.get("notatie_tag") else None
-        u = concept(label, d, "waarde", notation=nt or None,
+        pid = key[1][4:] if isinstance(key, tuple) and str(key[1]).startswith("pub:") else None
+        if pid and homoniem[lab.lower()] > 1:
+            # dezelfde waarde is in het gepubliceerde kader per lijst een eigen begrip: onderscheiden (NL-SBB)
+            label = (wc.get("botsing") or "{waarde} ({lijst})").format(waarde=lab, lijst=T.humanize(codelists[k0]["name"]))
+            log.append(f"Waarde '{lab}' is in het gepubliceerde kader per waardelijst een eigen begrip; "
+                       f"voorkeursterm '{label}'")
+        if label.lower() in used_labels and not pid:
+            # botsing met een bestaand begrip: eerst op definitie (gelijk = hetzelfde begrip), anders
+            # onderscheiden volgens NL-SBB, met de waardelijst tussen haakjes
+            ander = used_labels[label.lower()]
+            if def_key(d) and def_key(d) == def_key(str(g.value(ander, SKOS.definition) or "")):
+                for c in codes(lst):
+                    g.add((ander, SKOS.notation, c))
+                    notaties[ander] = " | ".join(x for x in (notaties[ander], f"{c} [{str(c.datatype).rsplit('/', 1)[-1]}]") if x)
+                for k, a in lst:
+                    val_uri[(k, a["name"].strip())] = ander
+                log.append(f"Waarde '{lab}' heeft dezelfde definitie als het andere begrip '{concepts[ander]}': "
+                           "één begrip, ook lid van de collectie")
+                continue
+            oud = wc.get("botsing_achtervoegsel")
+            label = f"{label}{oud}" if oud else (wc.get("botsing") or "{waarde} ({lijst})").format(
+                waarde=lab, lijst=T.humanize(codelists[k0]["name"]))
+            log.append(f"Waarde '{lab}' botst met ander begrip '{concepts[ander]}' (andere definitie); "
+                       f"voorkeursterm '{label}'")
+        elif label.lower() in used_labels:
+            label = (wc.get("botsing") or "{waarde} ({lijst})").format(waarde=lab, lijst=T.humanize(codelists[k0]["name"]))
+            log.append(f"Waarde '{lab}' botst met een ander begrip; voorkeursterm '{label}'")
+        names = sorted({a["name"].strip() for _, a in lst})
+        u = concept(label, d, "waarde", codes=codes(lst),
                     source_tag=bron_tag(a0, cfg) or bron_tag(codelists[k0], cfg), toelichting=a0.get("toelichting", ""),
                     alt=[n for n in names if n.lower() != label.lower()] + sorted(split_orig.get(lab, ())))
         for k, a in lst:
             val_uri[(k, a["name"].strip())] = u
+        if pid:
+            vooraf[u] = URIRef(pid)
         if len(lst) > 1:
             log.append(f"Waarde '{label}' staat in {len(lst)} waardelijsten: "
                        f"{', '.join(codelists[k]['name'] for k, _ in lst)}")
@@ -356,8 +454,7 @@ def main(inv_pad, project, uit):
                 log.append(f"Waardelijst '{c['name']}' heeft geen waarden in het model (extern beheerd?"
                            f"{' Locatie: ' + c['tags']['Locatie'] if c['tags'].get('Locatie') else ''}); geen collectie")
                 continue
-            cnaam = c["name"] if re.fullmatch(r"[\w.-]+", c["name"], re.A) else local_name(c["name"])
-            cu = URIRef(uri(cfg, "collectie", cnaam))
+            cu = coll_uri(k)
             g.add((cu, RDF.type, SKOS.Collection))
             g.add((cu, SKOS.prefLabel, lit(T.humanize(c["name"]))))
             g.add((cu, SKOS.notation, Literal(c["name"])))
@@ -429,6 +526,10 @@ def main(inv_pad, project, uit):
             log.append(f"Match niet gelegd: begrip '{m['term']}' bestaat niet")
             continue
         g.add((lab2uri[m["term"]], SKOS[m["relatie"]], URIRef(m["uri"])))
+
+    # ---------- URI's van een al gepubliceerd kader ----------
+    if pub is not None:
+        g, concepts, soort, notaties = bestaande_uris(cfg, pub, vooraf, g, concepts, soort, notaties, uit, log)
 
     os.makedirs(os.path.dirname(os.path.abspath(uit)), exist_ok=True)
     g.serialize(uit, format="turtle")

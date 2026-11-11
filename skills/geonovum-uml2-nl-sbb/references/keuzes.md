@@ -11,17 +11,20 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 2. **Waarden in meerdere waardelijsten:**
    - zelfde naam + zelfde definitie → één begrip, lid van meerdere collecties
    - definities die alleen in leestekens verschillen → samenvoegen
-   - inhoudelijk andere definitie → splitsen in aparte begrippen (de gebruiker kiest de termen)
+   - inhoudelijk andere definitie → splitsen in aparte begrippen (de gebruiker kiest de termen); NL-SBB-vorm: `onverhard (wegdeel)`
+   - een waardeterm die al een ander begrip is (waarde `weg`, objecttype `weg`): gelijke definitie → één begrip, anders `weg (functie)`
+   - de code van een waarde (de naam in het model) staat altijd in `skos:notation`, getypeerd met de waardelijst
+   - met een gepubliceerd kader (`uris.bestaand`) gaat de identiteit voor: is een waarde daar per lijst een eigen begrip, dan blijft dat zo
 3. **Termen:**
    - camelCase wordt woorden in kleine letters; afkortingen blijven staan
    - attributen krijgen objecttype-context (`type bak`) waar de naam niet uniek is
    - de UML-naam wordt `altLabel`; `skos:notation` = `Klasse.attribuut`
 4. **Relaties:**
-   - generalisatie → `skos:broader` + `isothes:broaderGeneric`
+   - generalisatie → `skos:broader` (geen `isothes:broaderGeneric`, tenzij gekozen)
    - attribuut `related` objecttype
    - waarde `related` het attribuut dat de lijst gebruikt (of het objecttype als dat attribuut niet in het model staat)
-   - parent-tag van waarden → `broaderGeneric`
-5. **URI's:** `{kader}/id/begrip/{Term}`, `{kader}/id/collectie/{Lijst}`, `{kader}/id/bron/{Sleutel}`.
+   - een parent-tag van waarden wordt standaard niet gebruikt (modelspecifiek; aan te zetten met `relaties.waarde_parent_tag`)
+5. **URI's:** `{kader}/id/begrip/{Term}`, `{kader}/id/collectie/{Lijst}`, `{kader}/id/bron/{Sleutel}`. Is het model al gepubliceerd, dan houden gekoppelde begrippen en collecties hun gepubliceerde URI (`uris.bestaand`).
 6. **Extern:**
    - `dct:source` uit de tag *Herkomst definitie*
    - harmonisatierelaties naar NEN 3610:2011 en BAG
@@ -33,6 +36,7 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 | Sleutel | Standaard | Alternatieven | Wanneer afwijken |
 |---|---|---|---|
 | `kader.uri` / `titel` / `omschrijving` | – (verplicht) | | Altijd invullen |
+| `uris.bestaand` | `null` | URL of bestand (Turtle) van het gepubliceerde kader | Het model is al eerder als begrippenkader gepubliceerd: begrippen, collecties en het kader houden hun URI. Koppeling op URI, dan term + definitie, dan unieke term; waarden via hun waardelijst. Zie `uit/uri-koppeling.tsv`; `bk.py bestaand <url>` zet het |
 | `uris.*` | patroon definities.geostandaarden.nl | Elk patroon met `{kader}` en `{naam}` | Ander publicatiedomein of URI-strategie |
 | `stereotypen.waardelijst` / `datatype` | codeList, enumeration, … / dataType, union, … | Eigen stereotypen toevoegen | Het model gebruikt andere stereotypen (zie analyse "stereotypen") |
 | `stereotypen.overslaan` | [] | Lijst | Bv. «Interface», «Union», hulpklassen |
@@ -56,13 +60,16 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 | `attributen.samenvoegen` | `naam_en_definitie` | `nooit` | De gebruiker wil per klasse een eigen attribuutbegrip |
 | `waarden.samenvoegen` | `naam_en_definitie` | `nooit` | Eén begrip per waardelijst (zoals in het gepubliceerde IMGeo-kader; geeft dubbele voorkeurstermen) |
 | `waarden.splitsingen` | {} | "waarde\|Lijst" → term | Verplicht bij gelijke naam en inhoudelijk andere definitie |
-| `waarden.automatisch_splitsen` | `null` | Patroon, bv. `"{lijst} {waarde}"` | Veel conflicten van dezelfde soort, bv. codes 1–12 in meerdere lijsten (IMGeluid) |
+| `waarden.automatisch_splitsen` | `null` | Patroon, bv. `"{waarde} ({lijst})"` (NL-SBB) | Veel conflicten van dezelfde soort, bv. codes 1–12 in meerdere lijsten (IMGeluid: `1 (bovenbouwcode)`) |
+| `waarden.botsing` | `"{waarde} ({lijst})"` | Ander patroon | Een waardeterm is al een ander begrip met een andere definitie. Bij gelijke definitie wordt het één begrip. (`botsing_achtervoegsel`, voorheen `" waarde"`, gaat voor als het gezet is) |
+| `waarden.notatie` | `code` | `tag` (uit `notatie_tag`), `geen` | De code is de waardenaam in het model, als `skos:notation` met de waardelijst als datatype; zo blijft hij stabiel en uniek per lijst |
 | `waarden.zelfde_begrip` | [] | Waardenamen | Eén begrip ondanks kleine verschillen in formulering (IMEV: "gegeven in transitie") |
 | `waarden.hernoem` | {} | waarde → term | Bv. `niet-bgt` → `niet-BGT-object` |
 | `waarden.extern.bron` | `null` | URL of pad met `{lijst}` | De UML-lijsten hebben alleen kolommen (Waarde, Omschrijving) en de waarden staan in een bestand per lijst, bv. de BRO-domeintabellen |
 | `waarden.extern.naam` / `definitie` / `tags` / `lijsten` | `Waarde` / `Omschrijving` / [] / [] | Andere veldnamen; alleen bepaalde lijsten | Volg de kolommen uit de analyse; `tags` zijn veldnamen in het bestand (zonder leestekens: `IMBROA`) |
-| `waarden.notatie_tag` | `null` | Tagnaam, bv. `Code` | Waarden hebben codes die als notatie moeten |
-| `relaties.generalisatie` | `broaderGeneric` | `broader`, `geen` | – |
+| `waarden.notatie_tag` | `null` | Tagnaam, bv. `Code` | Met `notatie: tag`: de code staat in een tagged value |
+| `relaties.generalisatie` | `broader` | `broaderGeneric`, `geen` | `broaderGeneric` (ook `isothes:broaderGeneric`) alleen als het kader ook andere ISO 25964-relaties gebruikt |
+| `relaties.waarde_parent_tag` | `null` | Tagnaam, bv. `parent` | Het model legt bovenliggende waarden in een tag vast en de werkgroep wil die als `skos:broader`; controleer of elke parent echt een bovenliggend begrip is |
 | `relaties.wortel` | `null` (klassen zonder superklasse = topbegrip) | UML-naam | Er is een basisklasse (`_CityObject`, `GeoObject`) |
 | `relaties.zelfstandig` | [] | UML-namen | Klassen zonder superklasse die topbegrip moeten blijven |
 | `relaties.externe_superklasse_op_naam` | `true` | `false` | – |
