@@ -50,6 +50,7 @@ Leg deze momenten voor, als keuzevraag met opties als dat kan; één onderwerp p
 |---|---|
 | `start` toont een packageboom | Welke package(s)? Stel het informatiemodel zelf voor. Ingesloten basismodellen (NEN 3610, GML, ISO, MIM) laat je weg, tenzij zo'n model zelf het om te zetten model is. |
 | `start` noemt een voorbeeld | Mag het ingevulde voorbeeld (`voorbeelden/<naam>.yaml`) gebruikt worden? Zo ja: `bk.py voorbeeld <naam>`. |
+| VRAAG `waarden-extern` | De waardelijsten bevatten alleen kolommen; de waarden staan elders. Laat de bron-URL bevestigen (versiemap!), zet hem met `bk.py zet waarden.extern.bron '<url met {lijst}>'` en draai `bk.py waarden`. |
 | eerste `analyseer` | Eén keer: de standaardkeuzes (zie `references/keuzes.md`, "Samenvatting"). Vraag of ze goed zijn. |
 | elk VRAAG-punt (`bk.py vraag <nr>`) | Het scriptvoorstel als eerste optie, "standaard houden" als tweede. |
 | review met oordeel `term` | De betere termen, vóór je ze met `bk.py zet` vastlegt. |
@@ -147,6 +148,7 @@ Wil je meer in het rapport, zoals de doorgevoerde termcorrecties? Schrijf dat in
 | `setup` | Maakt `.venv` in de werkmap en installeert de pakketten. |
 | `start <bestand> [--package P] [--zonder P]` | Maakt de inventaris uit XMI 1.1/2.x, EAP, EAPX, QEA of ZIP. Bij dubbele packagenamen geef je een pad: `Ouder/Kind`. |
 | `voorbeeld <naam>` | Kopieert `voorbeelden/<naam>.yaml` naar `project.yaml`. `start` noemt het voorbeeld als het bij het bestand past. |
+| `waarden` | Haalt de waarden van extern beheerde waardelijsten op (`waarden.extern`, XML/CSV/TSV per lijst) en zet ze in de inventaris. Na een nieuwe `start` opnieuw nodig; `status` zegt dat. |
 | `analyseer` | Maakt de beslispunten: INFO (alleen noemen), VRAAG (beslissen), BESLOTEN. |
 | `vraag <nr>` | Toont één beslispunt met details en scriptvoorstel. |
 | `overnemen <code…> \| --alle [--standaard]` | Zet scriptvoorstel(len) in `project.yaml`. |

@@ -194,7 +194,7 @@ def cmd_start(a):
         volgende(f"vraag de gebruiker of het voorbeeld gebruikt mag worden; zo ja: bk.py voorbeeld {vb}. "
                  "Anders (of zonder gebruiker: ook gebruiken en als aanname noemen): bk.py analyseer")
         return
-    volgende("bk.py analyseer")
+    volgende("bk.py waarden" if extern_bron() else "bk.py analyseer")
 
 
 def voorbeeld_voorstel(bestandsnaam, packages):
@@ -415,6 +415,18 @@ def controleer(stil=False):
             fouten.append(f"waarden.splitsingen: sleutel '{sl}' moet 'waarde|Waardelijst' zijn")
         elif inv["elementen"] and sl.split("|")[1] not in klassen:
             fouten.append(f"waarden.splitsingen: waardelijst '{sl.split('|')[1]}' bestaat niet")
+    ex = w.get("extern") or {}
+    if not isinstance(ex, dict):
+        fouten.append("waarden.extern moet een sectie zijn (bron, naam, definitie, tags, lijsten)")
+    else:
+        for k2 in ex:
+            if k2 not in std["waarden"]["extern"]:
+                fouten.append(f"onbekende sleutel 'waarden.extern.{k2}'" + _lijkt(k2, std["waarden"]["extern"]))
+        if ex.get("bron") and "{lijst}" not in str(ex["bron"]):
+            fouten.append("waarden.extern.bron moet {lijst} bevatten, bv. https://.../lists/{lijst}.xml")
+        for n in ex.get("lijsten") or []:
+            if inv["elementen"] and n not in klassen:
+                fouten.append(f"waarden.extern.lijsten: waardelijst '{n}' bestaat niet")
     if w.get("automatisch_splitsen") and "{waarde}" not in w["automatisch_splitsen"]:
         fouten.append("waarden.automatisch_splitsen moet {waarde} bevatten, bv. \"{lijst} {waarde}\"")
     r = cfg["relaties"]
@@ -471,6 +483,23 @@ def cmd_controleer(_):
 
 
 # ---------- genereren en valideren ----------
+
+def extern_bron():
+    """waarden.extern.bron uit project.yaml, als de waarden daarvan nog niet in de inventaris staan."""
+    bron = ((yaml_lees(PROJECT).get("waarden") or {}).get("extern") or {}).get("bron")
+    if bron and os.path.exists(INV) and (json.load(open(INV)).get("waarden_extern") or {}).get("bron") != bron:
+        return bron
+    return None
+
+
+def cmd_waarden(_):
+    if not os.path.exists(INV):
+        sys.exit("Eerst: bk.py start <bestand>")
+    if not ((yaml_lees(PROJECT).get("waarden") or {}).get("extern") or {}).get("bron"):
+        sys.exit("waarden.extern.bron ontbreekt in project.yaml (zie beslispunt waarden-extern: bk.py analyseer)")
+    run("waarden_extern.py", INV, PROJECT, P("werk", "lijsten"))
+    volgende("bk.py analyseer (de waarden zijn nieuw; noem LET OP-meldingen hierboven aan de gebruiker)")
+
 
 def cmd_genereer(_):
     if controleer(stil=True):
@@ -961,6 +990,8 @@ def cmd_status(_):
         if os.path.exists(P("werk", "packages.txt")):
             return stap("kies package(s) uit werk/packages.txt en draai bk.py start <bestand> --package <naam>")
         return stap("bk.py start <bestand>")
+    if extern_bron():
+        return stap("bk.py waarden (waarden van de extern beheerde waardelijsten ophalen)")
     if not nieuwer(BESLIS, INV) or not nieuwer(BESLIS, PROJECT):
         return stap("bk.py analyseer")
     open_ = [(i, p) for i, p in enumerate(punten(), 1) if p["soort"] == "VRAAG"]
@@ -1003,6 +1034,7 @@ COMMANDO = {
     "zet": (cmd_zet, "<sleutel.pad> '<yaml-waarde>' [--notitie T]: één keuze in project.yaml"),
     "controleer": (cmd_controleer, "project.yaml controleren (sleutels, namen, regexen)"),
     "toon": (cmd_toon, "<naam | Klasse.attribuut>: element uit de inventaris opzoeken"),
+    "waarden": (cmd_waarden, "waarden van extern beheerde waardelijsten ophalen (waarden.extern)"),
     "genereer": (cmd_genereer, "kader.ttl + termen.tsv + beslissingen.md maken"),
     "valideer": (cmd_valideer, "SHACL-validatie (run A en B)"),
     "review": (cmd_review, "[klaar | --opnieuw]: reviewdelen maken / controleren en samenvoegen"),

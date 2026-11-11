@@ -237,6 +237,85 @@ class Package(unittest.TestCase):
             shutil.rmtree(w, ignore_errors=True)
 
 
+def schrijf(pad, tekst):
+    with open(pad, "w", encoding="utf-8") as f:
+        f.write(tekst)
+
+
+def lees_json(pad):
+    with open(pad, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def kolomlijst(naam, kolommen=("Waarde", "IMBRO", "Omschrijving")):
+    """Waardelijst zoals in de BRO-catalogi: alleen kolommen, geen waarden."""
+    return {"name": naam, "type": "uml:DataType", "stereo": "Referentielijst", "pkg": "Model", "abstract": False,
+            "doc": f"De lijst {naam}.", "alias": None, "gens": [], "tags": {
+                "Locatie": f"https://voorbeeld.nl/lists/{naam}.xml"},
+            "attrs": [{"id": f"{naam}-{k}", "name": k, "doc": f"Kolom {k}.", "type": "Tekst",
+                       "stereo": "Referentie element", "tags": {}} for k in kolommen]}
+
+
+class WaardenExtern(unittest.TestCase):
+    """Extern beheerde waardelijsten: herkennen (analyseer) en vullen (bk.py waarden)."""
+
+    def setUp(self):
+        self.w = tempfile.mkdtemp(prefix="bk-extern-")
+        self.lijsten = ["Kleur", "Vorm", "Coördinaatstelsel"]
+        self.inv = {"bron": "test.xmi", "packages": ["Model"], "zonder": [], "externe_klassen": {},
+                    "elementen": {f"L{i}": kolomlijst(n) for i, n in enumerate(self.lijsten)}}
+        self.inv["elementen"]["K"] = {"name": "Ding", "type": "uml:Class", "stereo": "Objecttype", "pkg": "Model",
+                                      "abstract": False, "doc": "Een ding.", "alias": None, "gens": [], "tags": {},
+                                      "attrs": [{"id": "a", "name": "kleur", "doc": "De kleur.", "type": "Kleur",
+                                                 "stereo": None, "tags": {}}]}
+        os.makedirs(os.path.join(self.w, "werk"))
+        os.makedirs(os.path.join(self.w, "lijsten"))
+        schrijf(os.path.join(self.w, "werk", "inventaris.json"), json.dumps(self.inv, ensure_ascii=False))
+        rij = "<{l}><Waarde>{w}</Waarde><IMBRO>v</IMBRO><Omschrijving>{d}</Omschrijving></{l}>"
+        schrijf(os.path.join(self.w, "lijsten", "Kleur.xml"), "<domeintabel>" + rij.format(l="Kleur", w="rood", d="De kleur rood.")
+            + rij.format(l="Kleur", w="donkerBlauw", d="De kleur donkerblauw.") + "</domeintabel>")
+        schrijf(os.path.join(self.w, "lijsten", "Vorm.xml"), "<domeintabel>" + rij.format(l="Vorm", w="rond", d="Zonder hoeken.") + "</domeintabel>")
+        # bestandsnaam zonder trema, zoals in de BRO-repository
+        schrijf(os.path.join(self.w, "lijsten", "Coordinaatstelsel.xml"), "<domeintabel>" + rij.format(l="X", w="RD", d="Rijksdriehoeksmeting.") + "</domeintabel>")
+
+    def tearDown(self):
+        shutil.rmtree(self.w, ignore_errors=True)
+
+    def test_herkent_kolomlijsten_met_voorstel(self):
+        bk(self.w, "analyseer")
+        p = {x["code"]: x for x in lees_json(os.path.join(self.w, "werk", "beslispunten.json"))}
+        self.assertEqual(p["waarden-extern"]["soort"], "VRAAG")
+        ex = p["waarden-extern"]["voorstel"]["waarden"]["extern"]
+        self.assertEqual(ex["bron"], "https://voorbeeld.nl/lists/{lijst}.xml")
+        self.assertEqual((ex["naam"], ex["definitie"], ex["tags"]), ("Waarde", "Omschrijving", ["IMBRO"]))
+        self.assertIn("0 waarden", p["overzicht"]["titel"])  # kolommen tellen niet als waarden
+        self.assertNotIn("waarden-samen", p)
+
+    def test_waarden_ophalen_en_status(self):
+        bk(self.w, "zet", "kader.uri", "http://voorbeeld.nl/kader")
+        bk(self.w, "zet", "waarden.extern.bron", "lijsten/{lijst}.xml")
+        self.assertIn("bk.py waarden", bk(self.w, "status").stdout)
+        uit = bk(self.w, "waarden").stdout
+        self.assertIn("3 waardelijsten gevuld met 4 waarden", uit)
+        inv = lees_json(os.path.join(self.w, "werk", "inventaris.json"))
+        kleur = next(c for c in inv["elementen"].values() if c["name"] == "Kleur")
+        self.assertEqual([a["name"] for a in kleur["attrs"]], ["rood", "donkerBlauw"])
+        self.assertEqual(kleur["attrs"][0]["doc"], "De kleur rood.")
+        self.assertEqual(kleur["kolommen"], ["Waarde", "IMBRO", "Omschrijving"])
+        self.assertNotIn("bk.py waarden", bk(self.w, "status").stdout)
+        bk(self.w, "analyseer")
+        bk(self.w, "overnemen", "--alle")
+        bk(self.w, "genereer")
+        t = {r["voorkeursterm"]: r for r in termen(self.w)}
+        self.assertEqual(t["donker blauw"]["soort"], "waarde")
+        self.assertIn("RD", t)
+
+    def test_onbekende_sleutel_en_bron_zonder_lijst(self):
+        bk(self.w, "zet", "kader.uri", "http://voorbeeld.nl/kader")
+        r = bk(self.w, "zet", "waarden.extern.bron", "lijsten/alles.xml", ok=False)
+        self.assertIn("{lijst}", r.stdout)
+
+
 @unittest.skipUnless(os.environ.get("BK_NETWERK") == "1", "SHACL-validatie haalt het profiel uit het register (BK_NETWERK=1)")
 class Validatie(unittest.TestCase):
     def test_shacl_telling(self):

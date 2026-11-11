@@ -36,6 +36,48 @@ def split_voorstel(anders):
     return v
 
 
+NAAMVELD = re.compile(r"^(waarde|code|naam|value|term)$", re.I)
+DEFVELD = re.compile(r"^(omschrijving|definitie|description|definition|toelichting)$", re.I)
+
+
+def kolomlijsten(cod):
+    """Waardelijsten die kolommen bevatten in plaats van waarden: minstens 3 lijsten (en de helft) met
+    precies dezelfde attribuutnamen, waaronder een naam- of definitieveld. Geeft (lijsten, kolommen)."""
+    sets = Counter(frozenset(a["name"] for a in c["attrs"]) for c in cod.values() if c["attrs"])
+    if not sets:
+        return [], []
+    kol, n = sets.most_common(1)[0]
+    met = [c for c in cod.values() if c["attrs"]]
+    if n < 3 or n * 2 < len(met) or not any(NAAMVELD.match(k) or DEFVELD.match(k) for k in kol):
+        return [], []
+    lijsten = sorted(c["name"] for c in met if frozenset(a["name"] for a in c["attrs"]) == kol)
+    volgorde = next(c for c in met if c["name"] == lijsten[0])["attrs"]
+    return lijsten, [a["name"] for a in volgorde]
+
+
+def extern_voorstel(cod, lijsten, kolommen):
+    """Voorstel voor waarden.extern: bron uit een URL-tag die de lijstnaam bevat (bv. Locatie), velden uit de kolommen."""
+    bron = None
+    for c in cod.values():
+        if c["name"] not in lijsten:
+            continue
+        for v in (c.get("tags") or {}).values():
+            v = (v or "").strip()
+            if v.startswith(("http://", "https://")) and c["name"] in v:
+                bron = v.replace(c["name"], "{lijst}")
+                break
+        if bron:
+            break
+    naam = next((k for k in kolommen if NAAMVELD.match(k)), kolommen[0])
+    defi = next((k for k in kolommen if DEFVELD.match(k)), None)
+    ex = {"bron": bron, "naam": naam, "definitie": defi,
+          # veldnamen in de bestanden hebben meestal geen leestekens (IMBRO/A -> IMBROA)
+          "tags": [re.sub(r"[^0-9A-Za-z_]", "", k) for k in kolommen if k not in (naam, defi)]}
+    if len(lijsten) < len(cod):
+        ex["lijsten"] = lijsten
+    return {"waarden": {"extern": ex}}
+
+
 def bron_voorstel(onb):
     """Eén mappingregel per genormaliseerde tagwaarde; meest voorkomende schrijfwijze als titel."""
     groep = defaultdict(Counter)
@@ -67,11 +109,17 @@ def main(inv_pad, project, uitdir):
             soort = "BESLOTEN"  # de gebruiker heeft dit punt bewust zo gelaten (project.yaml: besloten)
         punten.append(dict(soort=soort, code=code, titel=titel, details=details or [], voorstel=voorstel))
 
+    # waardelijsten met kolommen i.p.v. waarden (extern beheerd): niet als waarden behandelen (punt G)
+    ex = cfg["waarden"].get("extern") or {}
+    gedaan = inv.get("waarden_extern")
+    kl, kol = kolomlijsten(cod) if not gedaan else ([], [])
+
     # A. overzicht
     st = Counter((c["type"], c["stereo"]) for c in inv["elementen"].values())
     punt("INFO", "overzicht", f"{len(obj)} objecttypen, {len(dat)} datatypen, {len(cod)} waardelijsten, "
          f"{len(over)} overgeslagen; {sum(len(c['attrs']) for c in klassen.values())} attributen, "
-         f"{sum(len(c['attrs']) for c in cod.values())} waarden",
+         f"{sum(len(c['attrs']) for c in cod.values() if c['name'] not in kl)} waarden"
+         + (f" (plus {len(kl)} lijsten met alleen kolommen, zie waarden-extern)" if kl else ""),
          [f"{t} «{s}»: {n}" for (t, s), n in sorted(st.items(), key=str)])
 
     # B. stereotypen die niet in de lijsten staan -> objecttype
@@ -141,6 +189,8 @@ def main(inv_pad, project, uitdir):
     hern = {k.lower(): v for k, v in (cfg["waarden"].get("hernoem") or {}).items()}
     vg = defaultdict(list)
     for c in cod.values():
+        if c["name"] in kl:
+            continue
         for a in c["attrs"]:
             nm = a["name"].strip()
             if f"{nm.lower()}|{c['name'].lower()}" in split:
@@ -185,6 +235,19 @@ def main(inv_pad, project, uitdir):
     gebruikt = {a.get("type") for c in klassen.values() for a in c["attrs"]}
     cfg_g = rel.get("gebruik") or {}
     leeg = [c["name"] for c in cod.values() if not c["attrs"]]
+    if gedaan:
+        punt("INFO", "waarden-extern", f"{gedaan['lijsten']} waardelijsten gevuld met {gedaan['waarden']} waarden uit "
+             f"{gedaan['bron']} (bk.py waarden)", [f"geen extern bestand: {n}" for n in gedaan.get("ontbreekt") or []])
+    elif kl and ex.get("bron"):
+        punt("INFO", "waarden-extern", f"{len(kl)} waardelijsten bevatten kolommen ({', '.join(kol)}); de waarden "
+             f"komen uit {ex['bron']}: draai bk.py waarden")
+    elif kl:
+        voorstel = extern_voorstel(cod, kl, kol)
+        punt("VRAAG", "waarden-extern", f"{len(kl)} waardelijsten bevatten geen waarden maar kolommen ({', '.join(kol)}): "
+             "de waarden worden extern beheerd. Waar staan ze (waarden.extern.bron, URL of pad met {lijst})? "
+             + ("Voorstel uit de tag met de lijstlocatie: controleer de versiemap." if voorstel["waarden"]["extern"]["bron"]
+                else "Geen locatie gevonden in de tags: vraag de gebruiker om de URL."),
+             kl, voorstel=voorstel)
     if leeg:
         punt("INFO", "waardelijsten-leeg", f"{len(leeg)} waardelijsten zonder waarden in het model (extern beheerd?): "
              "geen collectie; attributen die ze gebruiken worden wel begrip", leeg)

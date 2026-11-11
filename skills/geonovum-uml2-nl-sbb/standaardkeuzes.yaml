@@ -97,6 +97,14 @@ waarden:
   hernoem: {}                         # waardenaam (kleine letters) -> term, bv. {"niet-bgt": "niet-BGT-object"}
   botsing_achtervoegsel: " waarde"    # als een waardeterm al als begrip bestaat
   notatie_tag: null                   # tagged value voor skos:notation (bv. Code); null = geen
+  # Extern beheerde waardelijsten: de UML-lijst heeft alleen kolommen (bv. Waarde, Omschrijving) en de
+  # waarden staan in een los bestand per lijst (XML, CSV of TSV). bk.py waarden haalt ze op.
+  extern:
+    bron: null                        # URL of pad met {lijst} (UML-naam), bv. https://.../lists/2.2/{lijst}.xml
+    naam: Waarde                      # veld met de waardenaam
+    definitie: Omschrijving           # veld met de definitie
+    tags: []                          # extra velden die als tagged value meegaan (niet in het kader)
+    lijsten: []                       # alleen deze waardelijsten (UML-namen); [] = alle
 
 relaties:
   generalisatie: broaderGeneric   # broaderGeneric (skos:broader + isothes:broaderGeneric) | broader | geen

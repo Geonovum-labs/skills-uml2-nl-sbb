@@ -56,6 +56,8 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 | `waarden.automatisch_splitsen` | `null` | Patroon, bv. `"{lijst} {waarde}"` | Veel conflicten van dezelfde soort, bv. codes 1–12 in meerdere lijsten (IMGeluid) |
 | `waarden.zelfde_begrip` | [] | Waardenamen | Eén begrip ondanks kleine verschillen in formulering (IMEV: "gegeven in transitie") |
 | `waarden.hernoem` | {} | waarde → term | Bv. `niet-bgt` → `niet-BGT-object` |
+| `waarden.extern.bron` | `null` | URL of pad met `{lijst}` | De UML-lijsten hebben alleen kolommen (Waarde, Omschrijving) en de waarden staan in een bestand per lijst, bv. de BRO-domeintabellen |
+| `waarden.extern.naam` / `definitie` / `tags` / `lijsten` | `Waarde` / `Omschrijving` / [] / [] | Andere veldnamen; alleen bepaalde lijsten | Volg de kolommen uit de analyse; `tags` zijn veldnamen in het bestand (zonder leestekens: `IMBROA`) |
 | `waarden.notatie_tag` | `null` | Tagnaam, bv. `Code` | Waarden hebben codes die als notatie moeten |
 | `relaties.generalisatie` | `broaderGeneric` | `broader`, `geen` | – |
 | `relaties.wortel` | `null` (klassen zonder superklasse = topbegrip) | UML-naam | Er is een basisklasse (`_CityObject`, `GeoObject`) |
@@ -80,6 +82,7 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 - **access-parser** decodeert Access' *compressed unicode* niet (tekens als '–' en 'é' buiten Latin-1 worden \x13 e.d.); `inventaris_eap.py` vervangt die functie. Soms leest access-parser de `ea_guid` of een memoveld niet; het script gebruikt dan een id op Object_ID en meldt onleesbare definities bij naam.
 - **MIM-stereotypen** (`Codelijst`, `Enumeratie`, `Gestructureerd datatype`, `Primitief datatype`, `Keuze`) staan in de standaardlijsten.
 - **Waardelijsten zonder waarden** (extern beheerd, bv. IMKL) worden geen lege collectie; de attributen die ze gebruiken worden wel begrip.
+- **Waardelijsten met kolommen in plaats van waarden** (BRO-catalogi, bv. BHR-GT: Waarde, IMBRO, IMBRO/A, Omschrijving). Zonder herkenning werden de kolommen als waarden omgezet (436 nepwaarden). `analyseer` herkent dit (minstens 3 lijsten met dezelfde kolommen) en stelt `waarden.extern` voor, met de bron uit de tag met de lijstlocatie. Controleer de versiemap: de tag `Locatie` wees in BHR-GT 2.2 naar `lists/` en niet naar `lists/2.2/`. Bestandsnamen zonder trema (`Coordinaattransformatie.xml`) vindt het script zelf.
 
 - **EAP-bestanden** worden gelezen met `access-parser` 0.0.6. Die versie plakt bij lange memovelden de tekst van volgende records aan een definitie vast, door een fout in de afkapping van overflowrecords. `inventaris_eap.py` vervangt die functie. Test na een upgrade van `access-parser` opnieuw tegen een XMI-export.
 
