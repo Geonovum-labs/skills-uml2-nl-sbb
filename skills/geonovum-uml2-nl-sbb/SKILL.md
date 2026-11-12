@@ -50,9 +50,10 @@ Leg deze momenten voor, als keuzevraag met opties als dat kan; één onderwerp p
 |---|---|
 | `start` toont een packageboom | Welke package(s)? Stel het informatiemodel zelf voor. Ingesloten basismodellen (NEN 3610, GML, ISO, MIM) laat je weg, tenzij zo'n model zelf het om te zetten model is. |
 | `start` noemt een voorbeeld | Mag het ingevulde voorbeeld (`voorbeelden/<naam>.yaml`) gebruikt worden? Zo ja: `bk.py voorbeeld <naam>`. |
-| VRAAG `waarden-extern` | De waardelijsten bevatten alleen kolommen; de waarden staan elders. Laat de bron-URL bevestigen (versiemap!), zet hem met `bk.py zet waarden.extern.bron '<url met {lijst}>'` en draai `bk.py waarden`. |
-| VRAAG `termen-codes` | Laat de afkortingen controleren (samenstellingen met `-`, bv. `RTK-GPS`) en neem het voorstel over; het scheelt veel `term`-oordelen in de review. |
+| VRAAG `waarden-extern` | De waardelijsten bevatten alleen kolommen; de waarden staan elders. Een kandidaat-URL uit het model staat in de vraag: leg hem voor (host en versiemap!), zet hem pas na bevestiging met `bk.py zet waarden.extern.bron '<url met {lijst}>'` en draai `bk.py waarden`. Zonder gebruiker: niet invullen. |
+| VRAAG `termen-codes` | Laat de voorbeelden in de details zien (naam -> term) en de afkortingen controleren (samenstellingen met `-`, bv. `RTK-GPS`). Neem een keuze niet over als een voorbeeld fout uitpakt. |
 | VRAAG `bestaand-kader` | Is het model al gepubliceerd als begrippenkader? Zo ja: `bk.py bestaand <url>`, dan houden bestaande begrippen hun URI. Noem na `genereer` wat niet gekoppeld is (`uit/uri-koppeling.tsv`). |
+| `genereer` stopt met OPEN BESLISSINGEN | Twee begrippen krijgen dezelfde voorkeursterm. Leg de paren voor en zet per paar een onderscheidende term met het genoemde `bk.py zet`-commando. Zonder gebruiker: kies een term en noteer de aanname. |
 | eerste `analyseer` | Eén keer: de standaardkeuzes (zie `references/keuzes.md`, "Samenvatting"). Vraag of ze goed zijn. |
 | elk VRAAG-punt (`bk.py vraag <nr>`) | Het scriptvoorstel als eerste optie, "standaard houden" als tweede. |
 | review met oordeel `term` | De betere termen, vóór je ze met `bk.py zet` vastlegt. |

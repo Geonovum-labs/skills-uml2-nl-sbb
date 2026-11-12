@@ -144,7 +144,14 @@ def main(inv_pad, project, uit):
     concepts, used_labels = {}, {}
     soort, notaties = {}, {}
 
+    label_botsingen = []
+
     def concept(label, definition, kind, notation=None, source_tag=None, alt=(), alt_lang=(), toelichting="", codes=()):
+        if label.lower() in used_labels:
+            # zelfde voorkeursterm voor twee begrippen (bv. abstracte klasse _Gebouw en subklasse Gebouw):
+            # in NL-SBB moet de term onderscheidend zijn. Niet stil doorgaan; de gebruiker kiest een term.
+            ander = used_labels[label.lower()]
+            label_botsingen.append((label, kind, notation, soort.get(ander), notaties.get(ander)))
         u = URIRef(uri(cfg, "begrip", local_name(label)))
         if u in concepts:
             # andere term, zelfde URI (NITG-code en NITGcode): de soort erbij, en het in het log zetten
@@ -197,6 +204,19 @@ def main(inv_pad, project, uit):
         g.add((b, SKOS.related, a))
 
     obj, dat, codelists, _ = indeling(inv, cfg)
+    # Waardelijsten met alleen kolommen (Waarde, Omschrijving, ...) zonder opgehaalde waarden: de kolommen zijn
+    # geen waarden. Zulke lijsten gelden als lege lijst (geen collectie), ook als bk.py waarden niet gedraaid is
+    # of een bestand ontbrak.
+    from analyseer import kolomlijsten
+    ex = inv.get("waarden_extern") or {}
+    kol = frozenset(ex.get("kolommen") or [])
+    leeg_maken = {c["name"] for c in codelists.values() if kol and frozenset(a["name"] for a in c["attrs"]) == kol} \
+        if ex else set(kolomlijsten(codelists)[0])
+    for c in codelists.values():
+        if c["name"] in leeg_maken:
+            log.append(f"Waardelijst '{c['name']}' heeft alleen kolommen ({', '.join(a['name'] for a in c['attrs'])}), "
+                       "geen waarden: geen collectie (zie waarden.extern en bk.py waarden)")
+            c["attrs"] = []
     klassen = {**obj, **dat}
     klassen = {k: inv["elementen"][k] for k in inv["elementen"] if k in klassen}  # inventarisvolgorde
     ext_namen = inv.get("externe_klassen") or {}
@@ -452,8 +472,17 @@ def main(inv_pad, project, uit):
             log.append(f"Waarde '{label}' staat in {len(lst)} waardelijsten: "
                        f"{', '.join(codelists[k]['name'] for k, _ in lst)}")
 
+    if label_botsingen:
+        sleutel = {"objecttype": "termen.vast[{n}]", "datatype": "termen.vast[{n}]",
+                   "attribuut": "attributen.term_correcties[{n}]", "waarde": "waarden.hernoem[{n}]"}
+        for label, kind, nota, kind2, nota2 in label_botsingen:
+            n = (nota or label).split(" [")[0]
+            open_beslissingen.append(
+                f"Voorkeursterm '{label}' voor twee begrippen: {kind2} {nota2 or ''} en {kind} {nota or ''}. "
+                f"Geef één van beide een onderscheidende term, bv. bk.py zet '{sleutel.get(kind, 'termen.vast[{n}]').format(n=n)}' "
+                f"'<term>' (voor een waarde: de waardenaam in kleine letters als sleutel)")
     if open_beslissingen:
-        print("OPEN BESLISSINGEN (voeg waarden.splitsingen toe in project.yaml of kies waarden.samenvoegen: nooit):")
+        print("OPEN BESLISSINGEN (los ze op in project.yaml; daarna opnieuw bk.py genereer):")
         for b in open_beslissingen:
             print("  -", b)
         sys.exit(2)

@@ -531,7 +531,9 @@ class WaardenExtern(unittest.TestCase):
         p = {x["code"]: x for x in lees_json(os.path.join(self.w, "werk", "beslispunten.json"))}
         self.assertEqual(p["waarden-extern"]["soort"], "VRAAG")
         ex = p["waarden-extern"]["voorstel"]["waarden"]["extern"]
-        self.assertEqual(ex["bron"], "https://voorbeeld.nl/lists/{lijst}.xml")
+        # de URL uit het model wordt niet stil overgenomen: alleen genoemd, de gebruiker zet hem
+        self.assertIsNone(ex["bron"])
+        self.assertIn("https://voorbeeld.nl/lists/{lijst}.xml", p["waarden-extern"]["titel"])
         self.assertEqual((ex["naam"], ex["definitie"], ex["tags"]), ("Waarde", "Omschrijving", ["IMBRO"]))
         self.assertIn("0 waarden", p["overzicht"]["titel"])  # kolommen tellen niet als waarden
         self.assertNotIn("waarden-samen", p)
@@ -559,6 +561,107 @@ class WaardenExtern(unittest.TestCase):
         bk(self.w, "zet", "kader.uri", "http://voorbeeld.nl/kader")
         r = bk(self.w, "zet", "waarden.extern.bron", "lijsten/alles.xml", ok=False)
         self.assertIn("{lijst}", r.stdout)
+
+
+class Tegenvoorbeelden(unittest.TestCase):
+    """Gevallen buiten de ontwikkelmodellen (goldfish-review van PR #8): de nieuwe regels mogen ze niet beschadigen."""
+
+    def test_en_tussen_getallen_is_geen_norm(self):
+        import kern
+        T = kern.Termen(kern._merge(kern.laad_keuzes(), {"termen": {"getallen": True, "normcodes": True}}))
+        self.assertEqual(T.waarde("veel10en20"), "veel 10 en 20")
+        self.assertEqual(T.waarde("grind2en4"), "grind 2 en 4")
+        self.assertEqual(T.waarde("EN1997d2v2007"), "EN 1997-2:2007")
+        self.assertEqual(T.waarde("ISO14688d1v2019NEN8990v2020"), "ISO 14688-1:2019 NEN 8990:2020")
+
+    def test_vaste_namen_met_getallen_blijven_heel(self):
+        import kern
+        T = kern.Termen(kern._merge(kern.laad_keuzes(), {"termen": {"getallen": True}}))
+        for naam, term in {"_Top10nlObject": "top10nl object", "lod2MultiSurface": "lod2 multi surface",
+                           "co2Uitstoot": "co2 uitstoot", "epsg28992": "epsg28992", "pm10": "pm10",
+                           "geometrie2D": "geometrie 2D", "spoorTot1": "spoor tot 1", "klasse2": "klasse 2"}.items():
+            self.assertEqual(T.humanize(naam), term, naam)
+
+    def test_afkorting_in_kleine_letters_alleen_in_codes(self):
+        import kern
+        T = kern.Termen(kern._merge(kern.laad_keuzes(), {"termen": {"afkortingen": ["IN", "PE"]}}))
+        self.assertEqual(T.waarde("weg in aanleg"), "weg in aanleg")
+        self.assertEqual(T.waarde("peHighDensity"), "PE high density")
+
+    def test_afkortingen_alleen_met_bewijs(self):
+        """BAGObject, WOZWaarde, BRTVlakOfPunt: geen afkorting voorstellen die het eerste woord opeet."""
+        w = tempfile.mkdtemp(prefix="bk-afk-")
+        try:
+            os.makedirs(os.path.join(w, "werk"))
+            namen = ["BAGObject", "WOZWaarde", "BRTVlakOfPunt", "XMLDocument", "RTKGPS0tot2cm", "GPSOnbekend"]
+            lijst = {"name": "Codes", "type": "uml:Enumeration", "stereo": None, "pkg": "M", "abstract": False,
+                     "doc": "", "alias": None, "gens": [], "tags": {},
+                     "attrs": [{"id": f"w{i}", "name": n, "doc": f"Waarde {n}.", "tags": {}} for i, n in enumerate(namen)]}
+            schrijf(os.path.join(w, "werk", "inventaris.json"),
+                    json.dumps({"bron": "t.xmi", "elementen": {"L": lijst}, "externe_klassen": {}}))
+            bk(w, "analyseer")
+            p = {x["code"]: x for x in lees_json(os.path.join(w, "werk", "beslispunten.json"))}
+            afk = p["termen-codes"]["voorstel"]["termen"].get("afkortingen", [])
+            self.assertEqual(afk, ["RTKGPS"])  # alleen RTKGPS staat los (vóór een cijfer)
+            self.assertTrue(any("RTKGPS0tot2cm ->" in d for d in p["termen-codes"]["details"]))  # effect zichtbaar
+        finally:
+            shutil.rmtree(w, ignore_errors=True)
+
+    def test_dubbele_voorkeursterm_stopt_genereer(self):
+        w = tempfile.mkdtemp(prefix="bk-dubbel-")
+        try:
+            mini_model(w, {"A": klasse("_Gebouw", "Algemeen gebouw.", []), "B": klasse("Gebouw", "Gebouw in TOP10NL.", [])})
+            r = bk(w, "genereer", ok=False)
+            self.assertEqual(r.returncode, 2)
+            self.assertIn("Voorkeursterm 'gebouw' voor twee begrippen", r.stdout)
+            bk(w, "zet", "termen.vast[_Gebouw]", "BRT-gebouw")
+            bk(w, "genereer")
+        finally:
+            shutil.rmtree(w, ignore_errors=True)
+
+
+class ExternVeilig(unittest.TestCase):
+    """Lijstnamen en bron-URL's komen uit het model (invoer van derden)."""
+
+    def setUp(self):
+        self.w = tempfile.mkdtemp(prefix="bk-veilig-")
+        self.doel = os.path.join(self.w, "werk", "lijsten")
+        os.makedirs(self.doel)
+
+    def tearDown(self):
+        shutil.rmtree(self.w, ignore_errors=True)
+
+    def test_lijstnaam_wordt_geen_pad(self):
+        import waarden_extern as we
+        self.assertEqual(we.veilige_naam("../../.venv/lib/evil"), "venv_lib_evil")
+        schrijf(os.path.join(self.w, "buiten.xml"), "<t/>")
+        pad, _, melding = we.haal_lijst(os.path.join(self.w, "{lijst}.xml"), "../buiten", self.doel, ".xml", self.w)
+        self.assertIsNone(pad)
+        self.assertIn("pad-tekens", melding)
+        self.assertEqual(os.listdir(self.doel), [])
+
+    def test_lokaal_pad_buiten_projectmap_geweigerd(self):
+        import waarden_extern as we
+        pad, _, melding = we.haal_lijst("/etc/{lijst}.csv", "passwd", self.doel, ".csv", self.w)
+        self.assertIsNone(pad)
+        self.assertIn("buiten de projectmap", melding)
+
+    def test_interne_adressen_en_sjabloon(self):
+        import waarden_extern as we
+        for url in ("http://127.0.0.1/x.xml", "http://169.254.169.254/latest/x.xml", "http://localhost/x.xml",
+                    "http://10.0.0.5/x.xml", "http://[::1]/x.xml"):
+            self.assertTrue(we.interne_host(url), url)
+        self.assertFalse(we.interne_host("https://8.8.8.8/x.xml"))
+        for fout in ("https://x.nl/p#{lijst}.pth", "https://x.nl/{lijst}.pth", "file:///etc/{lijst}.xml"):
+            with self.assertRaises(SystemExit):
+                we.controleer_sjabloon(fout)
+        self.assertEqual(we.controleer_sjabloon("https://x.nl/lists/2.2/{lijst}.xml"), ".xml")
+
+    def test_kolommen_worden_zonder_bron_geen_begrippen(self):
+        el = {f"L{i}": kolomlijst(n) for i, n in enumerate(["Kleur", "Vorm", "Maat"])}
+        mini_model(self.w, el)
+        bk(self.w, "genereer")
+        self.assertFalse({"waarde", "omschrijving", "imbro"} & {r["voorkeursterm"] for r in termen(self.w)})
 
 
 @unittest.skipUnless(os.environ.get("BK_NETWERK") == "1", "SHACL-validatie haalt het profiel uit het register (BK_NETWERK=1)")

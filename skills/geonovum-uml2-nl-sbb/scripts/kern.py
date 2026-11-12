@@ -135,10 +135,11 @@ class Termen:
         self.afk_klein = {k.lower(): a for k, a in self.afkortingen}
         self.getallen = t.get("getallen", False)
         self.normcodes = t.get("normcodes", False)
+        self._code = True  # naam zonder spaties (een code): dan mogen afkortingen ook in kleine letters
 
     def _woord(self, w):
-        if w.lower() in self.afk_klein:
-            return self.afk_klein[w.lower()]
+        if w.lower() in self.afk_klein and self._code:
+            return self.afk_klein[w.lower()]  # 'pe' in peHighDensity, niet 'in' in 'weg in aanleg'
         if self.afk and (ACRONIEM.match(w) or re.fullmatch(r"[A-Z]", w)):
             return w  # ook één hoofdletter blijft staan: klasseA -> klasse A
         if any(w == b or w.startswith(b + "-") for b in self.behouden):
@@ -162,8 +163,9 @@ class Termen:
             s = s.replace("", " ")  # twee normcodes of afkortingen achter elkaar
         return s, bewaard
 
-    # organisatie + nummer [+ d deel] [+ v jaar]; een hoofdletter-organisatie mag aan een woord vastzitten (fijnNEN5104)
-    NORM = re.compile(r"(?:(?<![A-Za-z])(ISO|iso|NEN|nen|EN|en|ASTM|astm|NPR|npr)|(?<=[a-z])(ISO|NEN|ASTM|NPR))"
+    # organisatie + nummer [+ d deel] [+ v jaar]; een hoofdletter-organisatie mag aan een woord of getal vastzitten
+    # (fijnNEN5104, …v2019NEN8990). Kleine letters alleen los: 'en' tussen cijfers (10en20) is een voegwoord.
+    NORM = re.compile(r"(?:(?<![A-Za-z0-9])(ISO|iso|NEN|nen|EN|en|ASTM|astm|NPR|npr)|(?<=[a-z0-9])(ISO|NEN|ASTM|NPR))"
                       r"_?([A-Za-z]?\d+)(?:d(\d+))?(?:v(\d{4}))?")
 
     def _normcodes(self, s):
@@ -182,13 +184,21 @@ class Termen:
             return ph
         return self.NORM.sub(f, s), paren
 
+    # korte letters+cijfers zijn meestal een vaste naam of code (lod2, co2, pm10, wgs84, top10nl, epsg28992),
+    # behalve als de letters een functiewoord zijn (tot1, en2): die horen bij een bereik
+    FUNCTIEWOORD = {"tot", "en", "of", "van", "tussen", "vanaf", "boven", "onder", "min", "max"}
+
+    def _vaste_code(self, w):
+        m = re.fullmatch(r"([A-Za-z]{1,4})\d+[A-Za-z]{0,3}", w)
+        return bool(m) and m.group(1).lower() not in self.FUNCTIEWOORD
+
     def _getallen(self, s):
         """Getallen los van woorden: veel25tot50 -> veel 25 tot 50, 16tot31.5mm -> 16 tot 31,5 mm, um -> µm.
         Afkortingen met cijfers (WGS84, AHN3, QM1), normcodes (17892-4:2016) en versies (v6.0) blijven staan."""
         uit = []
         for w in s.split(" "):
             if not w or ACRONIEM.match(w) or re.fullmatch(r"[A-Z]+\d+[A-Za-z]?", w) or re.search(r"\d[-:]\d", w) \
-                    or re.fullmatch(r"[vV]\d+(\.\d+)*", w) or "" in w:
+                    or re.fullmatch(r"[vV]\d+(\.\d+)*", w) or self._vaste_code(w) or "" in w:
                 uit.append(w)
                 continue
             w = re.sub(r"(?<=\d)\.(?=\d)", self.decimaal, w)
@@ -214,9 +224,12 @@ class Termen:
             return self.vast[name.strip().lower()]
         s = name.strip().lstrip("_")
         s = self.strip_prefix(s) if prefix else s
+        self._code = not re.search(r"\s", s)
         extra = []
         if self.normcodes:
             s, extra = self._normcodes(s)
+        if self.getallen:  # geometrie2D -> geometrie 2D, niet 2 D
+            extra += [(m, m.upper()) for m in sorted(set(re.findall(r"(?<![0-9])[23][Dd](?![A-Za-z])", s)))]
         s, bewaard = self._bescherm(s, extra)
         if self.getallen:
             s = re.sub(r"_(?=[A-Za-z])", " ", s)  # klasseA_v2006 -> klasse A v2006
@@ -247,6 +260,7 @@ class Termen:
             return self.humanize(nm)
         if self.getallen or self.normcodes or any(k in nm for k, _ in self.afkortingen):
             return self.humanize(nm, prefix=False)  # codes met getallen, normcodes of afkortingen
+        self._code = not re.search(r"\s", nm)
         return " ".join(self._woord(w) for w in nm.split())
 
 
@@ -306,7 +320,7 @@ def uri(cfg, soort, naam):
 
 # ---------- downloaden (curl: systeemcertificaten, redirects) ----------
 
-def curl_status(url, pad="/dev/null", accept="*/*", tries=6, timeout=90):
+def curl_status(url, pad="/dev/null", accept="*/*", tries=6, timeout=90, volgen=True):
     """Haalt url op met curl -L. Geeft (status, deny) terug; status '429' wordt met backoff herhaald.
     deny = True bij een blokkade door de uitvoeromgeving (x-deny-reason / allowlist)."""
     import subprocess
@@ -314,8 +328,8 @@ def curl_status(url, pad="/dev/null", accept="*/*", tries=6, timeout=90):
     import time
     for n in range(tries):
         with tempfile.NamedTemporaryFile() as hdr:
-            r = subprocess.run(["curl", "-sL", "-m", str(timeout), "-H", f"Accept: {accept}",
-                                "-A", "geonovum-uml2-nl-sbb", "-D", hdr.name, "-o", pad, "-w", "%{http_code}", url],
+            r = subprocess.run(["curl", "-sL" if volgen else "-s", "--proto", "=http,https", "-m", str(timeout),
+                                "-H", f"Accept: {accept}", "-A", "geonovum-uml2-nl-sbb", "-D", hdr.name, "-o", pad, "-w", "%{http_code}", url],
                                capture_output=True, text=True)
             headers = open(hdr.name, errors="ignore").read().lower()
         code = r.stdout.strip() or "000"

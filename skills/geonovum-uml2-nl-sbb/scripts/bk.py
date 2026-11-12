@@ -524,7 +524,8 @@ def cmd_genereer(_):
         sys.exit("Herstel eerst project.yaml (zie FOUT-regels).")
     rc = run("genereer.py", INV, PROJECT, KADER, toegestaan=(0, 2))
     if rc == 2:
-        volgende("open beslissingen hierboven: bk.py analyseer en bk.py vraag <nr> (waarden-splitsen)")
+        volgende("open beslissingen hierboven: leg ze voor aan de gebruiker en los ze op met bk.py zet (zie de voorbeelden); "
+                 "bij waarden met andere definities ook bk.py analyseer en bk.py vraag <nr> (waarden-splitsen)")
         sys.exit(2)
     volgende("bk.py valideer (kan bij grote modellen 10+ minuten duren; niet afbreken)")
 

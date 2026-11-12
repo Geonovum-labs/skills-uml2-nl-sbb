@@ -13,7 +13,7 @@ import sys
 from collections import Counter, defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from kern import Termen, bron_tag, clean_def, def_key, herkomst, indeling, laad_inventaris, laad_keuzes  # noqa: E402
+from kern import Termen, _merge, bron_tag, clean_def, def_key, herkomst, indeling, laad_inventaris, laad_keuzes  # noqa: E402
 
 
 MIM = {"objecttype", "gegevensgroeptype", "codelijst", "enumeratie", "referentielijst", "gestructureerd datatype",
@@ -75,12 +75,14 @@ def extern_voorstel(cod, lijsten, kolommen):
             break
     naam = next((k for k in kolommen if NAAMVELD.match(k)), kolommen[0])
     defi = next((k for k in kolommen if DEFVELD.match(k)), None)
-    ex = {"bron": bron, "naam": naam, "definitie": defi,
+    # De bron-URL komt uit het model (invoer van derden): nooit stil overnemen (bk.py overnemen --alle).
+    # Hij staat in de details; de gebruiker bevestigt hem en zet hem met bk.py zet waarden.extern.bron.
+    ex = {"bron": None, "naam": naam, "definitie": defi,
           # veldnamen in de bestanden hebben meestal geen leestekens (IMBRO/A -> IMBROA)
           "tags": [re.sub(r"[^0-9A-Za-z_]", "", k) for k in kolommen if k not in (naam, defi)]}
     if len(lijsten) < len(cod):
         ex["lijsten"] = lijsten
-    return {"waarden": {"extern": ex}}
+    return {"waarden": {"extern": ex}}, bron
 
 
 def engels_score(s):
@@ -280,11 +282,14 @@ def main(inv_pad, project, uitdir):
         punt("INFO", "waarden-extern", f"{len(kl)} waardelijsten bevatten kolommen ({', '.join(kol)}); de waarden "
              f"komen uit {ex['bron']}: draai bk.py waarden")
     elif kl:
-        voorstel = extern_voorstel(cod, kl, kol)
+        voorstel, kandidaat = extern_voorstel(cod, kl, kol)
         punt("VRAAG", "waarden-extern", f"{len(kl)} waardelijsten bevatten geen waarden maar kolommen ({', '.join(kol)}): "
              "de waarden worden extern beheerd. Waar staan ze (waarden.extern.bron, URL of pad met {lijst})? "
-             + ("Voorstel uit de tag met de lijstlocatie: controleer de versiemap." if voorstel["waarden"]["extern"]["bron"]
-                else "Geen locatie gevonden in de tags: vraag de gebruiker om de URL."),
+             "Zolang er geen bron is, worden de kolommen geen begrippen. "
+             + (f"Kandidaat uit de tag met de lijstlocatie: {kandidaat} . Deze URL komt uit het model: leg hem aan "
+                "de gebruiker voor (controleer host en versiemap) en zet hem pas na bevestiging met "
+                "bk.py zet waarden.extern.bron '<url>'. Zonder gebruiker: niet invullen."
+                if kandidaat else "Geen locatie gevonden in de tags: vraag de gebruiker om de URL."),
              kl, voorstel=voorstel)
     if leeg:
         punt("INFO", "waardelijsten-leeg", f"{len(leeg)} waardelijsten zonder waarden in het model (extern beheerd?): "
@@ -371,35 +376,47 @@ def main(inv_pad, project, uitdir):
                  else cfg["termen"].get("alias_naam_als_altlabel")}})
 
     # I2. codes in namen: vastgeplakte getallen, normcodes, afkortingen in hoofdletters (BRO: RTKGPS0tot2cm)
+    # Elke keuze wordt alleen voorgesteld als ze termen echt verandert; de details tonen het effect (naam -> term),
+    # zodat een fout voorstel zichtbaar is voordat het wordt overgenomen.
     namen = [c["name"] for c in klassen.values()] + [a["name"] for c in klassen.values() for a in c["attrs"]]
     wnamen = [a["name"] for c in cod.values() for a in c["attrs"]]
-    termen_nu = [T.humanize(n) for n in namen] + [T.waarde(n) for n in wnamen]
-    geplakt = sorted({t for t in termen_nu if re.search(r"[a-z]\d|\d[a-z]", t) and not re.search(r"\d[-:]\d", t)
-                      and not all(re.fullmatch(r"[A-Z]+\d+[A-Za-z]?|[^\d]*", w) for w in t.split())})
-    norm = sorted({n for n in namen + wnamen if Termen.NORM.search(n) and n.lower() not in T.vast})  # vast: al geregeld
-    alle_runs = {m.group(0) for n in namen + wnamen for m in re.finditer(r"[A-Z]{2,}", n)}
+    tc = cfg["termen"]
+
+    def termen_met(extra):
+        T2 = Termen(_merge(json.loads(json.dumps(cfg)), {"termen": extra}))
+        return [T2.humanize(n) for n in namen] + [T2.waarde(n) for n in wnamen]
+    nu = termen_met({})
+
+    def effect(extra):
+        return sorted({(n, t2) for n, t1, t2 in zip(namen + wnamen, nu, termen_met(extra)) if t1 != t2})
+    # Afkortingen alleen met bewijs: de reeks hoofdletters staat ergens los (vóór een cijfer, leesteken of het einde),
+    # zoals RTKGPS in RTKGPS0tot2cm of AHN in AHN3. Een reeks vóór een kleine letter is dubbelzinnig
+    # (BAGObject = BAG + Object, PPgroot = PP + groot) en wordt zonder zo'n los voorkomen niet voorgesteld.
+    los = {m.group(0) for n in namen + wnamen for m in re.finditer(r"(?<![A-Za-z])[A-Z]{2,}(?![A-Za-z])", n)}
     runs = Counter()
     for n in namen + wnamen:
-        for m in re.finditer(r"(?<![A-Za-z])([A-Z]{2,})(?=[a-z]{2,}|\d+[a-z]{2,})", n):
+        for m in re.finditer(r"(?<![A-Za-z])([A-Z]{2,})(?=[a-z]|\d)", n):
             r = m.group(1)
-            # AHNOnbekend: de laatste hoofdletter hoort bij het volgende woord als AHN ook los voorkomt (AHN3)
-            runs[r[:-1] if len(r) > 2 and n[m.end():m.end() + 1].islower() and r[:-1] in alle_runs else r] += 1
+            kand = r if r in los else (r[:-1] if len(r) > 2 and r[:-1] in los else None)
+            if kand:
+                runs[kand] += 1
     gedekt = {k for k, _ in T.afkortingen} | set(T.behouden) | {"ISO", "NEN", "EN", "ASTM", "NPR"}
     afk = sorted(r for r in runs if r not in gedekt)
-    tc = cfg["termen"]
-    voorstel = {}
-    if geplakt and not tc.get("getallen"):
-        voorstel["getallen"] = True
-    if norm and not tc.get("normcodes"):
-        voorstel["normcodes"] = True
-    if afk:
-        voorstel["afkortingen"] = sorted(set(tc.get("afkortingen") or []) | set(afk))
+    voorstel, det = {}, []
+    for sleutel, extra in (("getallen", {"getallen": True}), ("normcodes", {"normcodes": True}),
+                           ("afkortingen", {"afkortingen": sorted(set(tc.get("afkortingen") or []) | set(afk))})):
+        if (sleutel == "afkortingen" and not afk) or (sleutel != "afkortingen" and tc.get(sleutel)):
+            continue
+        eff = effect(extra)
+        if eff:
+            voorstel.update(extra)
+            det += [f"{sleutel}: {n} -> {t}" for n, t in eff[:15]] + \
+                ([f"{sleutel}: ... en nog {len(eff) - 15}"] if len(eff) > 15 else [])
     if voorstel:
-        det = [f"aan elkaar: {t}" for t in geplakt[:25]] + [f"normcode: {n}" for n in norm[:10]] \
-            + [f"afkorting vóór een woord of getal: {r} ({runs[r]}x)" for r in afk]
         punt("VRAAG", "termen-codes", "Namen met codes: getallen aan woorden (termen.getallen), normcodes zoals "
-             "iso17892d4v2016 (termen.normcodes) of afkortingen vóór een woord (termen.afkortingen, bv. RTK-GPS "
-             "voor RTKGPS). Netjes schrijven? Controleer de afkortingen: een samenstelling schrijf je met '-'.",
+             "iso17892d4v2016 (termen.normcodes) of afkortingen vóór een woord of getal (termen.afkortingen). "
+             "De details tonen per keuze wat er met de termen gebeurt: controleer ze; een samenstelling schrijf je "
+             "met '-' (RTK-GPS). Neem een keuze niet over als een voorbeeld fout uitpakt.",
              det, voorstel={"termen": voorstel})
 
     # J. parent-tag (staat standaard uit: modelspecifiek, en niet elke parent is een generieke relatie)
