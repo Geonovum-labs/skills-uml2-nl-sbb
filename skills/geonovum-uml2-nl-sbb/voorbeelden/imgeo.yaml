@@ -1,4 +1,4 @@
-# Projectbestand IMGeo 2.1 (XMI 2013-03-29), conversie november 2026.
+# Projectbestand IMGeo (XMI uit het register, IMGeo 2.2), conversie november 2026.
 # Alleen modelspecifieke aanvullingen op standaardkeuzes.yaml.
 
 kader:
@@ -7,6 +7,10 @@ kader:
   omschrijving: >-
     Begrippen uit het Informatiemodel Geografie (IMGeo) 2.1: objecttypen, attributen en waarden
     uit waardelijsten, omgezet uit het UML-model (XMI) volgens NL-SBB.
+
+uris:
+  # Het gepubliceerde IMGeo-kader: gekoppelde begrippen en collecties houden hun URI (uit/uri-koppeling.tsv).
+  bestaand: https://definities.geostandaarden.nl/rest/v1/imgeo/data?format=text/turtle
 
 prefixen:
   imgeo: http://definities.geostandaarden.nl/imgeo/id/begrip/
@@ -32,14 +36,14 @@ attributen:
 waarden:
   hernoem:
     niet-bgt: niet-BGT-object
-  splitsingen:   # inhoudelijk verschillende definities
-    onverhard|FysiekVoorkomenWeg: onverhard wegdeel
-    onverhard|FysiekVoorkomenOndersteunendWegdeel: onverhard wegdeel
-    onverhard|FysiekVoorkomenOnbegroeidTerrein: onverhard terreindeel
-    zand|FysiekVoorkomenOnbegroeidTerrein: zand terreindeel
-    zand|FysiekVoorkomenWegPlus: zand deklaag
-    zand|FysiekVoorkomenOndersteunendWegdeelPlus: zand deklaag
-    zand|FysiekVoorkomenOnbegroeidTerreinPlus: zand deklaag
+  splitsingen:   # inhoudelijk verschillende definities; NL-SBB: onderscheidende term tussen haakjes
+    onverhard|FysiekVoorkomenWeg: onverhard (wegdeel)
+    onverhard|FysiekVoorkomenOndersteunendWegdeel: onverhard (wegdeel)
+    onverhard|FysiekVoorkomenOnbegroeidTerrein: onverhard (terreindeel)
+    zand|FysiekVoorkomenOnbegroeidTerrein: zand (terreindeel)
+    zand|FysiekVoorkomenWegPlus: zand (deklaag)
+    zand|FysiekVoorkomenOndersteunendWegdeelPlus: zand (deklaag)
+    zand|FysiekVoorkomenOnbegroeidTerreinPlus: zand (deklaag)
 
 relaties:
   wortel: _CityObject            # alle CityGML-objecten erven van _CityObject = IMGeo-object

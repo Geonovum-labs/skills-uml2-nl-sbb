@@ -50,6 +50,10 @@ Leg deze momenten voor, als keuzevraag met opties als dat kan; één onderwerp p
 |---|---|
 | `start` toont een packageboom | Welke package(s)? Stel het informatiemodel zelf voor. Ingesloten basismodellen (NEN 3610, GML, ISO, MIM) laat je weg, tenzij zo'n model zelf het om te zetten model is. |
 | `start` noemt een voorbeeld | Mag het ingevulde voorbeeld (`voorbeelden/<naam>.yaml`) gebruikt worden? Zo ja: `bk.py voorbeeld <naam>`. |
+| VRAAG `waarden-extern` | De waardelijsten bevatten alleen kolommen; de waarden staan elders. Een kandidaat-URL uit het model staat in de vraag: leg hem voor (host en versiemap!), zet hem pas na bevestiging met `bk.py zet waarden.extern.bron '<url met {lijst}>'` en draai `bk.py waarden`. Zonder gebruiker: niet invullen. |
+| VRAAG `termen-codes` | Laat de voorbeelden in de details zien (naam -> term) en de afkortingen controleren (samenstellingen met `-`, bv. `RTK-GPS`). Neem een keuze niet over als een voorbeeld fout uitpakt. |
+| VRAAG `bestaand-kader` | Is het model al gepubliceerd als begrippenkader? Zo ja: `bk.py bestaand <url>`, dan houden bestaande begrippen hun URI. Noem na `genereer` wat niet gekoppeld is (`uit/uri-koppeling.tsv`). |
+| `genereer` stopt met OPEN BESLISSINGEN | Twee begrippen krijgen dezelfde voorkeursterm. Leg de paren voor en zet per paar een onderscheidende term met het genoemde `bk.py zet`-commando. Zonder gebruiker: kies een term en noteer de aanname. |
 | eerste `analyseer` | Eén keer: de standaardkeuzes (zie `references/keuzes.md`, "Samenvatting"). Vraag of ze goed zijn. |
 | elk VRAAG-punt (`bk.py vraag <nr>`) | Het scriptvoorstel als eerste optie, "standaard houden" als tweede. |
 | review met oordeel `term` | De betere termen, vóór je ze met `bk.py zet` vastlegt. |
@@ -147,6 +151,8 @@ Wil je meer in het rapport, zoals de doorgevoerde termcorrecties? Schrijf dat in
 | `setup` | Maakt `.venv` in de werkmap en installeert de pakketten. |
 | `start <bestand> [--package P] [--zonder P]` | Maakt de inventaris uit XMI 1.1/2.x, EAP, EAPX, QEA of ZIP. Bij dubbele packagenamen geef je een pad: `Ouder/Kind`. |
 | `voorbeeld <naam>` | Kopieert `voorbeelden/<naam>.yaml` naar `project.yaml`. `start` noemt het voorbeeld als het bij het bestand past. |
+| `waarden` | Haalt de waarden van extern beheerde waardelijsten op (`waarden.extern`, XML/CSV/TSV per lijst) en zet ze in de inventaris. Na een nieuwe `start` opnieuw nodig; `status` zegt dat. |
+| `bestaand <url\|bestand>` | Legt het gepubliceerde kader vast waarvan de URI's behouden blijven (`uris.bestaand`). |
 | `analyseer` | Maakt de beslispunten: INFO (alleen noemen), VRAAG (beslissen), BESLOTEN. |
 | `vraag <nr>` | Toont één beslispunt met details en scriptvoorstel. |
 | `overnemen <code…> \| --alle [--standaard]` | Zet scriptvoorstel(len) in `project.yaml`. |
@@ -171,7 +177,7 @@ De losse scripts (`inventaris.py`, `genereer.py` enz.) zijn er nog voor gevorder
 
 ## Oplevering
 
-- `uit/kader.ttl`, `uit/termen.tsv`, `uit/beslissingen.md`
+- `uit/kader.ttl`, `uit/termen.tsv`, `uit/beslissingen.md`, en met `uris.bestaand` ook `uit/uri-koppeling.tsv`
 - `project.yaml`
 - `reports/`: SHACL, review en rapport
 

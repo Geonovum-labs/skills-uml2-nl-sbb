@@ -13,11 +13,14 @@ import sys
 from collections import Counter, defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from kern import Termen, bron_tag, clean_def, def_key, herkomst, indeling, laad_inventaris, laad_keuzes  # noqa: E402
+from kern import Termen, _merge, bron_tag, clean_def, def_key, herkomst, indeling, laad_inventaris, laad_keuzes  # noqa: E402
 
 
 MIM = {"objecttype", "gegevensgroeptype", "codelijst", "enumeratie", "referentielijst", "gestructureerd datatype",
        "primitief datatype", "keuze", "attribuutsoort"}
+
+
+GETAL = re.compile(r"\d+(?:[.,]\d+)?")
 
 
 def split_voorstel(anders):
@@ -27,13 +30,92 @@ def split_voorstel(anders):
     for lab, lst in anders:
         defs = sorted({clean_def(d).lower() for _, d in lst})
         minimum = min((SequenceMatcher(None, a, b).ratio() for i, a in enumerate(defs) for b in defs[i + 1:]), default=1)
-        (zelfde if minimum >= 0.8 else rest).append(lab)
+        # andere getallen = ander begrip, hoe gelijk de zin ook is (grof: 20-63 mm vs 630-2000 µm)
+        getallen = {tuple(sorted(GETAL.findall(d))) for d in defs}
+        (zelfde if minimum >= 0.8 and len(getallen) == 1 else rest).append(lab)
     v = {"waarden": {}}
     if zelfde:
         v["waarden"]["zelfde_begrip"] = zelfde
     if rest:
-        v["waarden"]["automatisch_splitsen"] = "{lijst} {waarde}"
+        v["waarden"]["automatisch_splitsen"] = "{waarde} ({lijst})"  # NL-SBB: onderscheidende term tussen haakjes
     return v
+
+
+NAAMVELD = re.compile(r"^(waarde|code|naam|value|term)$", re.I)
+DEFVELD = re.compile(r"^(omschrijving|definitie|description|definition|toelichting)$", re.I)
+
+
+def kolomlijsten(cod):
+    """Waardelijsten die kolommen bevatten in plaats van waarden: minstens 3 lijsten (en de helft) met
+    precies dezelfde attribuutnamen, waaronder een naam- of definitieveld. Geeft (lijsten, kolommen)."""
+    sets = Counter(frozenset(a["name"] for a in c["attrs"]) for c in cod.values() if c["attrs"])
+    if not sets:
+        return [], []
+    kol, n = sets.most_common(1)[0]
+    met = [c for c in cod.values() if c["attrs"]]
+    if n < 3 or n * 2 < len(met) or not any(NAAMVELD.match(k) or DEFVELD.match(k) for k in kol):
+        return [], []
+    lijsten = sorted(c["name"] for c in met if frozenset(a["name"] for a in c["attrs"]) == kol)
+    volgorde = next(c for c in met if c["name"] == lijsten[0])["attrs"]
+    return lijsten, [a["name"] for a in volgorde]
+
+
+def extern_voorstel(cod, lijsten, kolommen):
+    """Voorstel voor waarden.extern: bron uit een URL-tag die de lijstnaam bevat (bv. Locatie), velden uit de kolommen."""
+    bron = None
+    for c in cod.values():
+        if c["name"] not in lijsten:
+            continue
+        for v in (c.get("tags") or {}).values():
+            v = (v or "").strip()
+            if v.startswith(("http://", "https://")) and c["name"] in v:
+                bron = v.replace(c["name"], "{lijst}")
+                break
+        if bron:
+            break
+    naam = next((k for k in kolommen if NAAMVELD.match(k)), kolommen[0])
+    defi = next((k for k in kolommen if DEFVELD.match(k)), None)
+    # De bron-URL komt uit het model (invoer van derden): nooit stil overnemen (bk.py overnemen --alle).
+    # Hij staat in de details; de gebruiker bevestigt hem en zet hem met bk.py zet waarden.extern.bron.
+    ex = {"bron": None, "naam": naam, "definitie": defi,
+          # veldnamen in de bestanden hebben meestal geen leestekens (IMBRO/A -> IMBROA)
+          "tags": [re.sub(r"[^0-9A-Za-z_]", "", k) for k in kolommen if k not in (naam, defi)]}
+    if len(lijsten) < len(cod):
+        ex["lijsten"] = lijsten
+    return {"waarden": {"extern": ex}}, bron
+
+
+def engels_score(s):
+    """Grove taalscore van een naam: positief = eerder Engels, negatief = eerder Nederlands."""
+    s = re.sub(r"([a-z])([A-Z])", r"\1 \2", s).lower()
+    nl = len(re.findall(r"ij|oe|aa|uu|ui|eu|sch|cht|heid|tie\b|isch|ige?\b|eer|oor|elijk|ng\b|en\b|eel", s))
+    en = len(re.findall(r"th|tion|ea|w|y|ph|sh|qu|ck|ity\b|ed\b|al\b|ous|ing\b", s))
+    return en - nl
+
+
+def alias_engels(paren):
+    """True als de aliassen in minstens twee derde van de paren (naam, alias) Engelser zijn dan de UML-naam."""
+    paren = [(n, a) for n, a in paren if a and a.lower().replace(" ", "") != n.lower().replace(" ", "")]
+    return bool(paren) and sum(engels_score(a) > engels_score(n) for n, a in paren) * 3 >= len(paren) * 2
+
+
+GENERIEK = {"model", "informatiemodel", "conceptueel model", "conceptueelmodel", "logisch model", "uml", "classes",
+            "package", "packages", "domein", "datamodel", "data model", "objecten", "objecttypen"}
+
+
+def kader_voorstel(inv, obj):
+    """Kader-URI en titel uit de modelnaam: een algemene packagenaam (Model) vervangen door de bovenliggende
+    package; een afkorting tussen haakjes (BHR-GT) wordt de URI-naam."""
+    paden = Counter(tuple(c.get("pkg_path") or []) for c in obj.values() if c.get("pkg_path"))
+    pad = list(paden.most_common(1)[0][0]) if paden else []
+    kand = [p for p in (inv.get("packages") or [])[:1]] + list(reversed(pad))
+    naam = next((k.split("/")[-1] for k in kand if k and k.split("/")[-1].strip().lower() not in GENERIEK), None)
+    naam = naam or os.path.splitext(os.path.basename(inv.get("bron", "model")))[0]
+    m = re.search(r"\(([A-Za-z][\w-]*)\)", naam)
+    slug = m.group(1).lower() if m else re.sub(r"[^0-9a-z]+", "", naam.lower())
+    return {"uri": "http://definities.geostandaarden.nl/" + slug,
+            "titel": f"Begrippenkader {naam}" if m or " " in naam else naam + "-begrippenkader",
+            "omschrijving": f"Begrippen uit het informatiemodel {naam}, omgezet volgens NL-SBB."}
 
 
 def bron_voorstel(onb):
@@ -67,11 +149,17 @@ def main(inv_pad, project, uitdir):
             soort = "BESLOTEN"  # de gebruiker heeft dit punt bewust zo gelaten (project.yaml: besloten)
         punten.append(dict(soort=soort, code=code, titel=titel, details=details or [], voorstel=voorstel))
 
+    # waardelijsten met kolommen i.p.v. waarden (extern beheerd): niet als waarden behandelen (punt G)
+    ex = cfg["waarden"].get("extern") or {}
+    gedaan = inv.get("waarden_extern")
+    kl, kol = kolomlijsten(cod) if not gedaan else ([], [])
+
     # A. overzicht
     st = Counter((c["type"], c["stereo"]) for c in inv["elementen"].values())
     punt("INFO", "overzicht", f"{len(obj)} objecttypen, {len(dat)} datatypen, {len(cod)} waardelijsten, "
          f"{len(over)} overgeslagen; {sum(len(c['attrs']) for c in klassen.values())} attributen, "
-         f"{sum(len(c['attrs']) for c in cod.values())} waarden",
+         f"{sum(len(c['attrs']) for c in cod.values() if c['name'] not in kl)} waarden"
+         + (f" (plus {len(kl)} lijsten met alleen kolommen, zie waarden-extern)" if kl else ""),
          [f"{t} «{s}»: {n}" for (t, s), n in sorted(st.items(), key=str)])
 
     # B. stereotypen die niet in de lijsten staan -> objecttype
@@ -141,6 +229,8 @@ def main(inv_pad, project, uitdir):
     hern = {k.lower(): v for k, v in (cfg["waarden"].get("hernoem") or {}).items()}
     vg = defaultdict(list)
     for c in cod.values():
+        if c["name"] in kl:
+            continue
         for a in c["attrs"]:
             nm = a["name"].strip()
             if f"{nm.lower()}|{c['name'].lower()}" in split:
@@ -185,6 +275,22 @@ def main(inv_pad, project, uitdir):
     gebruikt = {a.get("type") for c in klassen.values() for a in c["attrs"]}
     cfg_g = rel.get("gebruik") or {}
     leeg = [c["name"] for c in cod.values() if not c["attrs"]]
+    if gedaan:
+        punt("INFO", "waarden-extern", f"{gedaan['lijsten']} waardelijsten gevuld met {gedaan['waarden']} waarden uit "
+             f"{gedaan['bron']} (bk.py waarden)", [f"geen extern bestand: {n}" for n in gedaan.get("ontbreekt") or []])
+    elif kl and ex.get("bron"):
+        punt("INFO", "waarden-extern", f"{len(kl)} waardelijsten bevatten kolommen ({', '.join(kol)}); de waarden "
+             f"komen uit {ex['bron']}: draai bk.py waarden")
+    elif kl:
+        voorstel, kandidaat = extern_voorstel(cod, kl, kol)
+        punt("VRAAG", "waarden-extern", f"{len(kl)} waardelijsten bevatten geen waarden maar kolommen ({', '.join(kol)}): "
+             "de waarden worden extern beheerd. Waar staan ze (waarden.extern.bron, URL of pad met {lijst})? "
+             "Zolang er geen bron is, worden de kolommen geen begrippen. "
+             + (f"Kandidaat uit de tag met de lijstlocatie: {kandidaat} . Deze URL komt uit het model: leg hem aan "
+                "de gebruiker voor (controleer host en versiemap) en zet hem pas na bevestiging met "
+                "bk.py zet waarden.extern.bron '<url>'. Zonder gebruiker: niet invullen."
+                if kandidaat else "Geen locatie gevonden in de tags: vraag de gebruiker om de URL."),
+             kl, voorstel=voorstel)
     if leeg:
         punt("INFO", "waardelijsten-leeg", f"{len(leeg)} waardelijsten zonder waarden in het model (extern beheerd?): "
              "geen collectie; attributen die ze gebruiken worden wel begrip", leeg)
@@ -249,7 +355,14 @@ def main(inv_pad, project, uitdir):
 
     # I. aliassen
     al = Counter(c["stereo"] for c in klassen.values() if c["alias"] and c["alias"] != c["name"])
-    if al:
+    engels = alias_engels([(c["name"], c["alias"]) for c in klassen.values() if c["alias"]])
+    if al and engels and not cfg["termen"].get("alias_als_voorkeursterm"):
+        punt("VRAAG", "alias", "Klassen met een alias, maar de aliassen lijken Engels en de UML-namen Nederlands: "
+             "UML-naam als voorkeursterm houden (standaard; de alias komt dan niet in het kader)?",
+             [f"«{s}»: {n}x, bv. " + ", ".join(f"{c['name']} = {c['alias']}" for c in klassen.values()
+                                                if c["stereo"] == s and c["alias"])[:200] for s, n in al.items()],
+             voorstel={"termen": {"alias_als_voorkeursterm": []}})
+    elif al:
         punt("INFO" if cfg["termen"].get("alias_als_voorkeursterm") else "VRAAG", "alias",
              "Klassen met een alias: alias als voorkeursterm gebruiken (termen.alias_als_voorkeursterm), met "
              + ("de UML-naam als altLabel@" + cfg['termen']['alias_naam_als_altlabel'] if cfg['termen'].get('alias_naam_als_altlabel')
@@ -262,19 +375,70 @@ def main(inv_pad, project, uitdir):
                  "alias_naam_als_altlabel": None if any((c["stereo"] or "").lower() in MIM for c in klassen.values())
                  else cfg["termen"].get("alias_naam_als_altlabel")}})
 
-    # J. parent-tag
+    # I2. codes in namen: vastgeplakte getallen, normcodes, afkortingen in hoofdletters (BRO: RTKGPS0tot2cm)
+    # Elke keuze wordt alleen voorgesteld als ze termen echt verandert; de details tonen het effect (naam -> term),
+    # zodat een fout voorstel zichtbaar is voordat het wordt overgenomen.
+    namen = [c["name"] for c in klassen.values()] + [a["name"] for c in klassen.values() for a in c["attrs"]]
+    wnamen = [a["name"] for c in cod.values() for a in c["attrs"]]
+    tc = cfg["termen"]
+
+    def termen_met(extra):
+        T2 = Termen(_merge(json.loads(json.dumps(cfg)), {"termen": extra}))
+        return [T2.humanize(n) for n in namen] + [T2.waarde(n) for n in wnamen]
+    nu = termen_met({})
+
+    def effect(extra):
+        return sorted({(n, t2) for n, t1, t2 in zip(namen + wnamen, nu, termen_met(extra)) if t1 != t2})
+    # Afkortingen alleen met bewijs: de reeks hoofdletters staat ergens los (vóór een cijfer, leesteken of het einde),
+    # zoals RTKGPS in RTKGPS0tot2cm of AHN in AHN3. Een reeks vóór een kleine letter is dubbelzinnig
+    # (BAGObject = BAG + Object, PPgroot = PP + groot) en wordt zonder zo'n los voorkomen niet voorgesteld.
+    los = {m.group(0) for n in namen + wnamen for m in re.finditer(r"(?<![A-Za-z])[A-Z]{2,}(?![A-Za-z])", n)}
+    runs = Counter()
+    for n in namen + wnamen:
+        for m in re.finditer(r"(?<![A-Za-z])([A-Z]{2,})(?=[a-z]|\d)", n):
+            r = m.group(1)
+            kand = r if r in los else (r[:-1] if len(r) > 2 and r[:-1] in los else None)
+            if kand:
+                runs[kand] += 1
+    gedekt = {k for k, _ in T.afkortingen} | set(T.behouden) | {"ISO", "NEN", "EN", "ASTM", "NPR"}
+    afk = sorted(r for r in runs if r not in gedekt)
+    voorstel, det = {}, []
+    for sleutel, extra in (("getallen", {"getallen": True}), ("normcodes", {"normcodes": True}),
+                           ("afkortingen", {"afkortingen": sorted(set(tc.get("afkortingen") or []) | set(afk))})):
+        if (sleutel == "afkortingen" and not afk) or (sleutel != "afkortingen" and tc.get(sleutel)):
+            continue
+        eff = effect(extra)
+        if eff:
+            voorstel.update(extra)
+            det += [f"{sleutel}: {n} -> {t}" for n, t in eff[:15]] + \
+                ([f"{sleutel}: ... en nog {len(eff) - 15}"] if len(eff) > 15 else [])
+    if voorstel:
+        punt("VRAAG", "termen-codes", "Namen met codes: getallen aan woorden (termen.getallen), normcodes zoals "
+             "iso17892d4v2016 (termen.normcodes) of afkortingen vóór een woord of getal (termen.afkortingen). "
+             "De details tonen per keuze wat er met de termen gebeurt: controleer ze; een samenstelling schrijf je "
+             "met '-' (RTK-GPS). Neem een keuze niet over als een voorbeeld fout uitpakt.",
+             det, voorstel={"termen": voorstel})
+
+    # J. parent-tag (staat standaard uit: modelspecifiek, en niet elke parent is een generieke relatie)
     pt = rel.get("waarde_parent_tag")
     np_ = sum(1 for c in cod.values() for a in c["attrs"] if (a["tags"].get(pt) or "").strip())
     if pt and np_:
-        punt("INFO", "parent", f"{np_} waarden met tag '{pt}' -> broaderGeneric naar de bovenliggende waarde")
+        punt("INFO", "parent", f"{np_} waarden met tag '{pt}' -> skos:broader naar de bovenliggende waarde "
+             "(relaties.waarde_parent_tag; controleer of elke parent echt een bovenliggend begrip is)")
+
+    # J2. bestaand, al gepubliceerd kader: URI's gelijk houden
+    if not cfg["uris"].get("bestaand"):
+        punt("VRAAG", "bestaand-kader", "Is dit model al eerder als begrippenkader gepubliceerd? Geef dan de URL of het "
+             "bestand (Turtle), zodat bestaande begrippen en collecties hun URI houden: bk.py bestaand <url|bestand>. "
+             "Zo niet: bk.py overnemen bestaand-kader --standaard",
+             ["Koppeling per gepubliceerd begrip: gelijke URI, anders gelijke term (ook altLabel of code) met gelijke "
+              "definitie, anders gelijke term als die maar één keer voorkomt. Niet gekoppelde begrippen krijgen een nieuwe URI."])
 
     # K. kader
     if not cfg["kader"].get("uri"):
         punt("VRAAG", "kader", "Kader-URI, titel en omschrijving ontbreken (kader.uri / kader.titel / kader.omschrijving)",
              [f"modelnaam/package: {', '.join(sorted({c['pkg'] for c in obj.values() if c['pkg']}))}"],
-             voorstel={"kader": {"uri": "http://definities.geostandaarden.nl/" + re.sub(r"[^0-9a-z]+", "", (inv.get("packages") or [os.path.splitext(os.path.basename(inv.get("bron", "model")))[0]])[0].split("/")[-1].lower()),
-                                 "titel": (inv.get("packages") or [os.path.splitext(os.path.basename(inv.get("bron", "model")))[0]])[0].split("/")[-1] + "-begrippenkader",
-                                 "omschrijving": "Begrippen uit het informatiemodel " + os.path.basename(inv.get("bron", "")) + ", omgezet volgens NL-SBB."}})
+             voorstel={"kader": kader_voorstel(inv, obj)})
 
     os.makedirs(uitdir, exist_ok=True)
     json.dump(punten, open(os.path.join(uitdir, "beslispunten.json"), "w"), ensure_ascii=False, indent=1)

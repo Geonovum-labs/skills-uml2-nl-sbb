@@ -14,6 +14,9 @@ kader:
 # URI-patronen. {kader} = kader.uri, {naam} = PascalCase van de voorkeursterm (begrip),
 # UML-naam (collectie) of bronsleutel (bron).
 uris:
+  # Bestand of URL (Turtle) van een al gepubliceerd begrippenkader van dit model. Gekoppelde begrippen,
+  # collecties en het kader zelf houden hun gepubliceerde URI; zie uit/uri-koppeling.tsv. null = geen.
+  bestaand: null
   begrip: "{kader}/id/begrip/{naam}"
   collectie: "{kader}/id/collectie/{naam}"
   bron: "{kader}/id/bron/{naam}"
@@ -57,6 +60,10 @@ termen:
   term_tag: null                  # tagged value met de voorkeursterm (bv. "Term(NL)" in IMKL); UML-naam -> altLabel
   camelcase_splitsen: true
   cijfers_scheiden: false         # true: "golflengte12_5" -> "golflengte 12,5" (underscore tussen cijfers = decimaalteken)
+  # Codes in namen (bv. BRO-domeintabellen). Uit = gedrag zoals voorheen; analyseer stelt ze voor (termen-codes).
+  getallen: false                 # true: veel25tot50 -> veel 25 tot 50, 16tot31.5mm -> 16 tot 31,5 mm, um -> µm, kpa -> kPa
+  normcodes: false                # true: iso17892d4v2016 -> ISO 17892-4:2016, ASTM_D4767v2011 -> ASTM D4767:2011, NEN5104 -> NEN 5104
+  afkortingen: []                 # afkortingen vóór een woord of getal: [RTK-GPS, PP] -> RTKGPS0tot2cm -> RTK-GPS 0 tot 2 cm, PPgroot -> PP groot
   decimaalteken: ","
   kleine_letters: true
   afkortingen_behouden: true      # woorden met 2+ hoofdletters (BGT, OV-baan) blijven staan
@@ -89,24 +96,39 @@ waarden:
   # Bij gelijke naam en inhoudelijk andere definitie stopt genereer.py, tenzij hieronder een
   # splitsing staat. Sleutel "waardenaam|Waardelijst" (waardenaam in kleine letters) -> term.
   splitsingen: {}
-  # Alternatief voor handmatige splitsingen: patroon voor alle overige conflicten, bv. "{lijst} {waarde}"
-  # (lijst = term van de waardelijst). null = genereer.py stopt bij een conflict (standaard).
+  # Alternatief voor handmatige splitsingen: patroon voor alle overige conflicten, bv. "{waarde} ({lijst})"
+  # (NL-SBB: de onderscheidende term tussen haakjes achter de term; lijst = term van de waardelijst).
+  # null = genereer.py stopt bij een conflict (standaard).
   automatisch_splitsen: null
   # Waarden die één begrip zijn ondanks (kleine) definitieverschillen; meest voorkomende definitie wint.
   zelfde_begrip: []
   hernoem: {}                         # waardenaam (kleine letters) -> term, bv. {"niet-bgt": "niet-BGT-object"}
-  botsing_achtervoegsel: " waarde"    # als een waardeterm al als begrip bestaat
-  notatie_tag: null                   # tagged value voor skos:notation (bv. Code); null = geen
+  # Waardeterm die al als ander begrip bestaat (bv. waarde 'weg' en objecttype 'weg'): gelijke definitie
+  # = hetzelfde begrip (de waarde komt bij dat begrip); andere definitie = dit patroon.
+  botsing: "{waarde} ({lijst})"
+  botsing_achtervoegsel: null         # verouderd (was " waarde"); als gezet, gaat het voor botsing
+  # skos:notation (Code) van een waarde: code = de waarde zoals in het model, met de waardelijst als
+  # datatype (zo blijft de code stabiel en uniek per lijst); tag = uit notatie_tag; geen.
+  notatie: code
+  notatie_tag: null                   # tagged value met de code (bij notatie: tag), bv. Code
+  # Extern beheerde waardelijsten: de UML-lijst heeft alleen kolommen (bv. Waarde, Omschrijving) en de
+  # waarden staan in een los bestand per lijst (XML, CSV of TSV). bk.py waarden haalt ze op.
+  extern:
+    bron: null                        # URL of pad met {lijst} (UML-naam), bv. https://.../lists/2.2/{lijst}.xml
+    naam: Waarde                      # veld met de waardenaam
+    definitie: Omschrijving           # veld met de definitie
+    tags: []                          # extra velden die als tagged value meegaan (niet in het kader)
+    lijsten: []                       # alleen deze waardelijsten (UML-namen); [] = alle
 
 relaties:
-  generalisatie: broaderGeneric   # broaderGeneric (skos:broader + isothes:broaderGeneric) | broader | geen
+  generalisatie: broader          # broader | broaderGeneric (ook isothes:broaderGeneric, alleen zinvol met andere isothes-relaties) | geen
   wortel: null                    # UML-naam: klassen zonder superklasse in het model komen hieronder
   zelfstandig: []                 # klassen zonder superklasse die topbegrip blijven (niet onder wortel)
   datatypen_topbegrip: true
   externe_superklasse_op_naam: true   # externe superklasse met dezelfde naam als een modelklasse -> die klasse
   attribuut_objecttype: related       # related | geen
   waarde_attribuut: related           # related | geen (keuze: tegen verweesde waarden)
-  waarde_parent_tag: parent           # tagged value met bovenliggende waarde(n) -> broaderGeneric
+  waarde_parent_tag: null             # tagged value met bovenliggende waarde(n) -> broader (modelspecifiek, bv. parent in IMGeo)
   parent_scheiding: ";"
   # Waardelijst -> [klasse, attribuut] als het gebruik niet uit de attribuuttypen volgt.
   # attribuut null = waarden related aan het objecttype; hele waarde null = niet relateren.
