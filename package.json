@@ -1,6 +1,6 @@
 {
   "name": "geonovum-uml2-nl-sbb",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "Agent-skill van Geonovum die UML-informatiemodellen omzet naar NL-SBB-begrippenkaders. Dit pakket wordt niet naar npm gepubliceerd; package.json is er voor Changesets.",
   "license": "EUPL-1.2",
