@@ -427,6 +427,12 @@ def controleer(stil=False):
         for n in ex.get("lijsten") or []:
             if inv["elementen"] and n not in klassen:
                 fouten.append(f"waarden.extern.lijsten: waardelijst '{n}' bestaat niet")
+    if w.get("notatie", "code") not in ("code", "afwijkend", "tag", "geen"):
+        fouten.append(f"waarden.notatie '{w.get('notatie')}' moet code, afwijkend, tag of geen zijn")
+    elif w.get("notatie") == "tag" and not w.get("notatie_tag"):
+        fouten.append("waarden.notatie: tag vraagt ook waarden.notatie_tag (de naam van de tagged value)")
+    if not isinstance(w.get("notatie_datatype", True), bool):
+        fouten.append("waarden.notatie_datatype moet true of false zijn")
     if w.get("automatisch_splitsen") and "{waarde}" not in w["automatisch_splitsen"]:
         fouten.append("waarden.automatisch_splitsen moet {waarde} bevatten, bv. \"{lijst} {waarde}\"")
     r = cfg["relaties"]

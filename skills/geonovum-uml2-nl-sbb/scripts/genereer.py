@@ -162,7 +162,8 @@ def main(inv_pad, project, uit):
             log.append(f"URI-botsing: '{label}' ({kind}) en '{concepts[oud]}' geven beide {oud}; '{label}' krijgt {u}")
         concepts[u] = label
         used_labels[label.lower()] = u
-        soort[u], notaties[u] = kind, notation or " | ".join(f"{c} [{str(c.datatype).rsplit('/', 1)[-1]}]" for c in codes)
+        soort[u], notaties[u] = kind, notation or " | ".join(
+            f"{c} [{str(c.datatype).rsplit('/', 1)[-1]}]" if c.datatype else str(c) for c in codes)
         g.add((u, RDF.type, SKOS.Concept))
         g.add((u, SKOS.inScheme, SCHEME))
         g.add((u, SKOS.prefLabel, lit(label)))
@@ -400,15 +401,25 @@ def main(inv_pad, project, uit):
         naam = codelists[k]["name"]
         return URIRef(uri(cfg, "collectie", naam if re.fullmatch(r"[\w.-]+", naam, re.A) else local_name(naam)))
 
-    def codes(lst):
-        """skos:notation van een waarde: de code uit het model, getypeerd met de waardelijst (waarden.notatie)."""
+    def codes(lst, label=""):
+        """skos:notation van een waarde (waarden.notatie): code = de waardenaam uit het model; afwijkend = idem, maar
+        alleen als die anders is dan de voorkeursterm (bv. 'halfVerhard', niet 'half verhard'); tag = uit notatie_tag;
+        geen = geen notatie. Met waarden.notatie_datatype de waardelijst als datatype (uniek per lijst), anders een
+        gewone tekst (voor tools die geen eigen datatypes kennen)."""
         wijze = wc.get("notatie", "code")
         uit = []
         for k, a in lst:
-            code = a["name"].strip() if wijze == "code" else (a["tags"].get(wc.get("notatie_tag") or "") or "").strip()
-            if wijze != "geen" and code:
-                uit.append(Literal(code, datatype=coll_uri(k)))
+            code = a["name"].strip() if wijze in ("code", "afwijkend") else \
+                (a["tags"].get(wc.get("notatie_tag") or "") or "").strip()
+            if wijze == "geen" or not code:
+                continue
+            if wijze == "afwijkend" and " ".join(code.split()).lower() == " ".join(label.split()).lower():
+                continue
+            uit.append(Literal(code, datatype=coll_uri(k)) if wc.get("notatie_datatype", True) else Literal(code))
         return uit
+
+    def notatie_tekst(c):
+        return f"{c} [{str(c.datatype).rsplit('/', 1)[-1]}]" if c.datatype else str(c)
 
     from collections import Counter as _Counter
     homoniem = _Counter((key if isinstance(key, str) else key[0]).lower() for key in val_groups)
@@ -444,9 +455,9 @@ def main(inv_pad, project, uit):
             # onderscheiden volgens NL-SBB, met de waardelijst tussen haakjes
             ander = used_labels[label.lower()]
             if def_key(d) and def_key(d) == def_key(str(g.value(ander, SKOS.definition) or "")):
-                for c in codes(lst):
+                for c in codes(lst, concepts[ander]):
                     g.add((ander, SKOS.notation, c))
-                    notaties[ander] = " | ".join(x for x in (notaties[ander], f"{c} [{str(c.datatype).rsplit('/', 1)[-1]}]") if x)
+                    notaties[ander] = " | ".join(x for x in (notaties[ander], notatie_tekst(c)) if x)
                 for k, a in lst:
                     val_uri[(k, a["name"].strip())] = ander
                 log.append(f"Waarde '{lab}' heeft dezelfde definitie als het andere begrip '{concepts[ander]}': "
@@ -461,7 +472,7 @@ def main(inv_pad, project, uit):
             label = (wc.get("botsing") or "{waarde} ({lijst})").format(waarde=lab, lijst=T.humanize(codelists[k0]["name"]))
             log.append(f"Waarde '{lab}' botst met een ander begrip; voorkeursterm '{label}'")
         names = sorted({a["name"].strip() for _, a in lst})
-        u = concept(label, d, "waarde", codes=codes(lst),
+        u = concept(label, d, "waarde", codes=codes(lst, label),
                     source_tag=bron_tag(a0, cfg) or bron_tag(codelists[k0], cfg), toelichting=a0.get("toelichting", ""),
                     alt=[n for n in names if n.lower() != label.lower()] + sorted(split_orig.get(lab, ())))
         for k, a in lst:
