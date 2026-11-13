@@ -277,6 +277,43 @@ class Botsing(unittest.TestCase):
             shutil.rmtree(w, ignore_errors=True)
 
 
+class Notatie(unittest.TestCase):
+    """skos:notation van waarden: code, afwijkend, geen, en met of zonder datatype."""
+
+    def kader(self, *zetten):
+        w = tempfile.mkdtemp(prefix="bk-notatie-")
+        self.addCleanup(shutil.rmtree, w, True)
+        lijst = {"name": "Verharding", "type": "uml:Enumeration", "stereo": None, "pkg": "M", "abstract": False,
+                 "doc": "", "alias": None, "gens": [], "tags": {},
+                 "attrs": [{"id": "w1", "name": "half verhard", "doc": "Deels verhard.", "tags": {}},
+                           {"id": "w2", "name": "onverhard", "doc": "Niet verhard.", "tags": {}},
+                           {"id": "w3", "name": "gesloten verharding", "doc": "Dicht.", "tags": {}}]}
+        lijst["attrs"][2]["name"] = "geslotenVerharding"
+        mini_model(w, {"L": lijst})
+        for sleutel, waarde in zetten:
+            bk(w, "zet", sleutel, waarde)
+        bk(w, "genereer")
+        import rdflib
+        from rdflib.namespace import SKOS
+        g = rdflib.Graph().parse(os.path.join(w, "uit", "kader.ttl"))
+        from rdflib import RDF
+        return {str(g.value(s, SKOS.prefLabel)): list(g.objects(s, SKOS.notation))
+                for s in set(g.subjects(SKOS.notation, None)) if (s, RDF.type, SKOS.Concept) in g}
+
+    def test_standaard_code_met_datatype(self):
+        n = self.kader()
+        self.assertEqual(len(n), 3)
+        self.assertTrue(all(c.datatype for cs in n.values() for c in cs))
+
+    def test_afwijkend_zonder_datatype(self):
+        n = self.kader(("waarden.notatie", "afwijkend"), ("waarden.notatie_datatype", "false"))
+        self.assertEqual(list(n), ["gesloten verharding"])  # 'half verhard' en 'onverhard' = de term zelf
+        self.assertEqual([(str(c), c.datatype) for c in n["gesloten verharding"]], [("geslotenVerharding", None)])
+
+    def test_geen(self):
+        self.assertEqual(self.kader(("waarden.notatie", "geen")), {})
+
+
 class ProjectControle(unittest.TestCase):
     def setUp(self):
         self.w = tempfile.mkdtemp(prefix="bk-test-")

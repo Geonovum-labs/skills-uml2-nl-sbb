@@ -107,9 +107,12 @@ waarden:
   # = hetzelfde begrip (de waarde komt bij dat begrip); andere definitie = dit patroon.
   botsing: "{waarde} ({lijst})"
   botsing_achtervoegsel: null         # verouderd (was " waarde"); als gezet, gaat het voor botsing
-  # skos:notation (Code) van een waarde: code = de waarde zoals in het model, met de waardelijst als
-  # datatype (zo blijft de code stabiel en uniek per lijst); tag = uit notatie_tag; geen.
+  # skos:notation (Code) van een waarde: code = de waarde zoals in het model; afwijkend = idem, maar alleen
+  # als die anders is dan de voorkeursterm (dus niet bij 'half verhard' = 'half verhard'); tag = uit notatie_tag;
+  # geen = geen notatie.
   notatie: code
+  notatie_datatype: true              # true: de waardelijst als datatype (uniek per lijst); false: gewone tekst,
+                                      # voor tools die geen eigen datatypes kennen (zoals ModelDesk)
   notatie_tag: null                   # tagged value met de code (bij notatie: tag), bv. Code
   # Extern beheerde waardelijsten: de UML-lijst heeft alleen kolommen (bv. Waarde, Omschrijving) en de
   # waarden staan in een los bestand per lijst (XML, CSV of TSV). bk.py waarden haalt ze op.
