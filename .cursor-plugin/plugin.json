@@ -2,7 +2,7 @@
   "name": "geonovum-uml2-nl-sbb",
   "displayName": "Geonovum UML naar NL-SBB",
   "description": "Skill van Geonovum die een UML-informatiemodel (XMI of Enterprise Architect-bestand) omzet naar een begrippenkader volgens NL-SBB, met vaste standaardkeuzes, SHACL-validatie en een inhoudelijke review in delen. Alle vaste stappen lopen via één script, zodat ook kleinere modellen de werkwijze volledig doorlopen.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": {
     "name": "Geonovum"
   }
