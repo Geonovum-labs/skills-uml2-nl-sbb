@@ -320,18 +320,28 @@ def uri(cfg, soort, naam):
 
 # ---------- downloaden (curl: systeemcertificaten, redirects) ----------
 
-def curl_status(url, pad="/dev/null", accept="*/*", tries=6, timeout=90, volgen=True):
+def curl_status(url, pad=os.devnull, accept="*/*", tries=6, timeout=90, volgen=True):
     """Haalt url op met curl -L. Geeft (status, deny) terug; status '429' wordt met backoff herhaald.
     deny = True bij een blokkade door de uitvoeromgeving (x-deny-reason / allowlist)."""
     import subprocess
     import tempfile
     import time
     for n in range(tries):
-        with tempfile.NamedTemporaryFile() as hdr:
+        # Het headerbestand is gesloten zolang curl erin schrijft: Windows staat geen tweede
+        # schrijver toe op een bestand dat nog open is. Daarom mkstemp en zelf opruimen.
+        fd, hdr = tempfile.mkstemp(prefix="bk-hdr-", suffix=".txt")
+        os.close(fd)
+        try:
             r = subprocess.run(["curl", "-sL" if volgen else "-s", "--proto", "=http,https", "-m", str(timeout),
-                                "-H", f"Accept: {accept}", "-A", "geonovum-uml2-nl-sbb", "-D", hdr.name, "-o", pad, "-w", "%{http_code}", url],
+                                "-H", f"Accept: {accept}", "-A", "geonovum-uml2-nl-sbb", "-D", hdr, "-o", pad, "-w", "%{http_code}", url],
                                capture_output=True, text=True)
-            headers = open(hdr.name, errors="ignore").read().lower()
+            with open(hdr, errors="ignore") as f:
+                headers = f.read().lower()
+        finally:
+            try:
+                os.remove(hdr)
+            except OSError:
+                pass
         code = r.stdout.strip() or "000"
         if "x-deny-reason" in headers or "not in allowlist" in headers:
             return code, True

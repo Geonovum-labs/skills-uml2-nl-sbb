@@ -701,6 +701,40 @@ class ExternVeilig(unittest.TestCase):
         self.assertFalse({"waarde", "omschrijving", "imbro"} & {r["voorkeursterm"] for r in termen(self.w)})
 
 
+class CurlStatus(unittest.TestCase):
+    """curl_status zonder netwerk: een nagebootste curl schrijft headers naar het -D-bestand."""
+
+    def nep_curl(self, headers, code="200"):
+        gezien = []
+
+        def run(cmd, **kw):
+            hdr = cmd[cmd.index("-D") + 1]
+            gezien.append(hdr)
+            # Zoals curl: het bestand opnieuw openen om te schrijven. Op Windows faalt dit
+            # als curl_status het bestand zelf nog open heeft.
+            with open(hdr, "w") as f:
+                f.write(headers)
+            return subprocess.CompletedProcess(cmd, 0, stdout=code, stderr="")
+        return run, gezien
+
+    def test_headerbestand_opgeruimd(self):
+        from unittest import mock
+        import kern
+        run, gezien = self.nep_curl("HTTP/1.1 200 OK\r\nContent-Type: text/turtle\r\n\r\n")
+        with mock.patch("subprocess.run", run):
+            self.assertEqual(kern.curl_status("https://voorbeeld.nl/x.ttl"), ("200", False))
+        self.assertEqual(len(gezien), 1)
+        self.assertFalse(os.path.exists(gezien[0]))
+
+    def test_blokkade_herkend_en_opgeruimd(self):
+        from unittest import mock
+        import kern
+        run, gezien = self.nep_curl("HTTP/1.1 403 Forbidden\r\nX-Deny-Reason: host not in allowlist\r\n\r\n", "403")
+        with mock.patch("subprocess.run", run):
+            self.assertEqual(kern.curl_status("https://voorbeeld.nl/x.ttl"), ("403", True))
+        self.assertFalse(os.path.exists(gezien[0]))
+
+
 @unittest.skipUnless(os.environ.get("BK_NETWERK") == "1", "SHACL-validatie haalt het profiel uit het register (BK_NETWERK=1)")
 class Validatie(unittest.TestCase):
     def test_shacl_telling(self):
