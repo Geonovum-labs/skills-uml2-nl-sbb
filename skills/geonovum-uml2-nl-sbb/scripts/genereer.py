@@ -289,6 +289,15 @@ def main(inv_pad, project, uit):
         g.add((SCHEME, SKOS.hasTopConcept, cls_uri[t]))
         g.add((cls_uri[t], SKOS.topConceptOf, SCHEME))
 
+    # associaties (relatiesoorten) tussen klassen in het kader -> skos:related
+    if rel.get("associatie", "related") == "related":
+        paren = {frozenset((cls_uri[k], cls_uri[a["doel"]])) for k, c in klassen.items()
+                 for a in c.get("assocs") or [] if a.get("doel") in cls_uri and a["doel"] != k}
+        for p in paren:
+            related(*sorted(p))
+        if paren:
+            log.append(f"{len(paren)} associaties tussen klassen als skos:related (relaties.associatie)")
+
     # 2. attributen
     ac = cfg["attributen"]
     attr_uri = defaultdict(list)  # (klasse, attribuut) -> uri
@@ -579,6 +588,34 @@ def main(inv_pad, project, uit):
             continue
         g.add((lab2uri[m["term"]], SKOS[m["relatie"]], URIRef(m["uri"])))
 
+    # MIM-tag 'begrip' (of een andere tag in relaties.begrip_tag): URI van een bestaand begrip -> match
+    btags, brel = rel.get("begrip_tag") or [], rel.get("begrip_relatie", "exactMatch")
+    n_begrip = 0
+    if btags and brel != "geen":
+        def begrip_uris(tags):
+            namen = {tg.lower() for tg in btags}  # hoofdletterongevoelig: MIM-profielen schrijven 'begrip' of 'Begrip'
+            for tg, v in (tags or {}).items():
+                if tg.lower() not in namen:
+                    continue
+                for u in re.split(r"[\s,;]+", v or ""):
+                    if re.match(r"https?://\S+$", u) and not u.startswith(cfg["kader"]["uri"].rstrip("/") + "/"):
+                        yield u
+        doelen = []
+        for k, c in klassen.items():
+            doelen.append((cls_uri.get(k), c["tags"]))
+            for a in c["attrs"]:
+                for u in attr_uri.get((c["name"], a["name"]), []):
+                    doelen.append((u, a["tags"]))
+        for k, c in codelists.items():
+            for a in c["attrs"]:
+                doelen.append((val_uri.get((k, a["name"].strip())), a["tags"]))
+        gelegd = {(u, URIRef(b)) for u, tags in doelen if u is not None for b in begrip_uris(tags)}
+        for u, b in gelegd:
+            g.add((u, SKOS[brel], b))
+        n_begrip = len(gelegd)
+        if n_begrip:
+            log.append(f"{n_begrip} skos:{brel} naar bestaande begrippen uit tag {btags} (relaties.begrip_tag)")
+
     # ---------- URI's van een al gepubliceerd kader ----------
     if pub is not None:
         g, concepts, soort, notaties = bestaande_uris(cfg, pub, vooraf, g, concepts, soort, notaties, uit, log)
@@ -600,7 +637,7 @@ def main(inv_pad, project, uit):
         tel[s] += 1
     print(f"begrippen: {len(concepts)} ({', '.join(f'{k} {v}' for k, v in sorted(tel.items()))}); "
           f"collecties {sum(1 for c in codelists.values() if c['attrs'])}; topbegrippen {len(set(tops))}; bronnen {len(bronnen)}; "
-          f"matches {len(cfg.get('matches') or [])}; triples {len(g)}")
+          f"matches {len(cfg.get('matches') or []) + n_begrip}; triples {len(g)}")
     print(f"log: {len(log)} regels in beslissingen.md; termen in termen.tsv")
 
 

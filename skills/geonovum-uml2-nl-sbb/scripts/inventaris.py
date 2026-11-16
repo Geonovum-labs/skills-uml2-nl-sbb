@@ -10,7 +10,7 @@ export met meerdere modellen (bv. ook NEN 3610, ISO, MIM-datatypen) toont het sc
 --package de packageboom en stopt het (exitcode 1).
 
 Leest klassen, datatypen, waardelijsten (codelists/enumeraties), attributen, literals,
-generalisaties, stereotypen, aliassen, definities en tagged values. Ondersteunt
+generalisaties, associaties (relatiesoorten), stereotypen, aliassen, definities en tagged values. Ondersteunt
 Enterprise Architect (xmi:Extension) en generieke UML-XMI (ownedComment, ownedLiteral,
 stereotype-applicaties met base_Class/base_Property). XMI- en UML-namespaceversies
 worden automatisch herkend.
@@ -122,7 +122,7 @@ def xmi11(root, packages, zonder=()):
                                     alias=tg.get("alias") or None, stereo=st,
                                     pkg=path[-1] if path else None, pkg_path=path,
                                     abstract=c.get("isAbstract") == "true",
-                                    tags=eigen_tags(c), attrs=attrs, gens=[],
+                                    tags=eigen_tags(c), attrs=attrs, gens=[], assocs=[],
                                     _tpos=int(tg.get("tpos") or 0))
                 elif t == "Generalization":
                     gens.append((c.get("subtype"), c.get("supertype")))
@@ -137,6 +137,14 @@ def xmi11(root, packages, zonder=()):
         g = (el.get("subtype"), el.get("supertype"))
         if g not in gens:
             gens.append(g)
+    # associaties (relatiesoorten): van de bron naar het doel, met de naam of de rol aan de doelkant
+    for el in root.iter(U + "Association"):
+        ends = el.findall(".//" + U + "AssociationEnd")
+        if len(ends) == 2:
+            bron, doel = ends[0].get("type"), ends[1].get("type")
+            naam = el.get("name") or ends[1].get("name") or None
+            if bron in elems and doel and doel != bron:
+                elems[bron]["assocs"].append(dict(doel=doel, naam=naam))
     return pkgs, elems, gens, refs
 
 
@@ -181,6 +189,7 @@ def main(src, out, packages=(), zonder=()):
 
     elems = {}   # id -> klasse/datatype/enumeratie
     props = {}   # id van attribuut -> (klasse-id, index)
+    assocs = []  # (klasse-id, doel-id, naam)
 
     def comment(el):
         return " ".join((c.get("body") or (c.findtext("body") or "")).strip()
@@ -193,12 +202,22 @@ def main(src, out, packages=(), zonder=()):
             t = c.get(X + "type")
             if t == "uml:Package":
                 walk(c, pkg_path + [c.get("name")])
+            elif t == "uml:Association":
+                # twee niet-navigeerbare kanten staan als ownedEnd in de associatie zelf
+                ends = c.findall("ownedEnd")
+                if len(ends) == 2:
+                    ty = [(e.find("type").get(X + "idref") if e.find("type") is not None else e.get("type"))
+                          for e in ends]
+                    assocs.append((ty[0], ty[1], c.get("name") or ends[1].get("name") or None))
             elif t in ("uml:Class", "uml:Enumeration", "uml:DataType", "uml:Interface") and c.get("name"):
                 # naamloze klassen zijn tekenhulpmiddelen (bv. EA-boundaries)
                 i = c.get(X + "id")
                 attrs = []
                 for a in c.findall("ownedAttribute"):
                     if a.get("association") is not None:
+                        ty = a.find("type")
+                        assocs.append((c.get(X + "id"), ty.get(X + "idref") if ty is not None else a.get("type"),
+                                       a.get("name") or None))
                         continue
                     ty = a.find("type")
                     attrs.append(dict(id=a.get(X + "id"), name=a.get("name") or "", doc=comment(a),
@@ -211,10 +230,13 @@ def main(src, out, packages=(), zonder=()):
                 elems[i] = dict(name=c.get("name") or "", type=t, doc=comment(c), alias=None, stereo=None,
                                 pkg=pkg_path[-1] if pkg_path else None, pkg_path=pkg_path,
                                 abstract=c.get("isAbstract") == "true", tags={}, attrs=attrs,
-                                gens=[g.get("general") for g in c.findall("generalization")])
+                                gens=[g.get("general") for g in c.findall("generalization")], assocs=[])
                 for n, a in enumerate(attrs):
                     props[a["id"]] = (i, n)
     walk(model, [])
+    for bron, doel, naam in assocs:
+        if bron in elems and doel and doel != bron:
+            elems[bron]["assocs"].append(dict(doel=doel, naam=naam))
 
     # stereotype-applicaties buiten het model (generieke XMI-profielen)
     for e in root:

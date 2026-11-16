@@ -149,7 +149,7 @@ Wil je meer in het rapport, zoals de doorgevoerde termcorrecties? Schrijf dat in
 |---|---|
 | `status` | Noemt de volgende stap. Draai dit na elke stap. |
 | `setup` | Maakt `.venv` in de werkmap en installeert de pakketten. |
-| `start <bestand> [--package P] [--zonder P]` | Maakt de inventaris uit XMI 1.1/2.x, EAP, EAPX, QEA of ZIP. Bij dubbele packagenamen geef je een pad: `Ouder/Kind`. |
+| `start <bestand> [--package P] [--zonder P]` | Maakt de inventaris uit XMI 1.1/2.x, EAP, EAPX, QEA, ZIP of een ea2rdf-export (`.ttl`; zie `references/keuzes.md`). Bij dubbele packagenamen geef je een pad: `Ouder/Kind`. |
 | `voorbeeld <naam>` | Kopieert `voorbeelden/<naam>.yaml` naar `project.yaml`. `start` noemt het voorbeeld als het bij het bestand past. |
 | `waarden` | Haalt de waarden van extern beheerde waardelijsten op (`waarden.extern`, XML/CSV/TSV per lijst) en zet ze in de inventaris. Na een nieuwe `start` opnieuw nodig; `status` zegt dat. |
 | `bestaand <url\|bestand>` | Legt het gepubliceerde kader vast waarvan de URI's behouden blijven (`uris.bestaand`). |

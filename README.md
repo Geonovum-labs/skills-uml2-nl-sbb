@@ -10,7 +10,7 @@ Een agent-skill is een map met een instructiedocument (`SKILL.md`) dat een AI-as
 
 | Skill | Status | Doel |
 | --- | --- | --- |
-| [`geonovum-uml2-nl-sbb`](skills/geonovum-uml2-nl-sbb/SKILL.md) | concept | Zet een UML-model in XMI (1.1 of 2.x) of een Enterprise Architect-bestand (.eap, .eapx, .qea, .qeax, ook in een zip) om naar een NL-SBB-begrippenkader in Turtle. Objecttypen, datatypen, attributen en waarden uit waardelijsten worden begrippen, waardelijsten worden collecties. Met vaste standaardkeuzes, SHACL-validatie, een inhoudelijke review in delen en een rapport. |
+| [`geonovum-uml2-nl-sbb`](skills/geonovum-uml2-nl-sbb/SKILL.md) | concept | Zet een UML-model in XMI (1.1 of 2.x) of een Enterprise Architect-bestand (.eap, .eapx, .qea, .qeax, ook in een zip, of als export van [ea2rdf](https://github.com/architolk/ea2rdf)) om naar een NL-SBB-begrippenkader in Turtle. Objecttypen, datatypen, attributen en waarden uit waardelijsten worden begrippen, waardelijsten worden collecties. Met vaste standaardkeuzes, SHACL-validatie, een inhoudelijke review in delen en een rapport. |
 
 De status `concept` betekent dat de skill nog niet is vastgesteld. Een hogere status vraagt een expertreview, een gepubliceerde reviewprocedure met acceptatiecriteria, en een test met minstens twee assistenten waarvan één open source of Europees.
 

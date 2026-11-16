@@ -197,6 +197,28 @@ def main(inv_pad, project, uitdir):
              voorstel={"relaties": {"wortel": root_guess}} if root_guess and not rel.get("wortel") else
              ({"relaties": {"wortel": None}} if not rel.get("wortel") else None))
 
+    # C2. associaties (relatiesoorten) -> skos:related
+    asc = [f"{c['name']} -> {klassen[a['doel']]['name']}" + (f" ({a['naam']})" if a.get("naam") else "")
+           for c in klassen.values() for a in c.get("assocs") or [] if a.get("doel") in klassen]
+    if asc:
+        punt("INFO", "associaties", f"{len(asc)} associaties tussen klassen in het kader -> "
+             + ("skos:related (relaties.associatie)" if rel.get("associatie", "related") == "related"
+                else "niet omgezet (relaties.associatie: geen)"), asc)
+
+    # C3. tag met de URI van een bestaand begrip (MIM: begrip) -> match
+    btags = {t.lower() for t in rel.get("begrip_tag") or []}
+    if btags:
+        alle = list(klassen.values()) + list(cod.values())
+        met = [f"{c['name']}: {v}" for c in alle for t, v in c["tags"].items()
+               if t.lower() in btags and (v or "").startswith("http")]
+        met += [f"{c['name']}.{a['name']}: {v}" for c in alle for a in c["attrs"] for t, v in a["tags"].items()
+                if t.lower() in btags and (v or "").startswith("http")]
+        if met:
+            punt("INFO", "begrip-tag", f"{len(met)} elementen met een URI in tag {sorted(btags)} -> "
+                 + (f"skos:{rel.get('begrip_relatie', 'exactMatch')} naar dat begrip (relaties.begrip_relatie)"
+                    if rel.get("begrip_relatie", "exactMatch") != "geen" else "niet omgezet (relaties.begrip_relatie: geen)"),
+                 met)
+
     # D. ontbrekende definities
     leeg = [f"klasse {c['name']}" for c in klassen.values() if not clean_def(c["doc"])]
     leeg += [f"attribuut {c['name']}.{a['name']}" for c in klassen.values() for a in c["attrs"] if not clean_def(a["doc"])]

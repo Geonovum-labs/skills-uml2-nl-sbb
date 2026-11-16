@@ -1,0 +1,151 @@
+@prefix ea: <http://www.sparxsystems.eu/def/ea#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+# Fictief testmodel in de vorm van een ea2rdf-export (java -jar ea2rdf.jar -ea -e model.eap).
+# Geen bestaand informatiemodel. De definitie van Fietskluis bevat bewust dubbel gecodeerde UTF-8
+# ('Ã©Ã©n' = 'één'), zoals ea2rdf die met de optie -ea schrijft.
+<urn:package:1> a ea:Package;
+  ea:guid '00000000-0000-0000-0000-000000000001';
+  rdfs:label '''Model''';
+.
+<urn:package:2> a ea:Package;
+  ea:guid '00000000-0000-0000-0000-000000000002';
+  rdfs:label '''Basis''';
+  ea:parent <urn:package:1>;
+.
+<urn:package:3> a ea:Package;
+  ea:guid '00000000-0000-0000-0000-000000000003';
+  rdfs:label '''Fietsparkeren''';
+  ea:parent <urn:package:1>;
+.
+<urn:object:10> a ea:Object;
+  ea:guid '00000000-0000-0000-0000-000000000010';
+  ea:type '''Class''';
+  ea:stereotype '''Objecttype''';
+  rdfs:label '''GeoObject''';
+  ea:abstract true;
+  ea:package <urn:package:2>;
+  rdfs:comment '''Abstractie van een object in de werkelijkheid dat een locatie heeft.''';
+.
+<urn:object:11> a ea:Object;
+  ea:guid '00000000-0000-0000-0000-000000000011';
+  ea:type '''Class''';
+  ea:stereotype '''Objecttype''';
+  rdfs:label '''Stalling''';
+  ea:abstract false;
+  ea:package <urn:package:3>;
+  rdfs:comment '''--Definitie--
+Voorziening waar fietsen geordend kunnen worden geparkeerd.
+
+--Regels--
+Een stalling heeft een naam.''';
+.
+<urn:object:12> a ea:Object;
+  ea:guid '00000000-0000-0000-0000-000000000012';
+  ea:type '''Class''';
+  ea:stereotype '''Objecttype''';
+  rdfs:label '''Fietskluis''';
+  ea:abstract false;
+  ea:package <urn:package:3>;
+  rdfs:comment '''Afsluitbare stalling voor Ã©Ã©n fiets.''';
+.
+<urn:object:13> a ea:Object;
+  ea:guid '00000000-0000-0000-0000-000000000013';
+  ea:type '''Class''';
+  ea:stereotype '''Objecttype''';
+  rdfs:label '''Beheerder''';
+  ea:abstract false;
+  ea:package <urn:package:3>;
+  rdfs:comment '''Organisatie die een stalling exploiteert.''';
+.
+<urn:object:14> a ea:Object;
+  ea:guid '00000000-0000-0000-0000-000000000014';
+  ea:type '''Enumeration''';
+  ea:stereotype '''Enumeratie''';
+  rdfs:label '''TypeStalling''';
+  ea:package <urn:package:3>;
+  rdfs:comment '''Lijst van soorten stallingen naar de mate van toezicht.''';
+.
+<urn:object:15> a ea:Object;
+  ea:type '''Note''';
+  ea:package <urn:package:3>;
+  rdfs:comment '''Een notitie op het diagram: geen begrip.''';
+.
+<urn:attribute:20> a ea:Attribute;
+  ea:guid '00000000-0000-0000-0000-000000000020';
+  rdfs:label '''naam''';
+  ea:type '''CharacterString''';
+  ea:object <urn:object:11>;
+  rdfs:comment '''De officiële naam van de stalling.''';
+  ea:lowerBound '''1''';
+  ea:upperBound '''1''';
+.
+<urn:attribute:21> a ea:Attribute;
+  ea:guid '00000000-0000-0000-0000-000000000021';
+  rdfs:label '''typeStalling''';
+  ea:type '''TypeStalling''';
+  ea:classifier <urn:object:14>;
+  ea:object <urn:object:11>;
+  rdfs:comment '''Indeling van de stalling naar de mate van toezicht.''';
+.
+<urn:attribute:22> a ea:Attribute;
+  ea:guid '00000000-0000-0000-0000-000000000022';
+  rdfs:label '''bewaakt''';
+  ea:object <urn:object:14>;
+  rdfs:comment '''Stalling waar een beheerder of camera toezicht houdt.''';
+.
+<urn:attribute:23> a ea:Attribute;
+  ea:guid '00000000-0000-0000-0000-000000000023';
+  rdfs:label '''onbewaakt''';
+  ea:object <urn:object:14>;
+  rdfs:comment '''Stalling zonder toezicht.''';
+.
+<urn:connector:30> a ea:Connector;
+  ea:guid '00000000-0000-0000-0000-000000000030';
+  ea:type '''Generalization''';
+  ea:start <urn:object:11>;
+  ea:end <urn:object:10>;
+.
+<urn:connector:31> a ea:Connector;
+  ea:guid '00000000-0000-0000-0000-000000000031';
+  ea:type '''Generalization''';
+  ea:start <urn:object:12>;
+  ea:end <urn:object:11>;
+.
+<urn:connector:32> a ea:Connector;
+  ea:guid '00000000-0000-0000-0000-000000000032';
+  ea:type '''Association''';
+  ea:stereotype '''Relatiesoort''';
+  rdfs:label '''wordtBeheerdDoor''';
+  ea:start <urn:object:11>;
+  ea:end <urn:object:13>;
+  ea:destRole '''beheerder''';
+.
+<urn:connector:33> a ea:Connector;
+  ea:guid '00000000-0000-0000-0000-000000000033';
+  ea:type '''NoteLink''';
+  ea:start <urn:object:15>;
+  ea:end <urn:object:11>;
+.
+<urn:objectproperty:40> a ea:ObjectProperty;
+  ea:guid '00000000-0000-0000-0000-000000000040';
+  ea:element <urn:object:11>;
+  ea:property '''Begrip''';
+  ea:value '''http://voorbeeld.nl/basis/id/begrip/stalling''';
+.
+<urn:objectproperty:41> a ea:ObjectProperty;
+  ea:guid '00000000-0000-0000-0000-000000000041';
+  ea:element <urn:object:11>;
+  ea:property '''Herkomst definitie''';
+  ea:value '''Fietsnota''';
+.
+<urn:attributetag:50> a ea:Attributetag;
+  ea:guid '00000000-0000-0000-0000-000000000050';
+  ea:element <urn:attribute:20>;
+  ea:property '''begrip''';
+  ea:value '''http://voorbeeld.nl/basis/id/begrip/naam http://voorbeeld.nl/k/id/begrip/Eigen''';
+.
+<urn:diagram:60> a ea:Diagram;
+  ea:guid '00000000-0000-0000-0000-000000000060';
+  rdfs:label '''Overzicht''';
+  ea:package <urn:package:3>;
+.

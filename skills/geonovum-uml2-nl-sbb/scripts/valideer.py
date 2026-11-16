@@ -56,7 +56,7 @@ def extern_zonder_begrip(data, kader_uri):
     doelen = set()
     eigen = set(data.subjects(SKOS.inScheme, None))
     for p in ("exactMatch", "closeMatch", "broadMatch", "narrowMatch", "relatedMatch"):
-        doelen |= {o for o in data.objects(None, SKOS[p]) if not str(o).startswith(kader_uri) and o not in eigen}
+        doelen |= {o for o in data.objects(None, SKOS[p]) if not str(o).startswith(kader_uri.rstrip("/") + "/") and o not in eigen}
     return {o for o in doelen if (o, rdflib.RDF.type, SKOS.Concept) not in data}
 
 
@@ -71,7 +71,7 @@ def run(naam, data, shapes, alleen, reports, label_graph, extern=frozenset()):
             continue
         sev = str(rg.value(r, SH.resultSeverity)).split("#")[1]
         tel[sev] += 1
-        if sev == "Violation" and rg.value(r, SH.value) in extern:
+        if sev == "Violation" and (rg.value(r, SH.value) in extern or foc in extern):
             door_extern += 1
         shape = str(rg.value(r, SH.sourceShape)).split("#")[-1].split("/")[-1]
         # focus-URI's uit de melding halen, zodat gelijke bevindingen samen geteld worden

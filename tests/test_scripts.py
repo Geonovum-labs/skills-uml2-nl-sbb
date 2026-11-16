@@ -701,6 +701,140 @@ class ExternVeilig(unittest.TestCase):
         self.assertFalse({"waarde", "omschrijving", "imbro"} & {r["voorkeursterm"] for r in termen(self.w)})
 
 
+EA2RDF = os.path.join(ROOT, "tests", "fixtures", "fietsparkeren-ea2rdf.ttl")
+
+XMI_ASSOCIATIE = """<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20131001">
+  <uml:Model xmi:type="uml:Model" xmi:id="m" name="M">
+    <packagedElement xmi:type="uml:Package" xmi:id="p" name="P">
+      <packagedElement xmi:type="uml:Class" xmi:id="A" name="Stalling">
+        <ownedComment body="Voorziening waar fietsen worden geparkeerd."/>
+        <ownedAttribute xmi:id="A_b" name="beheerder" association="AB"><type xmi:idref="B"/></ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="B" name="Beheerder">
+        <ownedComment body="Organisatie die een stalling exploiteert."/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="C" name="Gemeente">
+        <ownedComment body="Openbaar lichaam dat een deel van het land bestuurt."/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="AB" name="wordtBeheerdDoor">
+        <memberEnd xmi:idref="A_b"/><memberEnd xmi:idref="AB_a"/>
+        <ownedEnd xmi:id="AB_a" type="A"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="BC" name="ligtIn">
+        <ownedEnd xmi:id="BC_b" type="B"/><ownedEnd xmi:id="BC_c" type="C"/>
+      </packagedElement>
+    </packagedElement>
+  </uml:Model>
+</xmi:XMI>
+"""
+
+
+class Ea2rdf(unittest.TestCase):
+    """Een ea2rdf-export als invoer: tabellen uit Turtle, herstel van tekst, associaties en de tag 'begrip'."""
+
+    @classmethod
+    def setUpClass(cls):
+        import rdflib
+        cls.w = tempfile.mkdtemp(prefix="bk-ea2rdf-")
+        cls.start = bk(cls.w, "start", EA2RDF, "--package", "Fietsparkeren").stdout
+        bk(cls.w, "zet", "kader.uri", "http://voorbeeld.nl/k")
+        cls.analyse = bk(cls.w, "analyseer").stdout
+        bk(cls.w, "overnemen", "--alle")
+        bk(cls.w, "analyseer")
+        bk(cls.w, "genereer")
+        cls.g = rdflib.Graph().parse(os.path.join(cls.w, "uit", "kader.ttl"))
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.w, ignore_errors=True)
+
+    def uri(self, notatie, w=None):
+        import rdflib
+        return rdflib.URIRef(next(r["uri"] for r in termen(w or self.w) if r["notatie"] == notatie))
+
+    def test_inventaris(self):
+        inv = lees_json(os.path.join(self.w, "werk", "inventaris.json"))
+        namen = {c["name"] for c in inv["elementen"].values()}
+        self.assertEqual(namen, {"Stalling", "Fietskluis", "Beheerder", "TypeStalling"})  # geen notitie
+        self.assertIn("GeoObject", inv["externe_klassen"].values())
+        self.assertIn("EAID_00000000_0000_0000_0000_000000000011", inv["elementen"])
+
+    def test_tekst_hersteld_en_gemeld(self):
+        t = {r["voorkeursterm"]: r for r in termen(self.w)}
+        self.assertEqual(t["fietskluis"]["definitie"], "Afsluitbare stalling voor één fiets.")
+        self.assertIn("dubbel gecodeerde UTF-8", self.start)
+        # notitie met koppen: alleen de definitiesectie, zoals bij een EAP
+        self.assertEqual(t["stalling"]["definitie"], "Voorziening waar fietsen geordend kunnen worden geparkeerd.")
+
+    def test_associatie_wordt_related(self):
+        from rdflib.namespace import SKOS
+        s, b = self.uri("Stalling"), self.uri("Beheerder")
+        self.assertIn((s, SKOS.related, b), self.g)
+        self.assertIn((b, SKOS.related, s), self.g)
+        self.assertIn("associaties", self.analyse)
+
+    def test_begrip_tag_wordt_exactmatch(self):
+        from rdflib.namespace import SKOS
+        doelen = {(s, str(o)) for s, o in self.g.subject_objects(SKOS.exactMatch)}
+        self.assertIn((self.uri("Stalling"), "http://voorbeeld.nl/basis/id/begrip/stalling"), doelen)  # tag 'Begrip'
+        self.assertIn((self.uri("Stalling.naam"), "http://voorbeeld.nl/basis/id/begrip/naam"), doelen)  # attribuuttag 'begrip'
+        self.assertFalse(any(o.startswith("http://voorbeeld.nl/k/") for _, o in doelen))  # eigen kader overgeslagen
+        self.assertIn("begrip-tag", self.analyse)
+
+    def test_uitzetten(self):
+        import rdflib
+        from rdflib.namespace import SKOS
+        w = tempfile.mkdtemp(prefix="bk-ea2rdf-")
+        try:
+            shutil.copytree(os.path.join(self.w, "werk"), os.path.join(w, "werk"))
+            shutil.copy(os.path.join(self.w, "project.yaml"), w)
+            bk(w, "zet", "relaties.associatie", "geen")
+            bk(w, "zet", "relaties.begrip_relatie", "geen")
+            bk(w, "genereer")
+            g = rdflib.Graph().parse(os.path.join(w, "uit", "kader.ttl"))
+            self.assertEqual(list(g.subject_objects(SKOS.exactMatch)), [])
+            self.assertNotIn((self.uri("Stalling", w), SKOS.related, self.uri("Beheerder", w)), g)
+            bk(w, "zet", "relaties.associatie", "soms", ok=False)
+            self.assertNotEqual(bk(w, "controleer", ok=False).returncode, 0)
+        finally:
+            shutil.rmtree(w, ignore_errors=True)
+
+    def test_cp1252_export(self):
+        """Java op Windows schrijft zonder -Dfile.encoding=UTF-8 in cp1252."""
+        w = tempfile.mkdtemp(prefix="bk-ea2rdf-")
+        try:
+            tekst = open(EA2RDF, encoding="utf-8").read().replace("Ã©Ã©n", "één")
+            pad = os.path.join(w, "model-ea.ttl")
+            with open(pad, "w", encoding="cp1252") as f:
+                f.write(tekst)
+            out = bk(w, "start", pad, "--package", "Fietsparkeren").stdout
+            self.assertIn("cp1252", out)
+            inv = lees_json(os.path.join(w, "werk", "inventaris.json"))
+            self.assertIn("één fiets", inv["elementen"]["EAID_00000000_0000_0000_0000_000000000012"]["doc"])
+        finally:
+            shutil.rmtree(w, ignore_errors=True)
+
+
+class Associaties(unittest.TestCase):
+    def test_xmi2_associaties(self):
+        import rdflib
+        from rdflib.namespace import SKOS
+        w = tempfile.mkdtemp(prefix="bk-assoc-")
+        try:
+            schrijf(os.path.join(w, "m.xmi"), XMI_ASSOCIATIE)
+            bk(w, "start", "m.xmi", "--package", "P")
+            inv = lees_json(os.path.join(w, "werk", "inventaris.json"))
+            paren = {(k, a["doel"]) for k, c in inv["elementen"].items() for a in c["assocs"]}
+            self.assertEqual(paren, {("A", "B"), ("B", "C")})
+            bk(w, "zet", "kader.uri", "http://voorbeeld.nl/k")
+            bk(w, "genereer")
+            g = rdflib.Graph().parse(os.path.join(w, "uit", "kader.ttl"))
+            self.assertEqual(len(set(g.subject_objects(SKOS.related))), 4)  # twee paren, beide richtingen
+        finally:
+            shutil.rmtree(w, ignore_errors=True)
+
+
 @unittest.skipUnless(os.environ.get("BK_NETWERK") == "1", "SHACL-validatie haalt het profiel uit het register (BK_NETWERK=1)")
 class Validatie(unittest.TestCase):
     def test_shacl_telling(self):

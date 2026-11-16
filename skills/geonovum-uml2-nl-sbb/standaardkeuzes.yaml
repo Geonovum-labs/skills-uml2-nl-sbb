@@ -131,6 +131,11 @@ relaties:
   externe_superklasse_op_naam: true   # externe superklasse met dezelfde naam als een modelklasse -> die klasse
   attribuut_objecttype: related       # related | geen
   waarde_attribuut: related           # related | geen (keuze: tegen verweesde waarden)
+  associatie: related                 # associaties (relatiesoorten) tussen klassen in het kader: related | geen
+  # Tagged value(s) met de URI van een bestaand begrip (MIM: 'begrip'; hoofdletterongevoelig), op klassen, attributen en waarden.
+  # Een http(s)-URI buiten het eigen kader wordt een match met begrip_relatie (exactMatch … relatedMatch | geen).
+  begrip_tag: [begrip]
+  begrip_relatie: exactMatch
   waarde_parent_tag: null             # tagged value met bovenliggende waarde(n) -> broader (modelspecifiek, bv. parent in IMGeo)
   parent_scheiding: ";"
   # Waardelijst -> [klasse, attribuut] als het gebruik niet uit de attribuuttypen volgt.
@@ -158,6 +163,10 @@ externe_kaders:
     namespace: http://definities.geostandaarden.nl/nen3610/id/begrip/
     data: https://definities.geostandaarden.nl/rest/v1/nen3610-2011/data?format=text/turtle
     prefix: nen3610
+  - naam: NEN 3610:2022
+    namespace: http://definities.geostandaarden.nl/nen3610-2022/id/begrip/
+    data: https://definities.geostandaarden.nl/rest/v1/nen3610-2022/data?format=text/turtle
+    prefix: nen3610-2022
   - naam: BAG (IMBAG)
     namespace: http://bag.basisregistraties.overheid.nl/id/concept/
     per_begrip: https://definities.geostandaarden.nl/rest/v1/IMBAG/data?uri={uri}&format=text/turtle

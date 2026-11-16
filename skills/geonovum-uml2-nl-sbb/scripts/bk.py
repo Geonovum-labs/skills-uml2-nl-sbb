@@ -161,7 +161,7 @@ def cmd_start(a):
         bron = os.path.join(doel, kand[0])
         print(f"Uit zip: {kand[0]}" + (f" (ook: {', '.join(kand[1:])})" if kand[1:] else ""))
     ext = os.path.splitext(bron)[1].lower()
-    script = "inventaris_eap.py" if ext in (".eap", ".eapx", ".qea", ".qeax") else "inventaris.py"
+    script = "inventaris_eap.py" if ext in (".eap", ".eapx", ".qea", ".qeax", ".ttl", ".turtle") else "inventaris.py"
     args = [bron, INV] + sum((["--package", p] for p in o.package), []) + sum((["--zonder", z] for z in o.zonder), [])
     r = subprocess.run([sys.executable, os.path.join(HIER, script), *args], capture_output=True, text=True)
     out = r.stdout + r.stderr
@@ -436,6 +436,14 @@ def controleer(stil=False):
     if w.get("automatisch_splitsen") and "{waarde}" not in w["automatisch_splitsen"]:
         fouten.append("waarden.automatisch_splitsen moet {waarde} bevatten, bv. \"{lijst} {waarde}\"")
     r = cfg["relaties"]
+    if r.get("associatie", "related") not in ("related", "geen"):
+        fouten.append(f"relaties.associatie '{r.get('associatie')}' moet related of geen zijn")
+    if r.get("begrip_relatie", "exactMatch") not in ("exactMatch", "closeMatch", "broadMatch", "narrowMatch",
+                                                      "relatedMatch", "geen"):
+        fouten.append(f"relaties.begrip_relatie '{r.get('begrip_relatie')}' moet exactMatch, closeMatch, broadMatch, "
+                      "narrowMatch, relatedMatch of geen zijn")
+    if not isinstance(r.get("begrip_tag") or [], list):
+        fouten.append("relaties.begrip_tag moet een lijst van tagnamen zijn, bv. [begrip]")
     for n in ([r["wortel"]] if r.get("wortel") else []) + list(r.get("zelfstandig") or []):
         if inv["elementen"] and n not in klassen:
             fouten.append(f"relaties: klasse '{n}' bestaat niet")

@@ -21,13 +21,15 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
    - de UML-naam wordt `altLabel`; `skos:notation` = `Klasse.attribuut`
 4. **Relaties:**
    - generalisatie → `skos:broader` (geen `isothes:broaderGeneric`, tenzij gekozen)
+   - associatie (relatiesoort) tussen twee klassen in het kader → `skos:related`
    - attribuut `related` objecttype
    - waarde `related` het attribuut dat de lijst gebruikt (of het objecttype als dat attribuut niet in het model staat)
    - een parent-tag van waarden wordt standaard niet gebruikt (modelspecifiek; aan te zetten met `relaties.waarde_parent_tag`)
 5. **URI's:** `{kader}/id/begrip/{Term}`, `{kader}/id/collectie/{Lijst}`, `{kader}/id/bron/{Sleutel}`. Is het model al gepubliceerd, dan houden gekoppelde begrippen en collecties hun gepubliceerde URI (`uris.bestaand`).
 6. **Extern:**
    - `dct:source` uit de tag *Herkomst definitie*
-   - harmonisatierelaties naar NEN 3610:2011 en BAG
+   - harmonisatierelaties naar NEN 3610:2011, NEN 3610:2022 en BAG
+   - een tag *begrip* (MIM) met de URI van een bestaand begrip → `skos:exactMatch` naar dat begrip
    - aliasnamen als `altLabel@en` waar de alias de voorkeursterm is
 7. **Validatie:** NL-SBB 1.0.0 + extensie, mét externe kaders als context.
 
@@ -75,12 +77,14 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 | `relaties.zelfstandig` | [] | UML-namen | Klassen zonder superklasse die topbegrip moeten blijven |
 | `relaties.externe_superklasse_op_naam` | `true` | `false` | – |
 | `relaties.attribuut_objecttype` / `waarde_attribuut` | `related` | `geen` | `geen` geeft verweesde begrippen (SHACL-waarschuwing) |
+| `relaties.associatie` | `related` | `geen` | Alleen associaties waarvan beide klassen in het kader staan. De naam van de relatie gaat verloren (SKOS kent geen benoemde `related`) |
+| `relaties.begrip_tag` / `begrip_relatie` | [begrip] / `exactMatch` | Andere tag(s); `closeMatch` … `relatedMatch`, `geen` | De tag (MIM: *begrip*) verwijst naar een bestaand begrip, bv. in het NEN 3610-kader. URI's in het eigen kader worden overgeslagen. Gebruik `closeMatch` als de tag naar een verwant, niet identiek begrip wijst |
 | `relaties.gebruik` | {} + automatisch via attribuuttype | Lijst → [klasse, attribuut\|null] of `null` | Als attribuuttypen niet naar de lijst verwijzen (IMGeo: GenericName) |
 | `bronnen.tag` / `mapping` | ["Herkomst definitie", herkomstDefinitie] / [] | Andere tag(s); regex-regels | Altijd een mapping maken voor de tagwaarden uit de analyse. Een URL als herkomst wordt een brondocument met `foaf:page` |
 | `definities.sectie_definitie` / `sectie_toelichting` / `sectie_bron` / `sectie_negeren` | definitie/definition, toelichting/description, source/bron/herkomst, regels/name/… | Lijsten van koppen | Notities met koppen als `--Definitie--` (MIM-modellen). Zonder koppen telt de hele notitie als definitie |
 | `definities.toelichting_tag` / `toelichting_negeer` | [Toelichting, toelichting] / standaardteksten uit het MIM-profiel | [] = uit | Toelichting → `skos:scopeNote` |
 | `matches` | [] | {term, relatie, uri} | Na stap 5, met bevestiging van de gebruiker |
-| `externe_kaders` | NEN 3610:2011 (bulk), BAG (per begrip) | Kaders toevoegen | Andere basismodellen of registraties |
+| `externe_kaders` | NEN 3610:2011 en NEN 3610:2022 (bulk), BAG (per begrip) | Kaders toevoegen | Andere basismodellen of registraties |
 | `validatie.met_externe_context` | `true` | `false` | – |
 | `validatie.extensie_fallback` | kopie van de extensie in de GitHub-repository | URL | Alleen gebruikt als `shacl/` bij de installatie ontbreekt |
 | `besloten` | [] | Codes van VRAAG-punten | Gezet door `bk.py overnemen`: het punt is beslist (ook als de standaard blijft) en telt niet meer als open vraag |
@@ -90,7 +94,7 @@ De standaardwaarden staan in `standaardkeuzes.yaml`. Ze zijn gekozen door de geb
 
 - **XMI 1.1** (EA "XMI/UML 1.3"): definities staan in tagged values (`documentation`, `description`), memo-tags in `XMI.extension/UML:Comment`. Enumeraties zijn `Class «enumeration»`. Getest: IMGeluid 3.1.1 XMI 1.1 en EAPX geven een gelijke inventaris.
 - **Afgebroken bestanden**: de IMRO2012-XMI in het register is afgebroken (ongeldige XML). Gebruik dan het EAP-bestand.
-- **access-parser** decodeert Access' *compressed unicode* niet (tekens als '–' en 'é' buiten Latin-1 worden \x13 e.d.); `inventaris_eap.py` vervangt die functie. Soms leest access-parser de `ea_guid` of een memoveld niet; het script gebruikt dan een id op Object_ID en meldt onleesbare definities bij naam.
+- **access-parser** decodeert Access' *compressed unicode* niet (tekens als '–' en 'é' buiten Latin-1 worden \x13 e.d.); `inventaris_eap.py` vervangt die functie. Soms leest access-parser de `ea_guid` of een memoveld niet; het script gebruikt dan een id op Object_ID en meldt onleesbare definities bij naam. Uitweg: exporteer het bestand met [ea2rdf](https://github.com/architolk/ea2rdf) (Java, leest met Jackcess) en geef de Turtle aan `bk.py start`: `java -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -jar ea2rdf.jar -ea -e model.eap > model-ea.ttl`. Zonder de `-D`-opties schrijft Java op Windows cp1252; met `-ea` leest ea2rdf de database als ISO-8859-1, wat dubbel gecodeerde tekst (`reÃ«le`) geeft. Het script herstelt beide en meldt dat. ea2rdf exporteert geen volgorde (TPos/Pos) en zet ’ om in ': bij samengevoegde attributen kan daardoor een andere klasse de notatie en context leveren dan bij de EAP-route (IMEV: 3 van 466 begrippen).
 - **MIM-stereotypen** (`Codelijst`, `Enumeratie`, `Gestructureerd datatype`, `Primitief datatype`, `Keuze`) staan in de standaardlijsten.
 - **Getallen in vaste namen** (goldfish-review op IMBRT): korte letters+cijfers blijven heel met `termen.getallen` (`top10nl`, `lod2`, `co2`, `pm10`, `epsg28992`, `2D`), behalve als de letters een functiewoord zijn (`tot1`, `en2`). 'en' tussen cijfers (`10en20`) is een voegwoord, geen norm EN.
 - **Dubbele voorkeurstermen** (bv. abstracte klasse `_Gebouw` en subklasse `Gebouw`) laten `genereer` stoppen met een voorstel per paar; een andere term met dezelfde URI (`NITG-code`/`NITGcode`) krijgt nog steeds een achtervoegsel.

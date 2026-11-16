@@ -1,4 +1,4 @@
-"""Stap 1 (alternatief) — Enterprise Architect-repository (.eap/.eapx of .qea/.qeax) -> inventaris.json.
+"""Stap 1 (alternatief) — Enterprise Architect-repository (.eap/.eapx, .qea/.qeax of een ea2rdf-export) -> inventaris.json.
 
 Gebruik: python inventaris_eap.py model.eap werk/inventaris.json --package IMGEO [--package ...] [--zonder deprecated]
 
@@ -10,7 +10,10 @@ Klassen buiten de gekozen packages tellen als externe klassen (bv. superklassen)
 
 Uitvoer heeft dezelfde vorm en dezelfde id's (EAID_<guid>) als inventaris.py op een XMI-export.
 .eap/.eapx = Access-database (gelezen met access-parser, pure Python);
-.qea/.qeax = SQLite (standaardbibliotheek).
+.qea/.qeax = SQLite (standaardbibliotheek);
+.ttl = export van ea2rdf (https://github.com/architolk/ea2rdf, `java -jar ea2rdf.jar -ea -e model.eap`).
+ea2rdf leest Access-bestanden met Jackcess, dat ook memovelden en GUID's leest die access-parser mist.
+ea2rdf exporteert geen volgorde (TPos/Pos): elementen staan dan op naam, attributen op database-id.
 """
 import argparse
 import json
@@ -20,6 +23,7 @@ import sqlite3
 import sys
 from collections import Counter
 
+EA = "http://www.sparxsystems.eu/def/ea#"
 TABELLEN = ["t_package", "t_object", "t_objectproperties", "t_attribute", "t_attributetag", "t_connector"]
 UMLTYPE = {"Class": "uml:Class", "Enumeration": "uml:Enumeration", "DataType": "uml:DataType",
            "Interface": "uml:Interface"}
@@ -91,6 +95,82 @@ def lees_sqlite(pad):
     return {t: [dict(r) for r in con.execute(f"select * from {t}")] for t in TABELLEN}, Counter()
 
 
+HERSTELD = Counter()
+
+
+def herstel(v):
+    """Tekst uit ea2rdf: dubbel gecodeerde UTF-8 (mojibake als 'reÃ«le'; ontstaat met de standaardoptie -ea, die
+    de database als ISO-8859-1 leest) terugzetten. Alleen als de hele tekst zo terug te zetten is."""
+    if re.search("[\u00c2-\u00f4][\u0080-\u00bf]", v):
+        try:
+            goed = v.encode("latin-1").decode("utf-8")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            HERSTELD["niet"] += 1
+            return v
+        HERSTELD["mojibake"] += 1
+        return goed
+    return v
+
+
+def lees_ea2rdf(pad):
+    """Turtle-export van ea2rdf (`-ea -e`) -> dezelfde tabellen als lees_access, voor zover ea2rdf ze exporteert."""
+    import rdflib
+    ruw = open(pad, "rb").read()
+    try:
+        tekst = ruw.decode("utf-8")
+    except UnicodeDecodeError:
+        # Java op Windows schrijft standaard in cp1252 (zonder -Dfile.encoding=UTF-8)
+        tekst = ruw.decode("cp1252", errors="replace")
+        HERSTELD["cp1252"] += 1
+    g = rdflib.Graph().parse(data=tekst, format="turtle")
+    E = rdflib.Namespace(EA)
+    L, C = rdflib.RDFS.label, rdflib.RDFS.comment
+
+    def nr(u):
+        return int(str(u).rsplit(":", 1)[-1]) if u is not None else 0
+
+    def w(sub, p):
+        x = g.value(sub, p)
+        if x is None:
+            return None
+        x = x.toPython() if isinstance(x, rdflib.Literal) else x
+        return herstel(x) if isinstance(x, str) else x
+
+    def rijen(soort):
+        return sorted(g.subjects(rdflib.RDF.type, E[soort]), key=nr)
+
+    data = {t: [] for t in TABELLEN}
+    for s in rijen("Package"):
+        data["t_package"].append(dict(Package_ID=nr(s), Parent_ID=nr(g.value(s, E.parent)), Name=w(s, L),
+                                      Notes=w(s, C), ea_guid=w(s, E.guid), TPos=0))
+    for s in rijen("Object"):
+        ab = g.value(s, E.abstract)
+        data["t_object"].append(dict(Object_ID=nr(s), ea_guid=w(s, E.guid), Object_Type=w(s, E.type),
+                                     Stereotype=w(s, E.stereotype), Name=w(s, L), Alias=w(s, E.alias),
+                                     Abstract=None if ab is None else ("1" if ab.toPython() is True else "0"),
+                                     Package_ID=nr(g.value(s, E.package)), Note=w(s, C), TPos=0))
+    for s in rijen("Attribute"):
+        cl = g.value(s, E.classifier)
+        data["t_attribute"].append(dict(ID=nr(s), ea_guid=w(s, E.guid), Name=w(s, L), Style=w(s, E.alias),
+                                        Type=w(s, E.type), Classifier=nr(cl) if cl is not None else None,
+                                        Stereotype=w(s, E.stereotype), Object_ID=nr(g.value(s, E.object)),
+                                        Notes=w(s, C), LowerBound=w(s, E.lowerBound), UpperBound=w(s, E.upperBound),
+                                        Pos=nr(s)))
+    for s in rijen("ObjectProperty"):
+        data["t_objectproperties"].append(dict(Object_ID=nr(g.value(s, E.element)), Property=w(s, E.property),
+                                               Value=w(s, E.value), Notes=w(s, E.notes)))
+    for s in rijen("Attributetag"):
+        data["t_attributetag"].append(dict(ElementID=nr(g.value(s, E.element)), Property=w(s, E.property),
+                                           VALUE=w(s, E.value), NOTES=w(s, E.notes)))
+    for s in rijen("Connector"):
+        data["t_connector"].append(dict(Connector_ID=nr(s), Connector_Type=w(s, E.type), Name=w(s, L),
+                                        Start_Object_ID=nr(g.value(s, E.start)), End_Object_ID=nr(g.value(s, E.end)),
+                                        SourceRole=w(s, E.sourceRole), DestRole=w(s, E.destRole)))
+    if not data["t_object"]:
+        sys.exit(f"Geen ea:Object in {pad}: is dit een export van ea2rdf met de optie -ea?")
+    return data, Counter()
+
+
 def eaid(guid):
     return "EAID_" + (guid or "").strip("{}").replace("-", "_")
 
@@ -153,6 +233,8 @@ def main():
 
     if a.bron.lower().endswith((".qea", ".qeax")):
         data, verloren = lees_sqlite(a.bron)
+    elif a.bron.lower().endswith((".ttl", ".turtle")):
+        data, verloren = lees_ea2rdf(a.bron)
     else:
         data, verloren = lees_access(a.bron)
 
@@ -222,7 +304,7 @@ def main():
                         doc=s(ci(o, "Note"), f"definitie van {s(ci(o, 'Name'))}"),
                         alias=ci(o, "Alias") or None, stereo=ci(o, "Stereotype") or None,
                         pkg=ppath[-1] if ppath else None, pkg_path=ppath,
-                        abstract=s(ci(o, "Abstract")) == "1", tags={}, attrs=[], gens=[])
+                        abstract=s(ci(o, "Abstract")) == "1", tags={}, attrs=[], gens=[], assocs=[])
 
     def tagwaarde(t, kol, notes):
         """Memo-tags: waarde '<memo>', de tekst staat in de notitiekolom."""
@@ -255,9 +337,15 @@ def main():
 
     externe = {}
     for c in data["t_connector"]:
+        src, dst = int(ci(c, "Start_Object_ID") or 0), int(ci(c, "End_Object_ID") or 0)
+        if ci(c, "Connector_Type") in ("Association", "Aggregation"):
+            # relatiesoort; alleen als beide kanten in de selectie liggen (anders is er geen begrip om naar te verwijzen)
+            if src in oid2id and dst in oid2id and src != dst:
+                elems[oid2id[src]]["assocs"].append(dict(doel=oid2id[dst],
+                                                         naam=s(ci(c, "Name")) or s(ci(c, "DestRole")) or None))
+            continue
         if ci(c, "Connector_Type") != "Generalization":
             continue
-        src, dst = int(ci(c, "Start_Object_ID") or 0), int(ci(c, "End_Object_ID") or 0)
         if src in oid2id and dst in by_oid:
             gid = oid2id.get(dst) or oid_id(by_oid[dst])
             elems[oid2id[src]]["gens"].append(gid)
@@ -277,12 +365,21 @@ def main():
           f"{len(externe)} externe klassen")
     for (t, st), n in sorted(Counter((c["type"], c["stereo"]) for c in elems.values()).items(), key=str):
         print(f"  {t:16} {str(st):20} {n}")
+    ea2rdf = ("Of lees het bestand met ea2rdf (Jackcess) en geef de export aan bk.py start: "
+              "java -Dfile.encoding=UTF-8 -jar ea2rdf.jar -ea -e model.eap > model-ea.ttl")
     if ONLEESBAAR:
         print(f"LET OP: {len(ONLEESBAAR)} memovelden onleesbaar (access-parser), als leeg behandeld: "
-              + "; ".join(ONLEESBAAR) + ". Controleer deze in EA of gebruik een XMI-export.")
+              + "; ".join(ONLEESBAAR) + ". Controleer deze in EA of gebruik een XMI-export. " + ea2rdf)
     if any(ZONDER_GUID.values()):
         print(f"LET OP: ea_guid niet leesbaar ({ {k: len(v) for k, v in ZONDER_GUID.items() if v} }); id op Object_ID/ID gebruikt "
-              "(EAOBJ_/EAATT_). Begrippen zijn correct, maar id's wijken af van een XMI-export.")
+              "(EAOBJ_/EAATT_). Begrippen zijn correct, maar id's wijken af van een XMI-export. " + ea2rdf)
+    if HERSTELD["cp1252"]:
+        print("LET OP: de ea2rdf-export is geen UTF-8 (Java op Windows schrijft standaard cp1252) en is als cp1252 "
+              "gelezen. Exporteer bij voorkeur opnieuw met java -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8.")
+    if HERSTELD["mojibake"] or HERSTELD["niet"]:
+        print(f"LET OP: {HERSTELD['mojibake']} teksten met dubbel gecodeerde UTF-8 (bv. 'reÃ«le') hersteld"
+              + (f", {HERSTELD['niet']} niet te herstellen (controleer de definities)" if HERSTELD["niet"] else "")
+              + ". Bij ea2rdf ontstaat dit door de optie -ea, die de database als ISO-8859-1 leest.")
     if verloren:
         print(f"LET OP: memovelden niet leesbaar per tabel {dict(verloren)} (overflowpagina ontbreekt). "
               "In t_connector is dat onschuldig (alleen opmaak/notities); in t_object of t_attribute "
