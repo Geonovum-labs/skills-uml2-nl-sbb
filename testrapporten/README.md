@@ -2,6 +2,7 @@
 
 | Rapport | Inhoud |
 |---|---|
+| [2026-11-16-vergelijking-ea2rdf.md](2026-11-16-vergelijking-ea2rdf.md) | De skill naast ea2rdf (architolk) op NEN 3610 en IMEV: ea2rdf is een verliesvrije EA-export naar RDF, geen begrippenkader; wat het beter doet en welke ideeën de skill kan overnemen |
 | [2026-11-11-bhr-gt.md](2026-11-11-bhr-gt.md) | BHR-GT 2.2 met de waardelijsten van GitHub en het gepubliceerde kader: 1707 van de 1824 URI's behouden, drie scriptfouten gevonden en opgelost |
 | [2026-11-11-imgeo-uris-en-relaties.md](2026-11-11-imgeo-uris-en-relaties.md) | Feedback op het IMGeo-kader verwerkt: URI's van het gepubliceerde kader behouden, `skos:broader` zonder isothes, botsingen en codes volgens NL-SBB |
 | [2026-11-10-imgeo-vier-runs.md](2026-11-10-imgeo-vier-runs.md) | Vier modellen op IMGeo 2.2, beoordeeld tegen een referentierun, en welke verbetervoorstellen zijn overgenomen |
